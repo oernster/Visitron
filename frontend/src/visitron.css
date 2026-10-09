@@ -3,6 +3,23 @@
    view, so it paints no ring in any state; the selected row is the indicator
    (noborderfocus). */
 
+/* A band picture with a badge over its lower right corner: the warning on
+   Refresh while the last check has failed (Amendment 3). The badge is chrome
+   on the picture, so it takes no pointer and no focus of its own. */
+.band-picture {
+  position: relative;
+  display: inline-flex;
+}
+
+.band-button img.band-badge {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  width: 24px;
+  height: auto;
+  pointer-events: none;
+}
+
 main.split {
   display: grid;
   grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr);
@@ -75,6 +92,14 @@ main.split {
   padding: 0;
   max-height: 200px;
   overflow-y: auto;
+}
+
+/* A list that scrolls is keyboard focusable with no tabindex, so the engine
+   would ring the whole of it on Tab; it stays a stop, painting nothing
+   (noborderfocus). The ticks inside carry the rings. */
+.repo-list:focus,
+.repo-list:focus-visible {
+  outline: none;
 }
 
 .licence-text {

@@ -44,11 +44,14 @@ func NewCheck(store Store, releases Releases, pageLoads PageLoads, secrets Secre
 // page loads from GoatCounter, saving each as it comes. Whatever fails keeps
 // the figures already held (FR-034); the outcome is recorded either way.
 func (c *Check) Run(ctx context.Context, progress Progress) (Outcome, error) {
+	now := c.clock.Now()
 	sites, err := c.store.Websites()
 	if err != nil {
-		return Outcome{}, err
+		// A check that could not start is still a failed check, so the window
+		// warns of it like any other (Amendment 3).
+		failed := Outcome{Failures: []string{fmt.Sprintf("reading the websites: %v", err)}}
+		return failed, errors.Join(err, c.record(now, failed))
 	}
-	now := c.clock.Now()
 	var out Outcome
 	read := map[string]bool{}
 	for i, w := range sites {

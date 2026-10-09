@@ -1,9 +1,9 @@
 /*
-  Every colour SymDiary uses, in one place. The page names tokens only; a test
+  Every colour Visitron uses, in one place. The page names tokens only; a test
   holds every text pairing to WCAG 2.2 AA (NFR-USE-003).
 
-  SymDiary opens DARK and wears light only when the reader asks for it, through
-  `data-theme` on the root element (FR-073, Amendment 12). It does not follow
+  Visitron opens DARK and wears light only when the reader asks for it, through
+  `data-theme` on the root element (FR-070). It does not follow
   the Windows app mode: the window changing under the reader because the desktop
   reached dusk is a surprise, while the button in the bar is one press away. That
   is why the dark tokens are the plain ones here and light is the override:

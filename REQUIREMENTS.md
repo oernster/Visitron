@@ -193,9 +193,12 @@ that verifies it; test names are the intended ones until the code exists.
 - Rationale: symdiary.com names its repository in `site.js` and keeps its
   download buttons on `download.html` (Appendix A, M-3), so the home page alone
   is not enough. The caps keep a hostile or broken site from holding Visitron.
-- Verified by: `internal/infrastructure/crawl/crawl_test.go` against a local
-  test server (`TestStaysOnSite`, `TestPageCap`, `TestSizeCap`,
-  `TestTimeout`)
+- Verified by: `internal/domain/links_test.go::TestSiteLinksStayOnSite`,
+  `internal/domain/links_test.go::TestSiteLinksStayUnderPath`,
+  `internal/application/websites_test.go::TestCrawlStopsAtPageLimit`, plus
+  `internal/infrastructure/web/web_test.go::TestTooLargeIsRefused` and
+  `internal/infrastructure/web/web_test.go::TestTimeout` against a local
+  test server
 
 **FR-006 Repository discovery**
 - Priority: Must
@@ -204,7 +207,7 @@ that verifies it; test names are the intended ones until the code exists.
   address in the fetched pages, once each, ignoring case.
 - Acceptance: Given the pages of symdiary.com, the crawl reports exactly
   `oernster/SymDiary`, although the home page names it twice.
-- Verified by: `internal/domain/discover_test.go::TestFindsBothForms`
+- Verified by: `internal/domain/repo_test.go::TestFindsBothForms`
 
 **FR-007 Choosing repositories**
 - Priority: Must
@@ -214,7 +217,7 @@ that verifies it; test names are the intended ones until the code exists.
   of its host.
 - Acceptance: `snarkapi.com` pre-ticks `oernster/snark-api`; `ernster.dev/WhatDay/`
   pre-ticks `oernster/WhatDay`; `ernster.dev/` pre-ticks nothing.
-- Verified by: `discover_test.go::TestPreTick`
+- Verified by: `repo_test.go::TestPreTick`
 
 **FR-008 Crawl fails**
 - Priority: Must
@@ -235,7 +238,7 @@ that verifies it; test names are the intended ones until the code exists.
   naming the selected website, the website service shall remove it with its
   history.
 - Source: Q-2, answered 2026-10-09; artwork `assets/delete-website.png`.
-- Verified by: `websites_test.go::TestDeleteRemovesHistory` plus the house
+- Verified by: `store_test.go::TestDeleteRemovesHistory` plus the house
   confirmation check.
 
 **FR-011 First-run seeding**
@@ -256,7 +259,7 @@ that verifies it; test names are the intended ones until the code exists.
 - Acceptance: Given paths `ernster.dev/index.html` (3 loads) and
   `ernster.dev/WhatDay/index.html` (5 loads) with both websites recorded,
   ernster.dev reports 3 and ernster.dev/WhatDay reports 5.
-- Verified by: `internal/domain/owner_test.go::TestLongestPrefixOwns`
+- Verified by: `internal/domain/figures_test.go::TestLongestPrefixOwns`
 
 **FR-021 Counted downloads**
 - Priority: Must
@@ -264,13 +267,13 @@ that verifies it; test names are the intended ones until the code exists.
   downloads as its raw downloads less 1 when it ends `.dmg`, never below 0.
 - Acceptance: `SymDiary.dmg` with 1 raw download counts 0; with 0 it counts 0;
   `SymDiarySetup.exe` with 4 counts 4.
-- Verified by: `internal/domain/downloads_test.go::TestSelfDownloadAllowance`
+- Verified by: `internal/domain/figures_test.go::TestSelfDownloadAllowance`
 
 **FR-022 Download totals**
 - Priority: Must
 - Requirement: The figures service shall total counted downloads per website,
   per chosen repository, per release and per platform.
-- Verified by: `downloads_test.go::TestTotals`
+- Verified by: `internal/domain/figures_test.go::TestTotals`
 
 **FR-023 Daily history**
 - Priority: Must
@@ -279,7 +282,7 @@ that verifies it; test names are the intended ones until the code exists.
   previous kept snapshot.
 - Acceptance: Snapshots totalling 10 on 1 October and 14 on 3 October report 4
   downloads on 3 October.
-- Verified by: `internal/application/history_test.go::TestDailyRise`
+- Verified by: `internal/domain/figures_test.go::TestDailyRise`
 
 **FR-024 A count that falls**
 - Priority: Must
@@ -288,7 +291,7 @@ that verifies it; test names are the intended ones until the code exists.
   file that day.
 - Rationale: a deleted release or a re-uploaded file resets GitHub's count; a
   negative day is not a real event.
-- Verified by: `history_test.go::TestFallIsNotNegative`
+- Verified by: `internal/domain/figures_test.go::TestFallIsNotNegative`
 
 ### 3.3 Functional requirements: checking
 
@@ -348,7 +351,7 @@ that verifies it; test names are the intended ones until the code exists.
   `assets/`; at the top right, from left to right, it shall show Donate, a
   vertical separator, the theme button and the help button.
 - Source: Q-1, answered 2026-10-09.
-- Verified by: `Toolbar.test.tsx::rightGroupOrder` plus manual inspection.
+- Verified by: `App.test.tsx::orders the band as FR-040 states` plus manual inspection.
 
 **FR-041 Website list**
 - Priority: Must
@@ -362,7 +365,7 @@ that verifies it; test names are the intended ones until the code exists.
 - Requirement: When a website is selected, the window shall show its
   downloads by repository, release and platform as tables, plus charts of page
   loads per day and downloads per day over the chosen period.
-- Verified by: `WebsiteDetail.test.tsx`
+- Verified by: `DetailPane.test.tsx`
 
 **FR-043 Periods**
 - Priority: Must
@@ -421,7 +424,7 @@ that verifies it; test names are the intended ones until the code exists.
 - Priority: Must
 - Requirement: The Settings dialog shall show a stored key or token only as
   "set", with a button to replace or remove it.
-- Verified by: `SettingsDialog.test.tsx::keyIsNeverEchoed`
+- Verified by: `SettingsDialog.test.tsx::shows each secret only as set or not`
 
 **FR-063 Check interval range**
 - Priority: Must
@@ -436,7 +439,8 @@ that verifies it; test names are the intended ones until the code exists.
 - Requirement: The theme button shall switch between dark and light, showing
   the picture of the mode it would switch to, as SymDiary does; the choice is
   remembered and dark is the default.
-- Verified by: `settings_test.go::TestThemeDefaultsDark`, `TestThemeRemembered`
+- Verified by: `theme.test.ts::opens dark when nothing has been remembered`,
+  `useTheme.test.tsx::opens in what was remembered`
 
 **FR-071 Guide**
 - Priority: Must
@@ -452,14 +456,14 @@ that verifies it; test names are the intended ones until the code exists.
   the name Visitron, "by Oliver Ernster", "© Oliver Ernster", the version from
   `VERSION`, the GPL-3.0 licence and a credit to every open source component
   shipped, each with its licence.
-- Verified by: `AboutDialog.test.tsx` plus a structural test that every module
+- Verified by: `Dialog.test.tsx` plus a structural test that every module
   in `go.mod` and every runtime package in `package.json` is credited.
 
 **FR-073 Donate**
 - Priority: Must
 - Requirement: The donate button shall open
   `https://www.paypal.com/ncp/payment/NRXS4SP24A6C8` in the default browser.
-- Verified by: `internal/application/links_test.go::TestDonateURL`
+- Verified by: `app_test.go::TestDonateOpensTheOneAddressOrSaysWhyNot`
 
 **FR-074 Keyboard**
 - Priority: Must
@@ -629,3 +633,35 @@ with the Export permission. Visitron therefore shows each page's visitors per
 day under the name page loads; one person reading a page twice in a day counts
 once. The Guide states this (FR-071). Verified by
 `internal/infrastructure/goatcounter/client_test.go::TestDailyPagesThroughPaths`.
+
+**Amendment 3 (2026-10-09): a failed check is shown on Refresh; the
+references are held to the tree.** Ruled by the owner on 2026-10-09.
+
+- While the last check has failed (FR-044: a failure later than the last
+  success), the Refresh button shall carry `assets/warning.png` over the corner
+  of its picture, with the failure as its hint, until a later check succeeds.
+  The Guide says so (FR-071). Verified by
+  `App.test.tsx::puts the warning on Refresh only while the last check has failed`.
+- A check that stops on a fault it could not report itself (a panic or a
+  website list that could not be read) shall be recorded as a failed check, so
+  the warning above covers it too (house robustness rule 8). Verified by
+  `scheduler_test.go::TestACheckThatCannotStartIsRecordedAsFailed`,
+  `scheduler_test.go::TestRecordFaultWarnsUntilALaterSuccess` and
+  `app_test.go::TestAPanicInACheckIsRecordedAsAFailedCheck`.
+- In the website list with nothing selected, Down shall select the first row
+  and Up the last (FR-041). Verified by
+  `WebsiteList.test.tsx::starts at the last row when Up is pressed with nothing selected`.
+- NFR-SEC-001 against GitHub's own answers: a next page of releases named on
+  another host shall be refused rather than sent the token; no more than
+  one hundred pages are read for one repository. Measured before the fix: the
+  token reached the other host. Verified by `TestKeyGoesOnlyToItsHost` and
+  `TestPagesAreCapped`.
+- Every text pairing in both themes is held to WCAG 2.2 AA contrast and every
+  focus ring to 3:1, as in SymDiary. Verified by
+  `tests/structural/colours_test.go::TestEveryTextPairingMeetsAA`.
+- Fifteen "Verified by" references named files or tests that did not exist,
+  mostly because the tests landed in differently named files; each now names
+  the test that proves its requirement. The four that had none (the crawl's
+  time limit, the band order, the Guide, About) were written. A structural test
+  now fails on any reference that names nothing. Verified by
+  `tests/structural/traceability_test.go::TestEveryVerificationNamesARealTest`.

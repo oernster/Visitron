@@ -230,6 +230,33 @@ func TestAPanicInTheSchedulerIsSurvived(t *testing.T) {
 	r := newRig(t, nil)
 	r.app.services.Scheduler = nil
 	r.app.tickOnce() // must return rather than end the test binary
+	if events := r.window.seen(); len(events) != 1 || events[0] != (ProgressDTO{}) {
+		t.Fatalf("the page was not told the tick ended: %v", events)
+	}
+}
+
+func TestAPanicInACheckIsRecordedAsAFailedCheck(t *testing.T) {
+	r := newRig(t, nil)
+	// The panic is planted where a check reports its progress.
+	if _, err := r.app.SaveWebsite(0, "symdiary.com", nil); err != nil {
+		t.Fatal(err)
+	}
+	r.app.emitter = panicker{}
+	r.app.tickOnce()
+	o, err := r.app.Overview()
+	if err != nil || o.LastFailure == "" || o.Failure != errInternal.Error() {
+		t.Fatalf("the fault was not recorded: %+v, %v", o, err)
+	}
+}
+
+// panicker is a window whose progress events panic mid-check, standing in for
+// any fault inside one; the closing event, which is empty, goes through.
+type panicker struct{}
+
+func (panicker) Emit(_ string, data any) {
+	if data.(ProgressDTO).Total > 0 {
+		panic("planted")
+	}
 }
 
 func TestRefreshRunsACheckAndEndsWithAnEmptyProgress(t *testing.T) {

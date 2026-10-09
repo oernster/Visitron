@@ -82,6 +82,13 @@ func (s *Scheduler) Tick(ctx context.Context, progress Progress) (Outcome, bool,
 	return out, err == nil, err
 }
 
+// RecordFault records a check that stopped on a fault the check itself could
+// not report, such as a panic, as a failed check with reason, so the window
+// warns of it until a later check succeeds (Amendment 3).
+func (s *Scheduler) RecordFault(reason string) error {
+	return s.check.record(s.clock.Now(), Outcome{Failures: []string{reason}})
+}
+
 // Refresh runs a check now unless one is running (FR-032, FR-033).
 func (s *Scheduler) Refresh(ctx context.Context, progress Progress) (Outcome, error) {
 	s.mu.Lock()

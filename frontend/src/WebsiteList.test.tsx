@@ -29,6 +29,12 @@ describe('the website list', () => {
     expect(onSelect).toHaveBeenLastCalledWith(1)
   })
 
+  it('starts at the last row when Up is pressed with nothing selected', () => {
+    const { onSelect, table } = list(null)
+    fireEvent.keyDown(table, { key: 'ArrowUp' })
+    expect(onSelect).toHaveBeenLastCalledWith(2)
+  })
+
   it('wraps from the first row to the last', () => {
     const { onSelect, table } = list(1)
     fireEvent.keyDown(table, { key: 'ArrowUp' })

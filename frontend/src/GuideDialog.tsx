@@ -1,4 +1,4 @@
-// The Guide: what each control is, how to record quickly and the rules the
+// The Guide: what each control is, how the keyboard moves and the rules the
 // window cannot state for itself. Its words live in guideContent.ts; this file
 // only draws them.
 

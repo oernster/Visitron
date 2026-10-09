@@ -143,3 +143,35 @@ func TestDueSurfacesStoreFaults(t *testing.T) {
 		}
 	}
 }
+
+func TestACheckThatCannotStartIsRecordedAsFailed(t *testing.T) {
+	t.Parallel()
+	s, store, _, clock := schedulerFixture()
+	store.failOn = "Websites"
+	out, err := s.Refresh(context.Background(), noProgress)
+	if !errors.Is(err, errPlanted) || out.Succeeded() {
+		t.Fatalf("refresh = %+v, %v", out, err)
+	}
+	if !store.record.LastFailure.Equal(clock.now) || store.record.Failure == "" {
+		t.Errorf("record = %+v", store.record)
+	}
+}
+
+func TestRecordFaultWarnsUntilALaterSuccess(t *testing.T) {
+	t.Parallel()
+	s, store, _, clock := schedulerFixture()
+	store.record = CheckRecord{LastSuccess: clock.now.Add(-time.Hour)}
+	if err := s.RecordFault("an internal fault"); err != nil {
+		t.Fatal(err)
+	}
+	if !store.record.LastFailure.After(store.record.LastSuccess) || store.record.Failure != "an internal fault" {
+		t.Fatalf("record = %+v", store.record)
+	}
+	clock.now = clock.now.Add(time.Minute)
+	if _, err := s.Refresh(context.Background(), noProgress); err != nil {
+		t.Fatal(err)
+	}
+	if store.record.LastFailure.After(store.record.LastSuccess) {
+		t.Errorf("a later success left the failure standing: %+v", store.record)
+	}
+}

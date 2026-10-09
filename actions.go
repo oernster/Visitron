@@ -146,12 +146,8 @@ func (a *App) Refresh() (err error) {
 		return application.ErrBusy
 	}
 	go func() {
-		defer func() {
-			if recovered := recover(); recovered != nil {
-				fmt.Fprintf(os.Stderr, "panic in a refresh: %v\n", recovered)
-			}
-			a.emit(progressEvent, ProgressDTO{})
-		}()
+		defer a.emit(progressEvent, ProgressDTO{})
+		defer a.survive("a refresh")
 		if _, err := a.services.Scheduler.Refresh(a.ctx, a.progress); err != nil && !errors.Is(err, application.ErrBusy) {
 			fmt.Fprintf(os.Stderr, "refresh: %v\n", err)
 		}

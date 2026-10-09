@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/oernster/visitron/internal/application"
 )
@@ -28,6 +29,31 @@ func TestGetSendsHeadersAndReads(t *testing.T) {
 	resp, err := NewClient().Get(context.Background(), s.URL, map[string]string{"Authorization": "Bearer k"}, 100)
 	if err != nil || !resp.OK() || string(resp.Body) != "auth=Bearer k" {
 		t.Errorf("resp %+v err %v", resp, err)
+	}
+}
+
+// TestTimeout holds FR-005's time limit: every client carries RequestTimeout,
+// and a server slower than the limit is cut off. The limit is shortened here so
+// the test does not wait the full twenty seconds.
+func TestTimeout(t *testing.T) {
+	t.Parallel()
+	if got := NewClient().http.Timeout; got != RequestTimeout {
+		t.Fatalf("timeout = %v, want %v", got, RequestTimeout)
+	}
+	const short, slow = 20 * time.Millisecond, time.Second
+	release := make(chan struct{})
+	s := server(t, func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case <-release:
+		case <-r.Context().Done():
+		case <-time.After(slow):
+		}
+	})
+	defer close(release)
+	c := NewClient()
+	c.http.Timeout = short
+	if _, err := c.Get(context.Background(), s.URL, nil, 100); err == nil {
+		t.Error("a server slower than the limit was waited for")
 	}
 }
 

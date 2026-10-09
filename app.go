@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/infrastructure/tray"
 	"github.com/oernster/visitron/internal/product"
 )
 
@@ -59,8 +58,10 @@ type App struct {
 	opener   browserOpener
 	emitter  emitter
 	close    func() error
-	// trayCommands are the tray icon's clicks; nil when no icon came up.
-	trayCommands <-chan tray.Command
+	// followers each run on a goroutine of their own once the window has
+	// started, such as following the tray icon's clicks. The composition root
+	// supplies them, so the facade imports no infrastructure.
+	followers []func()
 }
 
 // newApp answers the facade. problem is the reason the data could not be
@@ -77,8 +78,8 @@ func (a *App) startup(ctx context.Context) {
 		fmt.Fprintf(os.Stderr, "seeding the websites: %v\n", err)
 	}
 	go a.schedule()
-	if a.trayCommands != nil {
-		go a.followTray(a.trayCommands)
+	for _, follow := range a.followers {
+		go follow()
 	}
 }
 
@@ -98,16 +99,31 @@ func (a *App) schedule() {
 	}
 }
 
+// tickOnce runs one tick. The closing event is deferred so the page stops
+// saying a check is under way however the tick ended.
 func (a *App) tickOnce() {
-	defer func() {
-		if recovered := recover(); recovered != nil {
-			fmt.Fprintf(os.Stderr, "panic in the scheduler: %v\n%s", recovered, debug.Stack())
-		}
-	}()
+	defer a.emit(progressEvent, ProgressDTO{})
+	defer a.survive("the scheduler")
 	if _, _, err := a.services.Scheduler.Tick(a.ctx, a.progress); err != nil {
 		fmt.Fprintf(os.Stderr, "scheduled check: %v\n", err)
 	}
-	a.emit(progressEvent, ProgressDTO{})
+}
+
+// survive is deferred at the top of a goroutine that runs a check. A panic is
+// logged with its stack, then recorded as a failed check so the window warns
+// of it (house robustness rule 8, Amendment 3).
+func (a *App) survive(where string) {
+	recovered := recover()
+	if recovered == nil {
+		return
+	}
+	fmt.Fprintf(os.Stderr, "panic in %s: %v\n%s", where, recovered, debug.Stack())
+	if a.services.Scheduler == nil {
+		return
+	}
+	if err := a.services.Scheduler.RecordFault(errInternal.Error()); err != nil {
+		fmt.Fprintf(os.Stderr, "recording the fault: %v\n", err)
+	}
 }
 
 // progress tells the page how far a check has got (FR-033).

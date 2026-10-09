@@ -77,6 +77,26 @@ describe('the check', () => {
     expect(bandButton('Refresh')).toBeEnabled()
   })
 
+  it('puts the warning on Refresh only while the last check has failed', async () => {
+    let failed = true
+    const events = installEvents()
+    installBridge({
+      Overview: vi.fn(() => Promise.resolve(failed
+        ? { ...anOverview, lastFailure: '9 Oct 2026 21:00', failure: 'offline' }
+        : anOverview)),
+    })
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    const refresh = bandButton('Refresh')
+    expect(refresh).toHaveAttribute('title', 'The check at 9 Oct 2026 21:00 failed: offline')
+    expect(refresh.querySelector('img.band-badge')).not.toBeNull()
+
+    failed = false
+    act(() => events.send({ done: 1, total: 0, site: '' }))
+    await waitFor(() => expect(bandButton('Refresh').querySelector('img.band-badge')).toBeNull())
+    expect(bandButton('Refresh')).not.toHaveAttribute('title')
+  })
+
   it('holds Refresh while the facade says a check is running', async () => {
     installBridge({ Overview: vi.fn(() => Promise.resolve({ ...anOverview, running: true })) })
     render(<App />)
@@ -102,6 +122,17 @@ describe('the check', () => {
 })
 
 describe('the band', () => {
+  it('orders the band as FR-040 states', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    const groups = band().querySelectorAll('.band-group')
+    const labels = (group: Element) => Array.from(group.querySelectorAll('button')).map((b) => b.textContent)
+    expect(labels(groups[0])).toEqual(['Add website', 'Edit website', 'Delete website', 'Refresh', 'Settings'])
+    expect(labels(groups[1])).toEqual(['Donate', 'Light mode', 'Help'])
+    expect(groups[1].children[1]).toHaveClass('band-separator')
+  })
+
   it('opens Add website and closes it again', async () => {
     installBridge()
     render(<App />)

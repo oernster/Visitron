@@ -22,6 +22,7 @@ import guideIcon from './assets/icons/help-guide.png'
 import lightModeIcon from './assets/icons/light-mode.png'
 import darkModeIcon from './assets/icons/dark-mode.png'
 import donateIcon from './assets/icons/donate.png'
+import warningIcon from './assets/icons/warning.png'
 
 interface BandButtonProps {
   label: string
@@ -29,14 +30,19 @@ interface BandButtonProps {
   hint?: string
   className?: string
   disabled?: boolean
+  /** A picture drawn over the corner of the icon; the hint says what it means. */
+  badge?: string
   onClick: () => void
 }
 
-function BandButton({ label, icon, hint, className, disabled, onClick }: BandButtonProps) {
+function BandButton({ label, icon, hint, className, disabled, badge, onClick }: BandButtonProps) {
   return (
     <button type="button" className={className ? `band-button ${className}` : 'band-button'}
       title={hint} disabled={disabled} onClick={onClick}>
-      <img src={icon} alt="" />
+      <span className="band-picture">
+        <img src={icon} alt="" />
+        {badge && <img className="band-badge" src={badge} alt="" />}
+      </span>
       <span>{label}</span>
     </button>
   )
@@ -91,6 +97,9 @@ export function App() {
 
   const row = overview?.rows.find((r) => r.id === selected)
   const running = (overview?.running ?? false) || progress !== null
+  // The warning stays on Refresh until a later check succeeds, which is when
+  // the facade stops reporting the failure (Amendment 3).
+  const failed = Boolean(overview?.lastFailure)
   const saved = () => {
     setOpen(null)
     reload()
@@ -114,6 +123,8 @@ export function App() {
           <BandButton label="Edit website" icon={editIcon} disabled={!row} onClick={() => setOpen('edit')} />
           <BandButton label="Delete website" icon={deleteIcon} disabled={!row} onClick={() => setOpen('delete')} />
           <BandButton label={running ? 'Checking' : 'Refresh'} icon={refreshIcon} disabled={running}
+            badge={failed ? warningIcon : undefined}
+            hint={failed ? `The check at ${overview?.lastFailure} failed: ${overview?.failure}` : undefined}
             onClick={() => void api.refresh(refused)} />
           <BandButton label="Settings" icon={settingsIcon} onClick={() => setOpen('settings')} />
         </div>

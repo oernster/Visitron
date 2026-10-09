@@ -109,7 +109,8 @@ func main() {
 	icon := tray.New()
 	trayUp := icon.Start() == nil
 	if trayUp {
-		app.trayCommands = icon.Commands()
+		commands := icon.Commands()
+		app.followers = append(app.followers, func() { app.followTray(commands) })
 		defer icon.Stop()
 	} else {
 		fmt.Fprintln(os.Stderr, "the tray icon could not be shown, so closing the window quits")

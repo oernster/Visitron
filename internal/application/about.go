@@ -17,5 +17,5 @@ var Credits = []Credit{
 	{Work: "SQLite", Licence: "Public domain", Holder: "D. Richard Hipp and contributors"},
 	{Work: "go-keyring", Licence: "MIT", Holder: "Zalando SE"},
 	{Work: "React", Licence: "MIT", Holder: "Meta Platforms, Inc. and affiliates"},
-	{Work: "GoatCounter (the service read)", Licence: "EUPL-1.2", Holder: "Martin Tournoij"},
+	{Work: "GoatCounter (the service read)", Licence: "EUPL-1.2, slightly modified", Holder: "Martin Tournoij"},
 }

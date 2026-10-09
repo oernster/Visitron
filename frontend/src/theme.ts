@@ -2,7 +2,7 @@
 // button offers next. Pure, with no DOM and no React, so every rule is
 // reachable from a test by calling it; useTheme drives it against the page.
 //
-// SymDiary opens dark and stays dark until somebody says otherwise (FR-073).
+// Visitron opens dark and stays dark until somebody says otherwise (FR-070).
 // It does not follow the Windows app mode: a window that changes under the
 // reader because the desktop reached dusk is a surprise, while the choice here
 // is one press away.

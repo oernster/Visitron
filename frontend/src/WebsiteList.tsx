@@ -14,7 +14,12 @@ interface Props {
   onPeriod: (days: number) => void
 }
 
-const periodLabel = (days: number) => (days === 365 ? '1 year' : `${days} days`)
+// ONE_YEAR_DAYS is the period that reads as a year rather than as a count of
+// days. The periods themselves come from Go (domain.Periods); this only names
+// the one the label treats differently.
+const ONE_YEAR_DAYS = 365
+
+const periodLabel = (days: number) => (days === ONE_YEAR_DAYS ? '1 year' : `${days} days`)
 
 export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }: Props) {
   const ids = overview.rows.map((r) => r.id)
@@ -22,9 +27,12 @@ export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }:
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
     event.preventDefault()
     if (ids.length === 0) return
+    const down = event.key === 'ArrowDown'
     const at = selected === null ? -1 : ids.indexOf(selected)
-    const delta = event.key === 'ArrowDown' ? 1 : -1
-    onSelect(ids[(at + delta + ids.length) % ids.length])
+    // With nothing selected, Down starts at the first row and Up at the last
+    // (Amendment 3); otherwise both step one row and wrap.
+    if (at === -1) return onSelect(ids[down ? 0 : ids.length - 1])
+    onSelect(ids[(at + (down ? 1 : -1) + ids.length) % ids.length])
   }
   return (
     <section className="websites">
