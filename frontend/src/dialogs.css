@@ -1,0 +1,106 @@
+/* The modal dialogs: the confirmation, About and the Guide. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 45%);
+}
+
+.dialog {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  max-width: 560px;
+}
+
+/*
+  A dialog whose body can outgrow the window pins its action row to the foot and
+  scrolls only the content above it, so Close is always where the reader expects
+  it rather than below whatever the dialog holds. The dialog itself then stops
+  scrolling: the inner body is the scroller, which is also the surface the
+  self-reading cycle drives, so the buttons never drift as it reads.
+*/
+.dialog.pinned-actions {
+  display: flex;
+  flex-direction: column;
+  max-height: 84vh;
+  overflow: hidden;
+}
+
+.dialog-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* A gutter, so the words do not run under the scrollbar. */
+  padding-right: 8px;
+}
+
+/*
+  The body is a text view: a pane holding words, not a control. It stays a
+  keyboard stop while it overflows, because it carries no controls of its own
+  and a reader who never touches the mouse has to be able to scroll it; it
+  paints nothing in any state, Tab included, because a ring round a whole page
+  of words marks nothing to act on.
+
+  The suppression is needed rather than merely tidy. Measured in Chromium
+  against this stylesheet: an overflowing scroll container is keyboard focusable
+  with no tabindex at all; Tab drew the browser's own `1px auto` ring round the
+  entire Guide. Removing a rule cannot remove a ring the engine draws, so it
+  is turned off here.
+*/
+.dialog-body:focus,
+.dialog-body:focus-visible {
+  outline: none;
+}
+
+/*
+  Everything that is not the body is fixed furniture: a title above it, the
+  action row below it. None of it may grow or shrink, so the body is the only
+  thing that scrolls and the furniture cannot be squashed on a short window.
+  Stated once rather than per element, so a dialog that gains a header needs no
+  new rule.
+*/
+.dialog.pinned-actions > *:not(.dialog-body) {
+  flex: none;
+}
+
+.dialog h2 {
+  margin: 8px 0;
+}
+
+.crest {
+  width: 72px;
+  height: 72px;
+}
+
+.credits {
+  padding-left: 18px;
+}
+
+.guide-section h3 {
+  margin: 18px 0 6px;
+}
+
+.guide-intro {
+  color: var(--muted);
+}
+
+.guide-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.guide-icon {
+  width: 28px;
+  height: 28px;
+  flex: none;
+}
+
+.guide-rule {
+  margin: 8px 0;
+}

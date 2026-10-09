@@ -1,0 +1,87 @@
+/* Visitron's own surfaces: the list beside the detail, the tables and the
+   charts. Every colour is a token from theme.css. The website table is an item
+   view, so it paints no ring in any state; the selected row is the indicator
+   (noborderfocus). */
+
+main.split {
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.website-table,
+.totals {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.website-table:focus,
+.website-table:focus-visible {
+  outline: none;
+}
+
+.website-table th,
+.website-table td,
+.totals td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.website-table th:first-child,
+.website-table td:first-child,
+.totals td:first-child {
+  text-align: left;
+}
+
+.website-table tbody tr {
+  cursor: pointer;
+}
+
+.website-table tbody tr.selected {
+  background: var(--selected);
+}
+
+.totals caption {
+  text-align: left;
+  font-weight: bold;
+  padding: 4px 0;
+}
+
+.totals-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.chart {
+  margin: 0 0 12px;
+}
+
+.chart svg {
+  width: 100%;
+  height: 120px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.chart rect {
+  fill: var(--accent);
+}
+
+.repo-list {
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.licence-text {
+  white-space: pre-wrap;
+  font-size: 0.8em;
+}
+
+.status .refusal {
+  color: var(--danger);
+}

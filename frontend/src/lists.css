@@ -1,0 +1,129 @@
+/*
+  The two lists a record is read through: the history's events and the
+  symptoms held, with the row furniture they share.
+
+  They live apart from styles.css because that sheet reached the 400-line
+  limit; also because these are one concern: everything here draws a row of
+  recorded things, where styles.css draws the window around them.
+*/
+
+.list-head,
+.receipt-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+/*
+  Every caption in the receipt's rows reads beside its control, on one line, as
+  From and To do; a row too narrow for all of them wraps whole groups instead of
+  breaking a caption from its control. The range choice's legend joins its
+  radios on the same line rather than standing above them, so every group in
+  the row is one line high and they centre on one another.
+*/
+.receipt-controls {
+  flex-wrap: wrap;
+}
+
+.receipt-controls label {
+  white-space: nowrap;
+}
+
+.receipt-controls .radio-row {
+  align-items: center;
+  margin-bottom: 0;
+}
+
+/*
+  The engine gives a radio 3px of margin above and none below, which drops it
+  1.5px under the line its neighbours centre on (measured in Chromium).
+*/
+.receipt-controls .choice input {
+  margin-block: 0;
+}
+
+.receipt-controls .radio-row legend {
+  float: left;
+  margin: 0;
+}
+
+.events,
+.symptom-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.events > li,
+.symptom-list > li {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+}
+
+/*
+  --symptom-column is how wide a symptom's name is allowed to be wherever a
+  name sits beside something else. The history and the symptoms list both use
+  it, so the two cannot drift apart; stating it once is also what lets the
+  Rename buttons line up, since a column of a stated width puts every button
+  at the same place whatever the symptoms are called.
+*/
+.pane {
+  --symptom-column: 150px;
+}
+
+.event {
+  display: grid;
+  grid-template-columns: auto 150px var(--symptom-column) 90px 1fr auto;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.event .note {
+  white-space: pre-wrap;
+  color: var(--muted);
+}
+
+.row-actions,
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/*
+  The name takes a column of its own and the button starts where that column
+  ends, so every Rename sits at one x down the whole list. Laid out as a flex
+  row the buttons followed the words, which put them in a different place on
+  every line; a name longer than the column wraps inside it rather than
+  shifting its button out of the line.
+
+  justify-content keeps the pair together at the left: without it the second
+  column would take the rest of the pane and the button would be pushed to
+  the far edge, which is aligned but a long way from the name it belongs to.
+*/
+.symptom-list > li {
+  display: grid;
+  grid-template-columns: var(--symptom-column) auto;
+  justify-content: start;
+  align-items: center;
+  gap: 12px;
+}
+
+/*
+  A row being renamed holds one form instead of the name and the button, so it
+  takes the whole width rather than being squeezed into the name's column.
+*/
+.symptom-list > li > .rename {
+  grid-column: 1 / -1;
+}
+
+.rename {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

@@ -1,0 +1,314 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.45 'Segoe UI', system-ui, sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+/*
+  A disabled control wears a permanent red ring, not one that waits for the
+  mouse: the ring IS the disabled state, readable at a glance as "present but
+  inert". Its fill is muted at the same time, because a control left in its
+  enabled colour either hides the ring or swallows it; that is why opacity is
+  not used here, which would fade the ring along with everything else.
+*/
+button:disabled,
+input:disabled,
+textarea:disabled {
+  cursor: default;
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+  background: var(--muted-fill);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-danger);
+}
+
+/*
+  A filled button keeps its fill through the class rules above, which sit after
+  the disabled rule and match it for specificity. Naming both together raises
+  the specificity so the muted fill wins: Print left in the accent and Delete
+  left in the danger red would each swallow the ring that says they are inert,
+  the danger one completely.
+*/
+button.primary:disabled,
+button.danger:disabled {
+  background: var(--muted-fill);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+input,
+textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+/*
+  The ring belongs to a CONTROL, never to the container holding it. A ring round
+  a pane marks nothing the reader can act on and costs them a keypress to step
+  past, so the rule names the control elements one by one rather than matching
+  everything that can take focus. A bare `:focus-visible` stood here and would
+  have rung any container the day one gained a tabindex; the structural guard
+  refuses both the bare form and a container selector.
+
+  Hover and keyboard focus share the green deliberately: both say "you can use
+  this"; a reader should not have to learn two colours for one fact. The
+  hover half is gated on :enabled, so a disabled control keeps its red ring
+  under the mouse rather than being told it is usable.
+*/
+button:enabled:hover,
+button:enabled:focus-visible,
+input:enabled:hover,
+input:enabled:focus-visible,
+textarea:enabled:hover,
+textarea:enabled:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/*
+  Where the focus sits when the window opens, so nothing is ringed before the
+  reader has asked for anything. It takes no space, draws nothing and is out of
+  the tab order, so the first step enters the ring at its first stop.
+*/
+.focus-sink {
+  width: 0;
+  height: 0;
+  outline: none;
+}
+
+.band {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.band-group {
+  display: flex;
+  gap: 4px;
+}
+
+/*
+  The rule between groups of band buttons. It is inset from the band's own edges
+  rather than running its full height, so it reads as a division between the
+  buttons rather than as a second border beside the one under the band.
+*/
+.band-separator {
+  width: 1px;
+  align-self: stretch;
+  margin: 6px 6px;
+  background: var(--border);
+}
+
+.band-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 84px;
+  padding: 6px 4px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.band-button img {
+  width: 44px;
+  height: 44px;
+}
+
+.band-button span {
+  font-size: 13px;
+}
+
+/*
+  The donate mark is a detailed picture rather than a square glyph, so it takes
+  the band's own icon height and keeps its own width. It joins the tray rather
+  than getting a band of its own, so it is sized exactly like its neighbours: a
+  member drawn smaller than the row it sits in reads as a mistake.
+*/
+.band-button.donate img {
+  width: auto;
+}
+
+.band-button[aria-pressed='true'] {
+  background: var(--selected);
+  border-color: var(--border);
+}
+
+.problem {
+  margin: 12px 16px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 6px 16px;
+}
+
+.status.error span {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.status .dismiss {
+  padding: 2px 10px;
+}
+
+main {
+  flex: 1;
+  padding: 0 16px 24px;
+}
+
+.pane {
+  max-width: 880px;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 4px 0 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  border: 0;
+  padding: 0;
+}
+
+.field > label,
+.field > legend,
+.field .label {
+  font-weight: 600;
+}
+
+/* A row of radio choices under one legend: severity, the receipt's range. */
+.radio-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.radio-row legend {
+  margin-bottom: 4px;
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.combo {
+  position: relative;
+  max-width: 420px;
+}
+
+.combo input {
+  width: 100%;
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  margin: 2px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.suggestions li {
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.suggestions li[aria-selected='true'] {
+  background: var(--selected);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  flex-basis: 100%;
+}
+
+.group-label {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--muted);
+}
