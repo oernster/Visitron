@@ -8,4 +8,5 @@ import { cleanup } from '@testing-library/react'
 afterEach(() => {
   cleanup()
   delete (window as unknown as { go?: unknown }).go
+  delete (window as unknown as { runtime?: unknown }).runtime
 })
