@@ -5,7 +5,7 @@
 // installed rejects, which is how a test says "this call should not happen".
 
 import { vi } from 'vitest'
-import { noWindow, progressEvent, sentence } from './api'
+import { closeRequestEvent, noWindow, progressEvent, sentence } from './api'
 import type { About, Detail, Overview, Progress, Proposal, Settings, State, WebsiteRow } from './api'
 
 /** noWindowShown is that refusal as the status line shows it. */
@@ -31,6 +31,8 @@ export interface FakeBridge {
   RemoveSecret: Fn
   About: Fn
   Donate: Fn
+  MinimiseToTray: Fn
+  RequestQuit: Fn
 }
 
 export const periods = [7, 30, 90, 365]
@@ -124,20 +126,26 @@ export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
     RemoveSecret: vi.fn(refuse),
     About: vi.fn(() => Promise.resolve(anAbout)),
     Donate: vi.fn(refuse),
+    MinimiseToTray: vi.fn(refuse),
+    RequestQuit: vi.fn(refuse),
     ...answers,
   } as FakeBridge
   ;(window as unknown as { go: unknown }).go = { main: { App: bridge } }
   return bridge
 }
 
-/** installEvents puts a fake event runtime on the window; send fires an event. */
-export function installEvents(): { send: (p: Progress) => void } {
-  const listeners: ((p: Progress) => void)[] = []
+/** installEvents puts a fake event runtime on the window; send fires a
+ * progress event and close presses the window's close button. */
+export function installEvents(): { send: (p: Progress) => void; close: () => void } {
+  const listeners: Record<string, ((data?: Progress) => void)[]> = {}
   ;(window as unknown as { runtime: unknown }).runtime = {
-    EventsOn: (name: string, callback: (p: Progress) => void) => {
-      if (name === progressEvent) listeners.push(callback)
+    EventsOn: (name: string, callback: (data?: Progress) => void) => {
+      ;(listeners[name] ??= []).push(callback)
       return () => undefined
     },
   }
-  return { send: (p) => listeners.forEach((l) => l(p)) }
+  return {
+    send: (p) => listeners[progressEvent]?.forEach((l) => l(p)),
+    close: () => listeners[closeRequestEvent]?.forEach((l) => l()),
+  }
 }

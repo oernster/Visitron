@@ -665,3 +665,17 @@ references are held to the tree.** Ruled by the owner on 2026-10-09.
   time limit, the band order, the Guide, About) were written. A structural test
   now fails on any reference that names nothing. Verified by
   `tests/structural/traceability_test.go::TestEveryVerificationNamesARealTest`.
+
+**Amendment 4 (2026-10-09): closing asks.** Ruled by the owner on 2026-10-09,
+ported from PigeonPost. FR-050 now reads: when the window's close button is
+pressed and the tray icon is up, Visitron shall bring the window forward and
+ask whether to minimise to the tray or quit; Escape cancels and leaves the
+window open. The choice opens on Minimise to tray; where another dialog is
+open, it warns that unsaved work may be lost and opens on Go back. Without a
+tray icon the close quits, so no one is left with a process they cannot
+reach; a Quit from the tray or the choice does not ask again. Verified by
+`closing_test.go::TestCloseAsksWhenTheTrayIsUp`,
+`closing_test.go::TestCloseQuitsWithoutATray`,
+`closing_test.go::TestMinimiseHidesAndQuitDoesNotAskAgain`,
+`closing_test.go::TestTheTrayRevealsAndQuitsThroughTheSameWindow` and
+`CloseChoiceDialog.test.tsx::warns of open work and opens on Go back`.

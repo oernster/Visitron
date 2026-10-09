@@ -36,7 +36,7 @@ var logWriters = map[string]int{
 	// Handing over the keyboard panicked; following the tray panicked (value
 	// and stack each); a refresh asked for from the tray was refused.
 	"window.go": 3,
-	// The tray's message loop panicked: the recovered value.
+	// The tray's message loop panicked: the recovered value and the stack.
 	"internal/infrastructure/tray/tray_windows.go": 1,
 }
 

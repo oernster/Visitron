@@ -254,7 +254,7 @@ func TestAPanicInACheckIsRecordedAsAFailedCheck(t *testing.T) {
 type panicker struct{}
 
 func (panicker) Emit(_ string, data any) {
-	if data.(ProgressDTO).Total > 0 {
+	if progress, ok := data.(ProgressDTO); ok && progress.Total > 0 {
 		panic("planted")
 	}
 }

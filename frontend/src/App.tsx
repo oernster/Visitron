@@ -6,8 +6,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRing } from './useRing'
 import { useTheme } from './useTheme'
 import { themeLabel } from './theme'
-import { api, onProgress, type About, type Detail, type Overview, type Progress, type State } from './api'
+import { api, onCloseRequest, onProgress, type About, type Detail, type Overview, type Progress, type State } from './api'
 import { AboutDialog, ConfirmDialog } from './Dialog'
+import { CloseChoiceDialog } from './CloseChoiceDialog'
 import { GuideDialog } from './GuideDialog'
 import { SettingsDialog } from './SettingsDialog'
 import { WebsiteDialog } from './WebsiteDialog'
@@ -66,6 +67,7 @@ export function App() {
   const [progress, setProgress] = useState<Progress | null>(null)
   const [open, setOpen] = useState<Open>(null)
   const [about, setAbout] = useState<About | null>(null)
+  const [closing, setClosing] = useState(false)
   const [message, setMessage] = useState('')
   const refused = useCallback((text: string) => setMessage(text), [])
 
@@ -89,6 +91,9 @@ export function App() {
       if (p.total === 0) reload()
     })
   }, [refused, reload])
+
+  // The window's close button asks rather than assumes (FR-050, Amendment 4).
+  useEffect(() => onCloseRequest(() => setClosing(true)), [])
 
   useEffect(() => {
     if (selected === null) return setDetail(null)
@@ -181,6 +186,11 @@ export function App() {
           onAbout={() => void api.about(refused).then((found) => found && setAbout(found))} />
       )}
       {about && <AboutDialog about={about} onClose={() => setAbout(null)} />}
+      {closing && (
+        <CloseChoiceDialog onCancel={() => setClosing(false)}
+          onMinimise={() => { setClosing(false); void api.minimiseToTray(refused) }}
+          onQuit={() => { setClosing(false); void api.requestQuit(refused) }} />
+      )}
     </div>
   )
 }

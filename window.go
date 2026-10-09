@@ -53,6 +53,21 @@ func (e windowEmitter) Emit(name string, data any) {
 	}
 }
 
+// windowControls is the window's runtime as the facade's windowControl.
+type windowControls struct{ app *App }
+
+// Reveal brings the window back from the tray, the taskbar or behind others.
+func (w windowControls) Reveal() {
+	runtime.WindowUnminimise(w.app.ctx)
+	runtime.Show(w.app.ctx)
+}
+
+// Hide takes the window off the screen and the taskbar; the tray stays.
+func (w windowControls) Hide() { runtime.WindowHide(w.app.ctx) }
+
+// Quit ends Visitron.
+func (w windowControls) Quit() { runtime.Quit(w.app.ctx) }
+
 // followTray acts on the tray's commands until it closes (FR-051). It runs on
 // a goroutine of its own, so it carries its own recover.
 func (a *App) followTray(commands <-chan tray.Command) {
@@ -64,14 +79,13 @@ func (a *App) followTray(commands <-chan tray.Command) {
 	for command := range commands {
 		switch command {
 		case tray.Show:
-			runtime.WindowUnminimise(a.ctx)
-			runtime.Show(a.ctx)
+			a.control.Reveal()
 		case tray.Refresh:
 			if err := a.Refresh(); err != nil {
 				fmt.Fprintf(os.Stderr, "refresh from the tray: %v\n", err)
 			}
 		case tray.Quit:
-			runtime.Quit(a.ctx)
+			a.quit()
 		}
 	}
 }
@@ -80,10 +94,7 @@ func (a *App) followTray(commands <-chan tray.Command) {
 // again; the second copy then ends (FR-053).
 func singleInstance(app *App) *options.SingleInstanceLock {
 	return &options.SingleInstanceLock{
-		UniqueId: product.UniqueID,
-		OnSecondInstanceLaunch: func(options.SecondInstanceData) {
-			runtime.WindowUnminimise(app.ctx)
-			runtime.Show(app.ctx)
-		},
+		UniqueId:               product.UniqueID,
+		OnSecondInstanceLaunch: func(options.SecondInstanceData) { app.control.Reveal() },
 	}
 }

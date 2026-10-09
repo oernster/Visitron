@@ -100,15 +100,17 @@ func main() {
 	}
 	app := newApp(services, appVersion, problem, closeData)
 	app.focuser = windowFocus{}
+	app.control = windowControls{app: app}
 	app.opener = windowOpener{app: app}
 	app.emitter = windowEmitter{app: app}
 
-	// The tray comes up first: closing hides the window only when the icon
-	// exists to bring it back or quit (FR-050). Without one, closing quits, so
-	// nobody is left with a process they cannot reach.
+	// The tray comes up first: closing offers Minimise to tray only when the
+	// icon exists to bring the window back or quit (FR-050, Amendment 4).
+	// Without one, closing quits, so nobody is left with a process they cannot
+	// reach.
 	icon := tray.New()
-	trayUp := icon.Start() == nil
-	if trayUp {
+	app.trayUp = icon.Start() == nil
+	if app.trayUp {
 		commands := icon.Commands()
 		app.followers = append(app.followers, func() { app.followTray(commands) })
 		defer icon.Stop()
@@ -123,7 +125,7 @@ func main() {
 		MinWidth:           windowMinWidth,
 		MinHeight:          windowMinHeight,
 		StartHidden:        slices.Contains(os.Args[1:], startup.HiddenFlag),
-		HideWindowOnClose:  trayUp,
+		OnBeforeClose:      app.beforeClose,
 		AssetServer:        &assetserver.Options{Assets: assets},
 		OnStartup:          app.startup,
 		OnDomReady:         app.ready,

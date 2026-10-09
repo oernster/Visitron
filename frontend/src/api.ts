@@ -116,10 +116,12 @@ interface Bridge {
   RemoveSecret(which: SecretName): Promise<void>
   About(): Promise<About>
   Donate(): Promise<void>
+  MinimiseToTray(): Promise<void>
+  RequestQuit(): Promise<void>
 }
 
 interface WailsRuntime {
-  EventsOn(name: string, callback: (data: Progress) => void): () => void
+  EventsOn(name: string, callback: (data: never) => void): () => void
 }
 
 interface WailsWindow {
@@ -135,6 +137,9 @@ export const noWindow = 'Visitron is not running: this page needs its window.'
 
 /** progressEvent is the event Go sends as a check moves on. */
 export const progressEvent = 'check-progress'
+
+/** closeRequestEvent is Go asking for the close choice (FR-050, Amendment 4). */
+export const closeRequestEvent = 'close-request'
 
 const wails = (): WailsWindow => window as unknown as WailsWindow
 const bridge = (): Bridge | null => wails().go?.main?.App ?? null
@@ -171,6 +176,11 @@ export function onProgress(callback: (progress: Progress) => void): () => void {
   return wails().runtime?.EventsOn(progressEvent, callback) ?? (() => undefined)
 }
 
+/** onCloseRequest follows the window's close button; it answers the way to stop. */
+export function onCloseRequest(callback: () => void): () => void {
+  return wails().runtime?.EventsOn(closeRequestEvent, callback) ?? (() => undefined)
+}
+
 export const api = {
   state: (refused: Refused) => ask((b) => b.State(), refused),
   overview: (refused: Refused) => ask((b) => b.Overview(), refused),
@@ -195,4 +205,6 @@ export const api = {
   // The page asks for the donation page; it never names an address. Its one
   // home is Go's product package.
   donate: (refused: Refused) => act((b) => b.Donate(), refused),
+  minimiseToTray: (refused: Refused) => act((b) => b.MinimiseToTray(), refused),
+  requestQuit: (refused: Refused) => act((b) => b.RequestQuit(), refused),
 }

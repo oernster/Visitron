@@ -75,22 +75,33 @@ type fakeStartup struct{ on bool }
 func (f *fakeStartup) Enabled() (bool, error)   { return f.on, nil }
 func (f *fakeStartup) SetEnabled(on bool) error { f.on = on; return nil }
 
-// recorder keeps every event, address and focus the facade hands the window.
+// recorder keeps everything the facade hands the window: progress events and
+// the names of every event, addresses opened, focus, reveals, hides and quits.
 type recorder struct {
-	mu      sync.Mutex
-	events  []ProgressDTO
-	opened  []string
-	focused int
+	mu       sync.Mutex
+	events   []ProgressDTO
+	names    []string
+	opened   []string
+	focused  int
+	revealed int
+	hidden   int
+	quits    int
 }
 
-func (r *recorder) Emit(_ string, data any) {
+func (r *recorder) Emit(name string, data any) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.events = append(r.events, data.(ProgressDTO))
+	r.names = append(r.names, name)
+	if progress, ok := data.(ProgressDTO); ok {
+		r.events = append(r.events, progress)
+	}
 }
 
 func (r *recorder) Open(address string) { r.opened = append(r.opened, address) }
 func (r *recorder) Focus()              { r.focused++ }
+func (r *recorder) Reveal()             { r.revealed++ }
+func (r *recorder) Hide()               { r.hidden++ }
+func (r *recorder) Quit()               { r.quits++ }
 
 func (r *recorder) seen() []ProgressDTO {
 	r.mu.Lock()
@@ -137,7 +148,7 @@ func newRig(t *testing.T, data application.Store) *rig {
 	}
 	app := newApp(services, "1.2.3", "", func() error { return nil })
 	window := &recorder{}
-	app.emitter, app.opener, app.focuser = window, window, window
+	app.emitter, app.opener, app.focuser, app.control = window, window, window, window
 	app.ctx, app.cancel = context.WithCancel(context.Background())
 	t.Cleanup(app.cancel)
 	return &rig{app: app, store: opened, window: window, secrets: vault}

@@ -121,6 +121,37 @@ describe('the check', () => {
   })
 })
 
+describe('closing the window', () => {
+  it('asks, then minimises to the tray or quits as chosen', async () => {
+    const events = installEvents()
+    const bridge = installBridge({
+      MinimiseToTray: vi.fn(() => Promise.resolve()),
+      RequestQuit: vi.fn(() => Promise.resolve()),
+    })
+    render(<App />)
+    await screen.findByText('symdiary.com')
+
+    act(() => events.close())
+    fireEvent.click(screen.getByRole('button', { name: 'Minimise to tray' }))
+    await waitFor(() => expect(bridge.MinimiseToTray).toHaveBeenCalled())
+    expect(screen.queryByRole('alertdialog')).toBeNull()
+
+    act(() => events.close())
+    fireEvent.click(screen.getByRole('button', { name: 'Quit' }))
+    await waitFor(() => expect(bridge.RequestQuit).toHaveBeenCalled())
+  })
+
+  it('stays open when the choice is cancelled', async () => {
+    const events = installEvents()
+    installBridge()
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    act(() => events.close())
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(screen.queryByRole('alertdialog')).toBeNull()
+  })
+})
+
 describe('the band', () => {
   it('orders the band as FR-040 states', async () => {
     installBridge()

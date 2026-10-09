@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
+	"sync/atomic"
 	"time"
 
 	"github.com/oernster/visitron/internal/application"
@@ -57,7 +58,13 @@ type App struct {
 	focuser  windowFocuser
 	opener   browserOpener
 	emitter  emitter
+	control  windowControl
 	close    func() error
+	// trayUp is whether the tray icon came up: without it, hiding the window
+	// would leave nothing to bring it back, so closing quits (FR-050).
+	trayUp bool
+	// quitting is set once a Quit is under way, so closing asks nothing.
+	quitting atomic.Bool
 	// followers each run on a goroutine of their own once the window has
 	// started, such as following the tray icon's clicks. The composition root
 	// supplies them, so the facade imports no infrastructure.

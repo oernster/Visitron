@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"sync"
 	"sync/atomic"
 	"unsafe"
@@ -72,7 +73,7 @@ func (t *Tray) run() {
 	defer close(t.commands)
 	defer func() {
 		if recovered := recover(); recovered != nil {
-			fmt.Fprintf(os.Stderr, "panic in the tray: %v\n", recovered)
+			fmt.Fprintf(os.Stderr, "panic in the tray: %v\n%s", recovered, debug.Stack())
 		}
 	}()
 	if err := t.create(); err != nil {
