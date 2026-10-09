@@ -1,0 +1,123 @@
+package application
+
+import (
+	"context"
+
+	"github.com/oernster/visitron/internal/domain"
+)
+
+// DefaultPreferences are the settings until the owner changes one.
+var DefaultPreferences = Preferences{
+	IntervalHours: domain.DefaultIntervalHours,
+	Period:        domain.DefaultPeriod,
+	UpdateCheck:   true,
+}
+
+// Preferred answers the saved preferences, else the defaults.
+func Preferred(store Store) (Preferences, error) {
+	p, found, err := store.Preferences()
+	if err != nil || !found {
+		return DefaultPreferences, err
+	}
+	return p, nil
+}
+
+// SettingsView is what the Settings dialog shows (FR-060). The key and token
+// appear only as set or not (FR-062).
+type SettingsView struct {
+	Preferences
+	StartWithWindows bool
+	GoatCounterSet   bool
+	GitHubTokenSet   bool
+}
+
+// Settings is the settings service.
+type Settings struct {
+	store     Store
+	secrets   Secrets
+	startup   Startup
+	releases  Releases
+	pageLoads PageLoads
+}
+
+// NewSettings builds the settings service.
+func NewSettings(store Store, secrets Secrets, startup Startup, releases Releases, pageLoads PageLoads) *Settings {
+	return &Settings{store: store, secrets: secrets, startup: startup, releases: releases, pageLoads: pageLoads}
+}
+
+// View answers the current settings.
+func (s *Settings) View() (SettingsView, error) {
+	prefs, err := Preferred(s.store)
+	if err != nil {
+		return SettingsView{}, err
+	}
+	on, err := s.startup.Enabled()
+	if err != nil {
+		return SettingsView{}, err
+	}
+	key, err := s.secrets.Get(GoatCounterKey)
+	if err != nil {
+		return SettingsView{}, err
+	}
+	token, err := s.secrets.Get(GitHubToken)
+	if err != nil {
+		return SettingsView{}, err
+	}
+	return SettingsView{Preferences: prefs, StartWithWindows: on, GoatCounterSet: key != "", GitHubTokenSet: token != ""}, nil
+}
+
+// SaveInterval keeps a check interval in hours (FR-063).
+func (s *Settings) SaveInterval(hours int) error {
+	if err := domain.ValidInterval(hours); err != nil {
+		return err
+	}
+	return s.change(func(p *Preferences) { p.IntervalHours = hours })
+}
+
+// SavePeriod keeps the period the window reports over (FR-043).
+func (s *Settings) SavePeriod(days int) error {
+	period, err := domain.ValidPeriod(days)
+	if err != nil {
+		return err
+	}
+	return s.change(func(p *Preferences) { p.Period = period })
+}
+
+// SaveUpdateCheck turns the update check on or off (FR-075).
+func (s *Settings) SaveUpdateCheck(on bool) error {
+	return s.change(func(p *Preferences) { p.UpdateCheck = on })
+}
+
+// SaveStartWithWindows turns the sign-in start on or off (FR-052).
+func (s *Settings) SaveStartWithWindows(on bool) error { return s.startup.SetEnabled(on) }
+
+func (s *Settings) change(edit func(*Preferences)) error {
+	p, err := Preferred(s.store)
+	if err != nil {
+		return err
+	}
+	edit(&p)
+	return s.store.SavePreferences(p)
+}
+
+// SaveSecret stores a key or token, then tries it once (FR-061). It is stored
+// whether or not it works; the answer is the reason it did not, "" when it
+// did.
+func (s *Settings) SaveSecret(ctx context.Context, name Secret, value string) (string, error) {
+	if err := s.secrets.Set(name, value); err != nil {
+		return "", err
+	}
+	var tried error
+	if name == GoatCounterKey {
+		tried = s.pageLoads.Verify(ctx, value)
+	} else {
+		tried = s.releases.Verify(ctx, value)
+	}
+	if tried != nil {
+		return tried.Error(), nil
+	}
+	return "", nil
+}
+
+// RemoveSecret forgets a key or token (FR-062).
+func (s *Settings) RemoveSecret(name Secret) error { return s.secrets.Delete(name) }

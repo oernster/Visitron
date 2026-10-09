@@ -611,4 +611,12 @@ None open. Answered on 2026-10-09:
 
 ## 6. Amendments
 
-None yet.
+**Amendment 1 (2026-10-09): retry after a failed check.** FR-030 measures the
+interval from the last successful check, so after a failure every one-minute
+tick would find a check due and an outage would mean a check a minute. The
+scheduler now waits 30 minutes after a failed check before trying again on its
+own (`FailureRetry`); Refresh still runs at once. "Change since the previous
+check" (FR-041) is the rise between the last two kept snapshots, since a later
+check on the same day replaces that day's snapshot. Verified by
+`scheduler_test.go::TestFailureRetriesAfterWait` and
+`figures_test.go::TestOverviewSeparatesSubSites`.
