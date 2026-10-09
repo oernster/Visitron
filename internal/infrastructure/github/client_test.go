@@ -58,6 +58,44 @@ func TestFilesFollowsPages(t *testing.T) {
 	}
 }
 
+// TestKeyGoesOnlyToItsHost holds NFR-SEC-001 against GitHub's own answer: a
+// next page named on another host is refused, never sent the token.
+func TestKeyGoesOnlyToItsHost(t *testing.T) {
+	t.Parallel()
+	var leaked []string
+	elsewhere := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		leaked = append(leaked, r.Header.Get("Authorization"))
+		_, _ = w.Write([]byte(`[]`))
+	}))
+	t.Cleanup(elsewhere.Close)
+	c := client(t, secrets{token: "tok"}, func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Link", fmt.Sprintf(`<%s/steal?page=2>; rel="next"`, elsewhere.URL))
+		_, _ = w.Write([]byte(`[]`))
+	})
+	if _, _, err := c.Files(context.Background(), sym); !errors.Is(err, errForeignPage) {
+		t.Errorf("err = %v, want errForeignPage", err)
+	}
+	if len(leaked) != 0 {
+		t.Errorf("another host was sent %v", leaked)
+	}
+}
+
+// TestPagesAreCapped stops a Link that never ends, such as a page naming
+// itself as the next one.
+func TestPagesAreCapped(t *testing.T) {
+	t.Parallel()
+	asked := 0
+	var c *Client
+	c = client(t, secrets{}, func(w http.ResponseWriter, r *http.Request) {
+		asked++
+		w.Header().Set("Link", fmt.Sprintf(`<%s%s>; rel="next"`, c.base, r.URL.RequestURI()))
+		_, _ = w.Write([]byte(`[]`))
+	})
+	if _, _, err := c.Files(context.Background(), sym); !errors.Is(err, errTooManyPages) || asked != maxPages {
+		t.Errorf("err = %v after %d pages, want errTooManyPages after %d", err, asked, maxPages)
+	}
+}
+
 func TestAnonymousWithoutToken(t *testing.T) {
 	t.Parallel()
 	c := client(t, secrets{}, func(w http.ResponseWriter, r *http.Request) {

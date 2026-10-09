@@ -5,10 +5,12 @@ package github
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/oernster/visitron/internal/application"
@@ -31,6 +33,16 @@ const (
 	remainingHeader = "X-RateLimit-Remaining"
 	resetHeader     = "X-RateLimit-Reset"
 	noneRemaining   = "0"
+)
+
+// maxPages caps the pages of one repository's releases, so a Link that never
+// ends cannot hold a check. At pageSize a page it is ten thousand releases.
+const maxPages = 100
+
+// Refusals of a next page GitHub named (NFR-SEC-001, house robustness rule 5).
+var (
+	errForeignPage  = errors.New("GitHub named a next page on another host, which was not followed")
+	errTooManyPages = errors.New("GitHub named more pages of releases than Visitron reads")
 )
 
 // nextLink finds the next page in GitHub's Link header.
@@ -65,7 +77,15 @@ func (c *Client) Files(ctx context.Context, repo domain.Repo) ([]domain.ReleaseF
 	}
 	url := fmt.Sprintf("%s/repos/%s/releases?per_page=%d", c.base, repo, pageSize)
 	var files []domain.ReleaseFile
-	for url != "" {
+	for pages := 0; url != ""; pages++ {
+		// The next page comes from GitHub's answer, so it is foreign input:
+		// the token goes only under base and the pages are counted.
+		if !strings.HasPrefix(url, c.base+"/") {
+			return nil, time.Time{}, errForeignPage
+		}
+		if pages == maxPages {
+			return nil, time.Time{}, errTooManyPages
+		}
 		resp, err := c.web.Get(ctx, url, headers(token), bodyLimit)
 		if err != nil {
 			return nil, time.Time{}, err
