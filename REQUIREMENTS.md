@@ -620,3 +620,12 @@ check" (FR-041) is the rise between the last two kept snapshots, since a later
 check on the same day replaces that day's snapshot. Verified by
 `scheduler_test.go::TestFailureRetriesAfterWait` and
 `figures_test.go::TestOverviewSeparatesSubSites`.
+
+**Amendment 2 (2026-10-09): what GoatCounter's figure is.** GoatCounter's
+statistics API reports visitors, not raw page loads: its `count` is "number of
+visitors" and each day's `daily` is "total visitors for this day" (read from
+`api.json` on 2026-10-09). Raw loads are only in its export, which needs a key
+with the Export permission. Visitron therefore shows each page's visitors per
+day under the name page loads; one person reading a page twice in a day counts
+once. The Guide states this (FR-071). Verified by
+`internal/infrastructure/goatcounter/client_test.go::TestDailyPagesThroughPaths`.
