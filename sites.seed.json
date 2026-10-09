@@ -1,0 +1,196 @@
+{
+  "comment": "Every site carrying the GoatCounter tag, for Visitron to add on first run. A site with no repo offers no downloads.",
+  "goatcounter": "https://oernster.goatcounter.com",
+  "sites": [
+    {
+      "url": "https://ernster.dev/",
+      "repos": []
+    },
+    {
+      "url": "https://clearbudget.co.uk/",
+      "repos": [
+        "oernster/ClearBudget"
+      ]
+    },
+    {
+      "url": "https://crankthecode.com/",
+      "repos": [
+        "oernster/crankthecode"
+      ]
+    },
+    {
+      "url": "https://decitect.com/",
+      "repos": [
+        "oernster/Decitect"
+      ]
+    },
+    {
+      "url": "https://earthnow.world/",
+      "repos": [
+        "oernster/EarthNow"
+      ]
+    },
+    {
+      "url": "https://narratex.co.uk/",
+      "repos": [
+        "oernster/NarrateX"
+      ]
+    },
+    {
+      "url": "https://pigeonpost.ink/",
+      "repos": [
+        "oernster/pigeonpost"
+      ]
+    },
+    {
+      "url": "https://simquence.com/",
+      "repos": [
+        "oernster/Simquence"
+      ]
+    },
+    {
+      "url": "https://snarkapi.com/",
+      "repos": [
+        "oernster/snark-api"
+      ]
+    },
+    {
+      "url": "https://stellody.co.uk/",
+      "repos": [
+        "oernster/Stellody"
+      ]
+    },
+    {
+      "url": "https://symdiary.com/",
+      "repos": [
+        "oernster/SymDiary"
+      ]
+    },
+    {
+      "url": "https://timeribbon.world/",
+      "repos": [
+        "oernster/TimeRibbon"
+      ]
+    },
+    {
+      "url": "https://weatherribbon.world/",
+      "repos": [
+        "oernster/WeatherRibbon"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/AudioDeck/",
+      "repos": [
+        "oernster/AudioDeck"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/BridgeTalk/",
+      "repos": [
+        "oernster/BridgeTalk"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/BuildPilot/",
+      "repos": [
+        "oernster/BuildPilot"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/CommandFixer/",
+      "repos": [
+        "oernster/CommandFixer"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/EDColonisationAsst/",
+      "repos": [
+        "oernster/EDColonisationAsst"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/FancyClock/",
+      "repos": [
+        "oernster/FancyClock"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/FuckWhatDay/",
+      "repos": [
+        "oernster/FuckWhatDay"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/locus/",
+      "repos": [
+        "oernster/locus"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/meridian/",
+      "repos": [
+        "oernster/meridian"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/MMSP-Spec/",
+      "repos": [
+        "oernster/MMSP-Spec"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/o7Debrief/",
+      "repos": [
+        "oernster/o7Debrief"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/PlainSight/",
+      "repos": [
+        "oernster/PlainSight"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/postal-gambit/",
+      "repos": [
+        "oernster/postal-gambit"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/ScreenState/",
+      "repos": [
+        "oernster/ScreenState"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/WhatDay/",
+      "repos": [
+        "oernster/WhatDay"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/elevator/",
+      "repos": [
+        "oernster/elevator"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/coin-analysis/",
+      "repos": [
+        "oernster/coin-analysis"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/snark3Dprinter-discord-bot/",
+      "repos": [
+        "oernster/snark3Dprinter-discord-bot"
+      ]
+    },
+    {
+      "url": "https://ernster.dev/3D-Printer-Launcher/",
+      "repos": [
+        "oernster/3D-Printer-Launcher"
+      ]
+    }
+  ]
+}
