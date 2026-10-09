@@ -9,11 +9,14 @@ import (
 	"time"
 
 	"github.com/oernster/visitron/internal/application"
+	"github.com/oernster/visitron/internal/infrastructure/tray"
 	"github.com/oernster/visitron/internal/product"
 )
 
 // errInternal is what the page is told when a bound method panics. The stack
 // goes to the log; the page gets a sentence it can show.
+//
+//lint:ignore ST1005 the page shows this sentence as it stands; it opens with the product's name
 var errInternal = errors.New(product.Name + " hit an internal fault; the details are in its log")
 
 // tickEvery is how often the scheduler asks whether a check is due. It is
@@ -56,6 +59,8 @@ type App struct {
 	opener   browserOpener
 	emitter  emitter
 	close    func() error
+	// trayCommands are the tray icon's clicks; nil when no icon came up.
+	trayCommands <-chan tray.Command
 }
 
 // newApp answers the facade. problem is the reason the data could not be
@@ -72,6 +77,9 @@ func (a *App) startup(ctx context.Context) {
 		fmt.Fprintf(os.Stderr, "seeding the websites: %v\n", err)
 	}
 	go a.schedule()
+	if a.trayCommands != nil {
+		go a.followTray(a.trayCommands)
+	}
 }
 
 // schedule asks every tickEvery whether a check is due, at once included.

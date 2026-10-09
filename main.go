@@ -20,6 +20,7 @@ import (
 	"github.com/oernster/visitron/internal/infrastructure/secrets"
 	"github.com/oernster/visitron/internal/infrastructure/startup"
 	"github.com/oernster/visitron/internal/infrastructure/store"
+	"github.com/oernster/visitron/internal/infrastructure/tray"
 	"github.com/oernster/visitron/internal/infrastructure/web"
 	"github.com/oernster/visitron/internal/product"
 	"github.com/wailsapp/wails/v2"
@@ -102,16 +103,26 @@ func main() {
 	app.opener = windowOpener{app: app}
 	app.emitter = windowEmitter{app: app}
 
+	// The tray comes up first: closing hides the window only when the icon
+	// exists to bring it back or quit (FR-050). Without one, closing quits, so
+	// nobody is left with a process they cannot reach.
+	icon := tray.New()
+	trayUp := icon.Start() == nil
+	if trayUp {
+		app.trayCommands = icon.Commands()
+		defer icon.Stop()
+	} else {
+		fmt.Fprintln(os.Stderr, "the tray icon could not be shown, so closing the window quits")
+	}
+
 	err = wails.Run(&options.App{
-		Title:       product.Name,
-		Width:       windowWidth,
-		Height:      windowHeight,
-		MinWidth:    windowMinWidth,
-		MinHeight:   windowMinHeight,
-		StartHidden: slices.Contains(os.Args[1:], startup.HiddenFlag),
-		// FR-050 (close to tray) waits for the tray icon: until it exists, a
-		// hidden window could not be reopened or quit, so closing quits.
-		HideWindowOnClose:  false,
+		Title:              product.Name,
+		Width:              windowWidth,
+		Height:             windowHeight,
+		MinWidth:           windowMinWidth,
+		MinHeight:          windowMinHeight,
+		StartHidden:        slices.Contains(os.Args[1:], startup.HiddenFlag),
+		HideWindowOnClose:  trayUp,
 		AssetServer:        &assetserver.Options{Assets: assets},
 		OnStartup:          app.startup,
 		OnDomReady:         app.ready,

@@ -6,6 +6,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/oernster/visitron/internal/infrastructure/tray"
 	"github.com/oernster/visitron/internal/infrastructure/windowfocus"
 	"github.com/oernster/visitron/internal/product"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -49,6 +50,29 @@ type windowEmitter struct{ app *App }
 func (e windowEmitter) Emit(name string, data any) {
 	if e.app.ctx != nil {
 		runtime.EventsEmit(e.app.ctx, name, data)
+	}
+}
+
+// followTray acts on the tray's commands until it closes (FR-051). It runs on
+// a goroutine of its own, so it carries its own recover.
+func (a *App) followTray(commands <-chan tray.Command) {
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			fmt.Fprintf(os.Stderr, "panic following the tray: %v\n%s", recovered, debug.Stack())
+		}
+	}()
+	for command := range commands {
+		switch command {
+		case tray.Show:
+			runtime.WindowUnminimise(a.ctx)
+			runtime.Show(a.ctx)
+		case tray.Refresh:
+			if err := a.Refresh(); err != nil {
+				fmt.Fprintf(os.Stderr, "refresh from the tray: %v\n", err)
+			}
+		case tray.Quit:
+			runtime.Quit(a.ctx)
+		}
 	}
 }
 
