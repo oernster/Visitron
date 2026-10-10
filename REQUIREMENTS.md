@@ -870,3 +870,20 @@ measurements now use neutral stand-ins (`example.com`, `someone/App`, the
 owner) rather than the author's account, domains or applications; the
 measurements keep their figures. The reference implementations that parts
 were ported from stay named, since they record a design, not a user.
+
+**Amendment 17 (2026-10-10): the charts have axes.** Ruled by the owner on
+2026-10-10, after a bar near the right edge read as misplaced: it was the
+latest day of the period, which runs oldest on the left to today on the right;
+nothing on the chart said so.
+
+- FR-042: each chart has a count axis down its left, rounded up to a clean top
+  (1, 2 or 5 of a power of ten) with its half where that is a whole number,
+  each marked by a hairline; the bars are drawn against that top. Along its
+  foot it names the first, middle and last day of the period ("11 Sept",
+  "10 Oct"). A bar's hover names its day and count the same way. The caption
+  gives the period's total as "2 in all" rather than as a number after "per
+  day", which read as a daily figure. Verified by
+  `Chart.test.tsx::draws one bar per day against a clean axis, with the days named`,
+  `Chart.test.tsx::names the first, middle and last day of a long period, oldest on the left`,
+  `Chart.test.tsx::rounds the largest count up to 1, 2 or 5 of a power of ten` and
+  `Chart.test.tsx::names a day without shifting it across a time zone`.
