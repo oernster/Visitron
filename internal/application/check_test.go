@@ -11,14 +11,14 @@ import (
 
 func checkFixture() (*fakeStore, *fakeReleases, *fakePageLoads, *fakeSecrets, *fakeClock) {
 	store := newStore()
-	sym, _ := domain.Normalise("symdiary.com")
+	sym, _ := domain.Normalise("example.org")
 	hub, _ := domain.Normalise("example.com")
 	_, _ = store.AddWebsite(Website{Address: sym, Repos: []domain.Repo{symRepo}})
-	_, _ = store.AddWebsite(Website{Address: hub, Repos: []domain.Repo{{Owner: "SOMEONE", Name: "symdiary"}}})
+	_, _ = store.AddWebsite(Website{Address: hub, Repos: []domain.Repo{{Owner: "SOMEONE", Name: "widget"}}})
 	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{
-		"someone/SymDiary": {{Repo: symRepo, Release: "v1", Name: "SymDiary.dmg", Raw: 3}},
+		"someone/Widget": {{Repo: symRepo, Release: "v1", Name: "Widget.dmg", Raw: 3}},
 	}}
-	loads := &fakePageLoads{loads: []PathDay{{Path: "symdiary.com/", Day: domain.Day{Year: 2026, Month: 10, Date: 9}, Count: 4}}}
+	loads := &fakePageLoads{loads: []PathDay{{Path: "example.org/", Day: domain.Day{Year: 2026, Month: 10, Date: 9}, Count: 4}}}
 	secrets := &fakeSecrets{values: map[Secret]string{GoatCounterKey: "k"}}
 	prefs := DefaultPreferences
 	prefs.GoatCounterSite = "someone"
@@ -57,7 +57,7 @@ func TestFailureKeepsFigures(t *testing.T) {
 	check := NewCheck(store, rel, loads, secrets, clock)
 	_, _ = check.Run(context.Background(), noProgress)
 	clock.now = at(2026, 10, 10, 12)
-	rel.failFor = "someone/SymDiary"
+	rel.failFor = "someone/Widget"
 	loads.err = errPlanted
 	out, err := check.Run(context.Background(), noProgress)
 	if err != nil || out.Succeeded() || len(out.Failures) != 2 {

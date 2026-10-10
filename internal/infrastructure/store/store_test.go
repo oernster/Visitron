@@ -18,7 +18,7 @@ var (
 )
 
 var (
-	sym   = domain.Repo{Owner: "someone", Name: "SymDiary"}
+	sym   = domain.Repo{Owner: "someone", Name: "Widget"}
 	oct8  = domain.Day{Year: 2026, Month: 10, Date: 8}
 	oct9  = domain.Day{Year: 2026, Month: 10, Date: 9}
 	oct10 = domain.Day{Year: 2026, Month: 10, Date: 10}
@@ -51,11 +51,11 @@ func TestWebsitesRoundTrip(t *testing.T) {
 	t.Parallel()
 	s := open(t)
 	other := domain.Repo{Owner: "someone", Name: "Other"}
-	id, err := s.AddWebsite(application.Website{Address: addr(t, "symdiary.com"), Repos: []domain.Repo{sym, other}})
+	id, err := s.AddWebsite(application.Website{Address: addr(t, "example.org"), Repos: []domain.Repo{sym, other}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := s.AddWebsite(application.Website{Address: addr(t, "symdiary.com")}); err == nil {
+	if _, err := s.AddWebsite(application.Website{Address: addr(t, "example.org")}); err == nil {
 		t.Error("a second website at the same address was accepted")
 	}
 	got, err := s.Websites()
@@ -80,10 +80,10 @@ func TestWebsitesRoundTrip(t *testing.T) {
 func TestDeleteRemovesHistory(t *testing.T) {
 	t.Parallel()
 	s := open(t)
-	shared := domain.Repo{Owner: "SOMEONE", Name: "symdiary"}
+	shared := domain.Repo{Owner: "SOMEONE", Name: "widget"}
 	a, _ := s.AddWebsite(application.Website{Address: addr(t, "a.example.com"), Repos: []domain.Repo{sym}})
 	b, _ := s.AddWebsite(application.Website{Address: addr(t, "b.example.com"), Repos: []domain.Repo{shared}})
-	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 3)})
+	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("Widget.dmg", 3)})
 	if err := s.DeleteWebsite(a); err != nil {
 		t.Fatal(err)
 	}
@@ -102,17 +102,17 @@ func TestDeleteRemovesHistory(t *testing.T) {
 func TestFilesBySnapshot(t *testing.T) {
 	t.Parallel()
 	s := open(t)
-	_ = s.SaveFiles(oct8, sym, []domain.ReleaseFile{file("SymDiary.dmg", 2), file("SymDiarySetup.exe", 5)})
-	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 9)})
-	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 3), file("SymDiarySetup.exe", 7)})
-	latest, err := s.LatestFiles(domain.Repo{Owner: "SOMEONE", Name: "SYMDIARY"})
+	_ = s.SaveFiles(oct8, sym, []domain.ReleaseFile{file("Widget.dmg", 2), file("WidgetSetup.exe", 5)})
+	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("Widget.dmg", 9)})
+	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("Widget.dmg", 3), file("WidgetSetup.exe", 7)})
+	latest, err := s.LatestFiles(domain.Repo{Owner: "SOMEONE", Name: "WIDGET"})
 	if err != nil || len(latest) != 2 || latest[0].Raw != 3 || latest[0].Repo != sym {
 		t.Fatalf("latest %+v err %v; a later save on a day replaces it", latest, err)
 	}
 	// The history keeps GitHub's own counts; nothing is taken off a disk image
 	// until it is counted, since how much is a setting (Amendment 19).
 	held, err := s.History(sym, oct8)
-	if err != nil || len(held) != 2 || held[0].Day != oct8 || held[1].Files[0].Name != "SymDiary.dmg" || held[1].Files[0].Raw != 3 {
+	if err != nil || len(held) != 2 || held[0].Day != oct8 || held[1].Files[0].Name != "Widget.dmg" || held[1].Files[0].Raw != 3 {
 		t.Fatalf("history %+v err %v", held, err)
 	}
 	if held, _ := s.History(sym, oct9); len(held) != 1 {
@@ -126,8 +126,8 @@ func TestFilesBySnapshot(t *testing.T) {
 func TestSnapshotIsAtomic(t *testing.T) {
 	t.Parallel()
 	s := open(t)
-	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 3)})
-	twice := []domain.ReleaseFile{file("SymDiary.dmg", 4), file("SymDiary.dmg", 5)}
+	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("Widget.dmg", 3)})
+	twice := []domain.ReleaseFile{file("Widget.dmg", 4), file("Widget.dmg", 5)}
 	if err := s.SaveFiles(oct9, sym, twice); err == nil {
 		t.Fatal("a save that breaks the key was accepted")
 	}
@@ -140,16 +140,16 @@ func TestPageLoads(t *testing.T) {
 	t.Parallel()
 	s := open(t)
 	loads := []application.PathDay{
-		{Path: "symdiary.com/", Day: oct8, Count: 1},
-		{Path: "symdiary.com/", Day: oct9, Count: 2},
-		{Path: "symdiary.com/", Day: oct9, Count: 3},
+		{Path: "example.org/", Day: oct8, Count: 1},
+		{Path: "example.org/", Day: oct9, Count: 2},
+		{Path: "example.org/", Day: oct9, Count: 3},
 	}
 	if err := s.SavePageLoads(oct8, oct9, loads); err != nil {
 		t.Fatal(err)
 	}
-	_ = s.SavePageLoads(oct9, oct10, []application.PathDay{{Path: "symdiary.com/", Day: oct10, Count: 7}})
+	_ = s.SavePageLoads(oct9, oct10, []application.PathDay{{Path: "example.org/", Day: oct10, Count: 7}})
 	got, err := s.PageLoads(oct8, oct10)
-	want := []application.PathDay{{Path: "symdiary.com/", Day: oct8, Count: 1}, {Path: "symdiary.com/", Day: oct10, Count: 7}}
+	want := []application.PathDay{{Path: "example.org/", Day: oct8, Count: 1}, {Path: "example.org/", Day: oct10, Count: 7}}
 	if err != nil || !reflect.DeepEqual(got, want) {
 		t.Errorf("page loads %+v err %v; want %+v", got, err, want)
 	}
@@ -177,7 +177,7 @@ func TestReopenKeepsData(t *testing.T) {
 	t.Parallel()
 	path := filepath.Join(t.TempDir(), "visitron.db")
 	s, _ := Open(path)
-	_, _ = s.AddWebsite(application.Website{Address: addr(t, "symdiary.com")})
+	_, _ = s.AddWebsite(application.Website{Address: addr(t, "example.org")})
 	_ = s.Close()
 	s, err := Open(path)
 	if err != nil {
@@ -226,7 +226,7 @@ func TestStoredDayMustParse(t *testing.T) {
 	if _, err := s.PageLoads(oct8, oct10); err == nil {
 		t.Error("a damaged day was read")
 	}
-	_, _ = s.db.Exec(`INSERT INTO release_files VALUES ('bad', 'someone/symdiary', 'someone', 'SymDiary', 'v1', 'f', 1)`)
+	_, _ = s.db.Exec(`INSERT INTO release_files VALUES ('bad', 'someone/widget', 'someone', 'Widget', 'v1', 'f', 1)`)
 	if _, err := s.LatestFiles(sym); err == nil {
 		t.Error("a damaged day was read from release files")
 	}

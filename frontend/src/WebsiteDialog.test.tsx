@@ -26,29 +26,29 @@ describe('adding a website', () => {
     expect(find()).toBeDisabled()
     expect(save()).toBeDisabled()
 
-    fireEvent.change(address(), { target: { value: 'symdiary.com' } })
+    fireEvent.change(address(), { target: { value: 'example.org' } })
     fireEvent.click(find())
-    const kept = await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
-    expect(bridge.Propose).toHaveBeenCalledWith('symdiary.com', 0)
+    const kept = await screen.findByRole('checkbox', { name: 'someone/Widget' })
+    expect(bridge.Propose).toHaveBeenCalledWith('example.org', 0)
     expect(kept).toBeChecked()
-    const site = screen.getByRole('checkbox', { name: 'someone/SymDiary-site' })
+    const site = screen.getByRole('checkbox', { name: 'someone/Widget-site' })
     expect(site).not.toBeChecked()
 
     fireEvent.click(site)
     fireEvent.click(kept)
     fireEvent.click(save())
     await waitFor(() => expect(onSaved).toHaveBeenCalled())
-    expect(bridge.SaveWebsite).toHaveBeenCalledWith(0, 'https://symdiary.com', ['someone/SymDiary-site'])
+    expect(bridge.SaveWebsite).toHaveBeenCalledWith(0, 'https://example.org', ['someone/Widget-site'])
   })
 
   it('finds on Enter and forgets the proposal when the address changes', async () => {
     installBridge({ Propose: vi.fn(() => Promise.resolve(aProposal)) })
     dialog()
-    fireEvent.change(address(), { target: { value: 'symdiary.com' } })
+    fireEvent.change(address(), { target: { value: 'example.org' } })
     fireEvent.keyDown(address(), { key: 'Enter' })
-    await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
+    await screen.findByRole('checkbox', { name: 'someone/Widget' })
     fireEvent.keyDown(address(), { key: 'a' })
-    fireEvent.change(address(), { target: { value: 'symdiary.co' } })
+    fireEvent.change(address(), { target: { value: 'example.or' } })
     expect(screen.queryByRole('checkbox')).toBeNull()
     expect(save()).toBeDisabled()
   })
@@ -64,23 +64,23 @@ describe('adding a website', () => {
   it('says when the site could not be read and still takes a repository by hand', async () => {
     const bridge = installBridge({
       Propose: vi.fn(() => Promise.resolve({ ...aProposal, found: [], ticked: [], problem: 'no answer' })),
-      ConfirmRepo: vi.fn(() => Promise.resolve('someone/SymDiary')),
+      ConfirmRepo: vi.fn(() => Promise.resolve('someone/Widget')),
     })
     dialog()
-    fireEvent.change(address(), { target: { value: 'symdiary.com' } })
+    fireEvent.change(address(), { target: { value: 'example.org' } })
     fireEvent.click(find())
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'The site could not be read: no answer. Add its repositories by hand.',
     )
     const typed = screen.getByRole('textbox', { name: 'Add a repository by hand' })
-    fireEvent.change(typed, { target: { value: 'SymDiary' } })
+    fireEvent.change(typed, { target: { value: 'Widget' } })
     fireEvent.keyDown(typed, { key: 'Enter' })
-    expect(await screen.findByRole('checkbox', { name: 'someone/SymDiary' })).toBeChecked()
-    expect(bridge.ConfirmRepo).toHaveBeenCalledWith('SymDiary')
+    expect(await screen.findByRole('checkbox', { name: 'someone/Widget' })).toBeChecked()
+    expect(bridge.ConfirmRepo).toHaveBeenCalledWith('Widget')
     expect(typed).toHaveValue('')
 
     // The same repository again neither lists nor ticks it twice.
-    fireEvent.change(typed, { target: { value: 'someone/SymDiary' } })
+    fireEvent.change(typed, { target: { value: 'someone/Widget' } })
     fireEvent.click(screen.getByRole('button', { name: 'Add repository' }))
     await waitFor(() => expect(typed).toHaveValue(''))
     expect(screen.getAllByRole('checkbox')).toHaveLength(1)
@@ -113,9 +113,9 @@ describe('adding a website', () => {
       SaveWebsite: vi.fn(() => Promise.reject('the store is closed')),
     })
     const { refused, onSaved, onClose } = dialog()
-    fireEvent.change(address(), { target: { value: 'symdiary.com' } })
+    fireEvent.change(address(), { target: { value: 'example.org' } })
     fireEvent.click(find())
-    await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
+    await screen.findByRole('checkbox', { name: 'someone/Widget' })
     fireEvent.click(save())
     await waitFor(() => expect(refused).toHaveBeenCalledWith('The store is closed'))
     expect(onSaved).not.toHaveBeenCalled()
@@ -130,14 +130,14 @@ describe('editing a website', () => {
       Propose: vi.fn(() => Promise.resolve(aProposal)),
       SaveWebsite: vi.fn(() => Promise.resolve(1)),
     })
-    const { onSaved } = dialog({ id: 1, url: 'https://symdiary.com' })
+    const { onSaved } = dialog({ id: 1, url: 'https://example.org' })
     expect(screen.getByRole('heading', { name: 'Edit website' })).toBeInTheDocument()
-    expect(address()).toHaveValue('https://symdiary.com')
+    expect(address()).toHaveValue('https://example.org')
     fireEvent.click(find())
-    await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
-    expect(bridge.Propose).toHaveBeenCalledWith('https://symdiary.com', 1)
+    await screen.findByRole('checkbox', { name: 'someone/Widget' })
+    expect(bridge.Propose).toHaveBeenCalledWith('https://example.org', 1)
     fireEvent.click(save())
     await waitFor(() => expect(onSaved).toHaveBeenCalled())
-    expect(bridge.SaveWebsite).toHaveBeenCalledWith(1, 'https://symdiary.com', ['someone/SymDiary'])
+    expect(bridge.SaveWebsite).toHaveBeenCalledWith(1, 'https://example.org', ['someone/Widget'])
   })
 })

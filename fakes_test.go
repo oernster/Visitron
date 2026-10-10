@@ -124,8 +124,8 @@ func (r *recorder) seen() []ProgressDTO {
 	return append([]ProgressDTO{}, r.events...)
 }
 
-// symdiaryRepo is the one repository the fakes know.
-var symdiaryRepo = domain.Repo{Owner: "someone", Name: "SymDiary"}
+// widgetRepo is the one repository the fakes know.
+var widgetRepo = domain.Repo{Owner: "someone", Name: "Widget"}
 
 // rig is a facade over the real store with every port faked.
 type rig struct {
@@ -148,9 +148,9 @@ func newRig(t *testing.T, data application.Store) *rig {
 		data = opened
 	}
 	clock := fixedClock{now: time.Date(2026, time.October, 9, 20, 0, 0, 0, time.Local)}
-	releases := fakeReleases{files: map[string][]domain.ReleaseFile{symdiaryRepo.String(): {
-		{Repo: symdiaryRepo, Release: "v1.0.0", Name: "SymDiary-Setup.exe", Raw: 5},
-		{Repo: symdiaryRepo, Release: "v1.0.0", Name: "SymDiary.dmg", Raw: 3},
+	releases := fakeReleases{files: map[string][]domain.ReleaseFile{widgetRepo.String(): {
+		{Repo: widgetRepo, Release: "v1.0.0", Name: "Widget-Setup.exe", Raw: 5},
+		{Repo: widgetRepo, Release: "v1.0.0", Name: "Widget.dmg", Raw: 3},
 	}}}
 	vault := &fakeSecrets{values: map[application.Secret]string{}}
 	check := application.NewCheck(data, releases, fakePageLoads{}, vault, clock)

@@ -117,7 +117,7 @@ func TestSizeAndCopyAndRemove(t *testing.T) {
 // naming a place that does not exist.
 func TestQuotedWritesThePathAsWindowsDoes(t *testing.T) {
 	t.Parallel()
-	path := `C:\Users\Oliver\AppData\Local\Programs\Visitron\uninstall.exe`
+	path := `C:\Users\someone\AppData\Local\Programs\Visitron\uninstall.exe`
 	got := quotedPath(path)
 	if want := `"` + path + `"`; got != want {
 		t.Errorf("quotedPath = %s, want %s", got, want)

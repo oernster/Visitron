@@ -17,7 +17,7 @@ import (
 
 var _ application.Releases = (*Client)(nil)
 
-var sym = domain.Repo{Owner: "someone", Name: "SymDiary"}
+var sym = domain.Repo{Owner: "someone", Name: "Widget"}
 
 // secrets answers a fixed token.
 type secrets struct {
@@ -43,11 +43,11 @@ func TestFilesFollowsPages(t *testing.T) {
 	c = client(t, secrets{token: "tok"}, func(w http.ResponseWriter, r *http.Request) {
 		auth = append(auth, r.Header.Get("Authorization"))
 		if r.URL.Query().Get("page") == "" {
-			w.Header().Set("Link", fmt.Sprintf(`<%s/repos/someone/SymDiary/releases?page=2>; rel="next", <x>; rel="last"`, c.base))
-			_, _ = w.Write([]byte(`[{"tag_name":"v2","assets":[{"name":"SymDiary.dmg","download_count":3}]}]`))
+			w.Header().Set("Link", fmt.Sprintf(`<%s/repos/someone/Widget/releases?page=2>; rel="next", <x>; rel="last"`, c.base))
+			_, _ = w.Write([]byte(`[{"tag_name":"v2","assets":[{"name":"Widget.dmg","download_count":3}]}]`))
 			return
 		}
-		_, _ = w.Write([]byte(`[{"tag_name":"v1","assets":[{"name":"SymDiarySetup.exe","download_count":5},{"name":"symdiary.flatpak","download_count":0}]}]`))
+		_, _ = w.Write([]byte(`[{"tag_name":"v1","assets":[{"name":"WidgetSetup.exe","download_count":5},{"name":"widget.flatpak","download_count":0}]}]`))
 	})
 	files, _, err := c.Files(context.Background(), sym)
 	if err != nil || len(files) != 3 || files[0].Release != "v2" || files[1].Raw != 5 || files[0].Repo != sym {
@@ -146,7 +146,7 @@ func TestForbiddenIsNotAlwaysTheLimit(t *testing.T) {
 func TestFilesFaults(t *testing.T) {
 	t.Parallel()
 	bad := client(t, secrets{}, func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte(`{`)) })
-	if _, _, err := bad.Files(context.Background(), sym); err == nil || !strings.Contains(err.Error(), "SymDiary") {
+	if _, _, err := bad.Files(context.Background(), sym); err == nil || !strings.Contains(err.Error(), "Widget") {
 		t.Errorf("bad JSON: %v", err)
 	}
 	gone := client(t, secrets{}, func(w http.ResponseWriter, r *http.Request) { http.NotFound(w, r) })
@@ -176,7 +176,7 @@ func TestExists(t *testing.T) {
 	t.Parallel()
 	c := client(t, secrets{}, func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/repos/someone/SymDiary":
+		case "/repos/someone/Widget":
 			_, _ = w.Write([]byte(`{}`))
 		case "/repos/someone/Broken":
 			w.WriteHeader(http.StatusInternalServerError)

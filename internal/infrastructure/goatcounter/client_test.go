@@ -69,7 +69,7 @@ func TestDailyPagesThroughPaths(t *testing.T) {
 		queries = append(queries, r.URL.RawQuery)
 		if r.URL.Query().Get("exclude_paths") == "" {
 			_, _ = w.Write([]byte(`{"more":true,"hits":[
-				{"path":"symdiary.com/","path_id":1,"stats":[{"day":"2026-10-07","daily":9},{"day":"2026-10-08","daily":2},{"day":"2026-10-10","daily":5}]},
+				{"path":"example.org/","path_id":1,"stats":[{"day":"2026-10-07","daily":9},{"day":"2026-10-08","daily":2},{"day":"2026-10-10","daily":5}]},
 				{"path":"click","path_id":2,"event":true,"stats":[{"day":"2026-10-08","daily":4}]}]}`))
 			return
 		}
@@ -81,7 +81,7 @@ func TestDailyPagesThroughPaths(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []application.PathDay{
-		{Path: "symdiary.com/", Day: oct8, Count: 2},
+		{Path: "example.org/", Day: oct8, Count: 2},
 		{Path: "example.com/App/", Day: oct9, Count: 3},
 	}
 	if !reflect.DeepEqual(got, want) {

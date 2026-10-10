@@ -10,7 +10,7 @@ func TestLongestPrefixOwns(t *testing.T) {
 	t.Parallel()
 	hub, _ := Normalise("example.com")
 	app, _ := Normalise("example.com/App/")
-	sym, _ := Normalise("symdiary.com")
+	sym, _ := Normalise("example.org")
 	sites := []Address{hub, app, sym}
 	cases := map[string]Address{
 		"example.com/index.html":        hub,
@@ -22,7 +22,7 @@ func TestLongestPrefixOwns(t *testing.T) {
 		"example.com/App/":              app,
 		"EXAMPLE.COM/App/":              app,
 		"example.com/app/":              hub,
-		"symdiary.com/download.html":    sym,
+		"example.org/download.html":     sym,
 	}
 	for path, want := range cases {
 		if got, ok := Owner(path, sites); !ok || got != want {
@@ -40,14 +40,14 @@ func TestSelfDownloadAllowance(t *testing.T) {
 		name            string
 		raw, self, want int
 	}{
-		{"SymDiary.dmg", 5, DefaultSelfDownloads, 5},
-		{"SymDiary.dmg", 1, 1, 0},
-		{"SymDiary.dmg", 0, 1, 0},
-		{"SymDiary.DMG", 5, 1, 4},
-		{"SymDiary.dmg", 5, 3, 2},
-		{"SymDiary.dmg", 5, -2, 5},
-		{"SymDiarySetup.exe", 4, 1, 4},
-		{"symdiary.flatpak", 0, 1, 0},
+		{"Widget.dmg", 5, DefaultSelfDownloads, 5},
+		{"Widget.dmg", 1, 1, 0},
+		{"Widget.dmg", 0, 1, 0},
+		{"Widget.DMG", 5, 1, 4},
+		{"Widget.dmg", 5, 3, 2},
+		{"Widget.dmg", 5, -2, 5},
+		{"WidgetSetup.exe", 4, 1, 4},
+		{"widget.flatpak", 0, 1, 0},
 	}
 	for _, c := range cases {
 		if got := Counted(c.name, c.raw, c.self); got != c.want {
@@ -73,8 +73,8 @@ func TestSelfDownloadsRange(t *testing.T) {
 func TestPlatforms(t *testing.T) {
 	t.Parallel()
 	cases := map[string]Platform{
-		"AudioDeckSetup.exe": Windows, "PigeonPost.dmg": MacOS,
-		"clearbudget.flatpak": Linux, "notes.txt": Other, "README": Other,
+		"MixerSetup.exe": Windows, "Mailer.dmg": MacOS,
+		"ledger.flatpak": Linux, "notes.txt": Other, "README": Other,
 	}
 	for name, want := range cases {
 		if got := PlatformOf(name); got != want {
@@ -85,19 +85,19 @@ func TestPlatforms(t *testing.T) {
 
 func TestTotals(t *testing.T) {
 	t.Parallel()
-	sym := Repo{"someone", "SymDiary"}
-	tr := Repo{"someone", "TimeRibbon"}
+	sym := Repo{"someone", "Widget"}
+	tr := Repo{"someone", "Gadget"}
 	files := []ReleaseFile{
-		{sym, "v1.3.0", "SymDiary.dmg", 3},
-		{sym, "v1.3.0", "SymDiarySetup.exe", 5},
-		{sym, "v1.2.0", "symdiary.flatpak", 2},
-		{tr, "v1.3.0", "TimeRibbonSetup.exe", 1},
+		{sym, "v1.3.0", "Widget.dmg", 3},
+		{sym, "v1.3.0", "WidgetSetup.exe", 5},
+		{sym, "v1.2.0", "widget.flatpak", 2},
+		{tr, "v1.3.0", "GadgetSetup.exe", 1},
 	}
 	got := Total(files, 1)
 	want := Totals{
 		All:        10,
-		ByRepo:     map[string]int{"someone/SymDiary": 9, "someone/TimeRibbon": 1},
-		ByRelease:  map[string]int{"someone/SymDiary/v1.3.0": 7, "someone/SymDiary/v1.2.0": 2, "someone/TimeRibbon/v1.3.0": 1},
+		ByRepo:     map[string]int{"someone/Widget": 9, "someone/Gadget": 1},
+		ByRelease:  map[string]int{"someone/Widget/v1.3.0": 7, "someone/Widget/v1.2.0": 2, "someone/Gadget/v1.3.0": 1},
 		ByPlatform: map[Platform]int{Windows: 6, MacOS: 2, Linux: 2},
 	}
 	if !reflect.DeepEqual(got, want) {
@@ -107,8 +107,8 @@ func TestTotals(t *testing.T) {
 
 func TestDailyRise(t *testing.T) {
 	t.Parallel()
-	sym := Repo{"someone", "SymDiary"}
-	file := func(raw int) []ReleaseFile { return []ReleaseFile{{sym, "v1", "SymDiarySetup.exe", raw}} }
+	sym := Repo{"someone", "Widget"}
+	file := func(raw int) []ReleaseFile { return []ReleaseFile{{sym, "v1", "WidgetSetup.exe", raw}} }
 	oct1, oct3, oct5 := Day{2026, 10, 1}, Day{2026, 10, 3}, Day{2026, 10, 5}
 	snaps := []Snapshot{
 		SnapshotOf(oct3, file(14), DefaultSelfDownloads),

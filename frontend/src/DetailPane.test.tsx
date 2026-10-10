@@ -6,10 +6,10 @@ import { aDetail } from './bridge-fake'
 describe('the detail pane', () => {
   it('names the website without its scheme and shows every total', () => {
     render(<DetailPane detail={aDetail} />)
-    expect(screen.getByRole('heading', { name: 'symdiary.com' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'example.org' })).toBeInTheDocument()
     expect(screen.getByText('Downloads to date: 80')).toBeInTheDocument()
     expect(screen.getByRole('table', { name: 'By platform' })).toHaveTextContent('Windows70macOS10')
-    expect(screen.getByRole('table', { name: 'By repository' })).toHaveTextContent('someone/SymDiary80')
+    expect(screen.getByRole('table', { name: 'By repository' })).toHaveTextContent('someone/Widget80')
     expect(screen.getByRole('table', { name: 'By release' })).toHaveTextContent('v1.0.080')
     expect(screen.getByText('Page loads per day, 10 in all')).toBeInTheDocument()
     expect(screen.getByText('Downloads per day, 3 in all')).toBeInTheDocument()

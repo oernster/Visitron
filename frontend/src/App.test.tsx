@@ -10,7 +10,7 @@ describe('the shell', () => {
   it('lists the websites and says when they were last checked', async () => {
     installBridge()
     render(<App />)
-    expect(await screen.findByText('symdiary.com')).toBeInTheDocument()
+    expect(await screen.findByText('example.org')).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('Last checked 9 Oct 2026 20:00.')
     expect(bandButton('Edit website')).toBeDisabled()
     expect(bandButton('Delete website')).toBeDisabled()
@@ -19,7 +19,7 @@ describe('the shell', () => {
   it('opens on nothing: the first focus is the sink, not a control', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     expect(document.activeElement).toHaveClass('focus-sink')
   })
 
@@ -30,8 +30,8 @@ describe('the shell', () => {
     expect(empty).toHaveTextContent('Select a website to see its statistics.')
     expect(empty).toHaveTextContent('GitHub token (optional)')
     expect(empty).not.toHaveTextContent('GoatCounter API key')
-    fireEvent.click(await screen.findByText('symdiary.com'))
-    expect(await screen.findByRole('heading', { name: 'symdiary.com' })).toBeInTheDocument()
+    fireEvent.click(await screen.findByText('example.org'))
+    expect(await screen.findByRole('heading', { name: 'example.org' })).toBeInTheDocument()
     expect(screen.queryByRole('region', { name: 'No website selected' })).toBeNull()
     expect(bridge.Detail).toHaveBeenCalledWith(1)
     expect(bandButton('Edit website')).toBeEnabled()
@@ -69,12 +69,12 @@ describe('the check', () => {
     const events = installEvents()
     const bridge = installBridge({ Refresh: vi.fn(() => Promise.resolve()) })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Refresh'))
     expect(bridge.Refresh).toHaveBeenCalled()
 
-    act(() => events.send({ done: 0, total: 2, site: 'symdiary.com' }))
-    expect(screen.getByRole('status')).toHaveTextContent('Checking symdiary.com (1 of 2)')
+    act(() => events.send({ done: 0, total: 2, site: 'example.org' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Checking example.org (1 of 2)')
     expect(bandButton('Checking')).toBeDisabled()
 
     act(() => events.send({ done: 2, total: 0, site: '' }))
@@ -91,7 +91,7 @@ describe('the check', () => {
         : anOverview)),
     })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     const refresh = bandButton('Refresh')
     expect(refresh).toHaveAttribute('title', 'The check at 9 Oct 2026 21:00 failed: offline')
     expect(refresh.querySelector('img.band-badge')).not.toBeNull()
@@ -105,7 +105,7 @@ describe('the check', () => {
   it('holds Refresh while the facade says a check is running', async () => {
     installBridge({ Overview: vi.fn(() => Promise.resolve({ ...anOverview, running: true })) })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     expect(bandButton('Checking')).toBeDisabled()
   })
 
@@ -134,7 +134,7 @@ describe('closing the window', () => {
       RequestQuit: vi.fn(() => Promise.resolve()),
     })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
 
     act(() => events.close())
     fireEvent.click(screen.getByRole('button', { name: 'Minimise to tray' }))
@@ -150,7 +150,7 @@ describe('closing the window', () => {
     const events = installEvents()
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     act(() => events.close())
     fireEvent.keyDown(window, { key: 'Escape' })
     expect(screen.queryByRole('alertdialog')).toBeNull()
@@ -161,7 +161,7 @@ describe('the band', () => {
   it('orders the band as FR-040 states', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     const groups = band().querySelectorAll('.band-group')
     const labels = (group: Element) => Array.from(group.querySelectorAll('button')).map((b) => b.textContent)
     expect(labels(groups[0])).toEqual(['Add website', 'Edit website', 'Delete website', 'Refresh', 'Settings'])
@@ -172,7 +172,7 @@ describe('the band', () => {
   it('opens Add website and closes it again', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Add website'))
     expect(screen.getByRole('heading', { name: 'Add website' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
@@ -181,13 +181,13 @@ describe('the band', () => {
 
   it('edits the selected website and reloads once it is saved', async () => {
     const bridge = installBridge({
-      Propose: vi.fn(() => Promise.resolve({ url: 'https://symdiary.com', found: [], ticked: [], problem: '' })),
+      Propose: vi.fn(() => Promise.resolve({ url: 'https://example.org', found: [], ticked: [], problem: '' })),
       SaveWebsite: vi.fn(() => Promise.resolve(1)),
     })
     render(<App />)
-    fireEvent.click(await screen.findByText('symdiary.com'))
+    fireEvent.click(await screen.findByText('example.org'))
     fireEvent.click(bandButton('Edit website'))
-    expect(screen.getByRole('textbox', { name: 'Website address' })).toHaveValue('https://symdiary.com')
+    expect(screen.getByRole('textbox', { name: 'Website address' })).toHaveValue('https://example.org')
     fireEvent.click(screen.getByRole('button', { name: 'Find repositories' }))
     await screen.findByText(/Downloads count from the ticked repositories/)
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
@@ -198,9 +198,9 @@ describe('the band', () => {
   it('asks before deleting, then deletes and clears the selection', async () => {
     const bridge = installBridge({ DeleteWebsite: vi.fn(() => Promise.resolve()) })
     render(<App />)
-    fireEvent.click(await screen.findByText('symdiary.com'))
+    fireEvent.click(await screen.findByText('example.org'))
     fireEvent.click(bandButton('Delete website'))
-    expect(screen.getByText('Delete https://symdiary.com and its download history?')).toBeInTheDocument()
+    expect(screen.getByText('Delete https://example.org and its download history?')).toBeInTheDocument()
     fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Delete' }))
     await waitFor(() => expect(bridge.DeleteWebsite).toHaveBeenCalledWith(1))
     await waitFor(() => expect(bandButton('Delete website')).toBeDisabled())
@@ -210,7 +210,7 @@ describe('the band', () => {
   it('keeps the website when the delete is cancelled or refused', async () => {
     installBridge({ DeleteWebsite: vi.fn(() => Promise.reject('the store is closed')) })
     render(<App />)
-    fireEvent.click(await screen.findByText('symdiary.com'))
+    fireEvent.click(await screen.findByText('example.org'))
     fireEvent.click(bandButton('Delete website'))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(screen.queryByRole('alertdialog')).toBeNull()
@@ -224,7 +224,7 @@ describe('the band', () => {
   it('opens Settings and reloads the list when it closes', async () => {
     const bridge = installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Settings'))
     await screen.findByText('GoatCounter API key: not set')
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
@@ -234,7 +234,7 @@ describe('the band', () => {
   it('lists the Help menu as Amendment 18 states: Guide first, then About, Licence and the check', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Help'))
     const menu = screen.getByRole('menu', { name: 'Help' })
     expect(within(menu).getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
@@ -246,7 +246,7 @@ describe('the band', () => {
   it('opens the Guide from the Help menu and closes the menu as it does', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Help'))
     fireEvent.click(screen.getByRole('menuitem', { name: 'Guide' }))
     expect(screen.queryByRole('menu')).toBeNull()
@@ -258,7 +258,7 @@ describe('the band', () => {
   it('opens About from the Help menu, without the licence text', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Help'))
     fireEvent.click(screen.getByRole('menuitem', { name: 'About Visitron' }))
     const about = await screen.findByRole('dialog', { name: 'Visitron 1.0.0' })
@@ -270,7 +270,7 @@ describe('the band', () => {
   it('opens the licence from the Help menu', async () => {
     installBridge()
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Help'))
     fireEvent.click(screen.getByRole('menuitem', { name: 'Licence' }))
     const licence = await screen.findByRole('dialog', { name: 'Licence' })
@@ -282,7 +282,7 @@ describe('the band', () => {
   it('says why About could not be read, opening nothing', async () => {
     installBridge({ About: vi.fn(() => Promise.reject('the licence is missing')) })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Help'))
     fireEvent.click(screen.getByRole('menuitem', { name: 'Licence' }))
     expect(await screen.findByText('The licence is missing')).toBeInTheDocument()
@@ -292,7 +292,7 @@ describe('the band', () => {
   it('checks for updates from the Help menu and names the product in the offer', async () => {
     installBridge({ CheckForUpdates: vi.fn(() => Promise.resolve(anOffer)) })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Help'))
     fireEvent.click(screen.getByRole('menuitem', { name: 'Check for updates' }))
     expect(await screen.findByRole('dialog', { name: 'Update available' })).toHaveTextContent(
@@ -303,7 +303,7 @@ describe('the band', () => {
   it('asks Go for the donation page and swaps the theme', async () => {
     const bridge = installBridge({ Donate: vi.fn(() => Promise.resolve()) })
     render(<App />)
-    await screen.findByText('symdiary.com')
+    await screen.findByText('example.org')
     fireEvent.click(bandButton('Donate'))
     expect(bridge.Donate).toHaveBeenCalled()
     fireEvent.click(bandButton('Light mode'))

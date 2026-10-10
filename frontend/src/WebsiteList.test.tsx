@@ -16,7 +16,7 @@ describe('the website list', () => {
     list(1)
     const rows = screen.getAllByRole('row')
     const cells = (i: number) => Array.from(rows[i].querySelectorAll('td')).map((c) => c.textContent)
-    expect(cells(2)).toEqual(['symdiary.com', '120', '14', '80', '+3'])
+    expect(cells(2)).toEqual(['example.org', '120', '14', '80', '+3'])
     expect(rows[2]).toHaveAttribute('aria-selected', 'true')
     expect(cells(3)).toEqual(['example.com/App', '9', '0', '0', '0'])
     expect(rows[3]).toHaveAttribute('aria-selected', 'false')

@@ -48,7 +48,7 @@ func readShortcut(t *testing.T, path string) (target, icon string) {
 // The script was built with %q, which is Go's quoting: PowerShell keeps a
 // backslash as a backslash, so every separator reached the shortcut doubled.
 // Measured on a real install before the fix: the icon read
-// C:\\Users\\Oliver\\...
+// C:\\Users\\someone\\...
 func TestShortcutsCarryPlainPaths(t *testing.T) {
 	desktop, startMenu := shortcutHome(t)
 	install := t.TempDir()
@@ -93,7 +93,7 @@ func TestShortcutsCarryPlainPaths(t *testing.T) {
 
 func TestLiteralQuotesForPowerShell(t *testing.T) {
 	t.Parallel()
-	if got := literal(`C:\Users\Oliver\Visitron.exe`); got != `'C:\Users\Oliver\Visitron.exe'` {
+	if got := literal(`C:\Users\someone\Visitron.exe`); got != `'C:\Users\someone\Visitron.exe'` {
 		t.Errorf("literal = %s", got)
 	}
 	// A quote inside a path is doubled, which is how PowerShell reads one

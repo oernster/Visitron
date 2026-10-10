@@ -8,9 +8,9 @@ import (
 func TestNormalise(t *testing.T) {
 	t.Parallel()
 	cases := []struct{ entry, key, url string }{
-		{"SymDiary.com", "symdiary.com/", "https://symdiary.com/"},
-		{"  https://SYMDIARY.com  ", "symdiary.com/", "https://symdiary.com/"},
-		{"http://symdiary.com/download.html?x=1#get", "symdiary.com/", "https://symdiary.com/"},
+		{"Example.org", "example.org/", "https://example.org/"},
+		{"  https://EXAMPLE.org  ", "example.org/", "https://example.org/"},
+		{"http://example.org/download.html?x=1#get", "example.org/", "https://example.org/"},
 		{"https://example.com/App", "example.com/App/", "https://example.com/App/"},
 		{"example.com/App/index.html", "example.com/App/", "https://example.com/App/"},
 		{"https://example.com:443/a/b/", "example.com/a/b/", "https://example.com/a/b/"},
@@ -32,7 +32,7 @@ func TestRefusals(t *testing.T) {
 		"":                ErrEmptyAddress,
 		"   ":             ErrEmptyAddress,
 		"ftp://x.com":     ErrScheme,
-		"symdiary":        ErrHostNotDNS,
+		"widget":          ErrHostNotDNS,
 		"https://":        ErrNoHost,
 		"https://%zz.com": ErrNoHost,
 	}
@@ -57,7 +57,7 @@ func TestSegmentsAndLabels(t *testing.T) {
 	if !root.Contains(sub) || sub.Contains(root) {
 		t.Error("Contains: root must contain the sub-site and not the reverse")
 	}
-	if root.Contains(Address{Host: "symdiary.com", Path: "/"}) {
+	if root.Contains(Address{Host: "example.org", Path: "/"}) {
 		t.Error("Contains crossed hosts")
 	}
 }

@@ -22,8 +22,8 @@ import (
 
 const (
 	// childEnv names what the child does; logEnv names the log it keeps.
-	childEnv = "SYMDIARY_RUNLOG_CHILD"
-	logEnv   = "SYMDIARY_RUNLOG_PATH"
+	childEnv = "VISITRON_RUNLOG_CHILD"
+	logEnv   = "VISITRON_RUNLOG_PATH"
 
 	// panicAct panics on another goroutine; fatalAct sends all error output
 	// to the log, writes a warning to it, then fails with a fatal error.
@@ -245,9 +245,9 @@ func TestWithNoDataFolderThereIsNoLog(t *testing.T) {
 func TestEveryPlatformsLogFolder(t *testing.T) {
 	t.Parallel()
 	const (
-		home    = "/home/oliver"
-		appdata = `C:\Users\Oliver\AppData\Local`
-		state   = "/home/oliver/.var/app/uk.codecrafter.visitron/.local/state"
+		home    = "/home/someone"
+		appdata = `C:\Users\someone\AppData\Local`
+		state   = "/home/someone/.var/app/uk.codecrafter.visitron/.local/state"
 	)
 	noHome := func() (string, error) { return "", errors.New("no home directory") }
 	atHome := func() (string, error) { return home, nil }

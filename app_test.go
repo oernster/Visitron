@@ -66,7 +66,7 @@ func TestOverviewStatesOnlyAFailureNewerThanTheLastSuccess(t *testing.T) {
 
 func TestSaveCheckThenOverviewAndDetail(t *testing.T) {
 	r := newRig(t, nil)
-	id, err := r.app.SaveWebsite(0, "symdiary.com", []string{symdiaryRepo.String()})
+	id, err := r.app.SaveWebsite(0, "example.org", []string{widgetRepo.String()})
 	if err != nil || id == 0 {
 		t.Fatalf("SaveWebsite = %d, %v", id, err)
 	}
@@ -77,7 +77,7 @@ func TestSaveCheckThenOverviewAndDetail(t *testing.T) {
 		t.Fatalf("Overview = %+v, %v", o, err)
 	}
 	row := o.Rows[0]
-	if row.ID != id || row.URL != "https://symdiary.com/" || row.Repos[0] != symdiaryRepo.String() {
+	if row.ID != id || row.URL != "https://example.org/" || row.Repos[0] != widgetRepo.String() {
 		t.Fatalf("row = %+v", row)
 	}
 	if o.LastSuccess == "" {
@@ -111,15 +111,15 @@ func TestSaveWebsiteRefusesABadAddressOrRepository(t *testing.T) {
 	if _, err := r.app.SaveWebsite(0, " ", nil); !errors.Is(err, domain.ErrEmptyAddress) {
 		t.Fatalf("empty address: %v", err)
 	}
-	if _, err := r.app.SaveWebsite(0, "symdiary.com", []string{"no-slash"}); !errors.Is(err, domain.ErrRepoForm) {
+	if _, err := r.app.SaveWebsite(0, "example.org", []string{"no-slash"}); !errors.Is(err, domain.ErrRepoForm) {
 		t.Fatalf("bad repository: %v", err)
 	}
 }
 
 func TestEditAndDeleteAWebsite(t *testing.T) {
 	r := newRig(t, nil)
-	id, _ := r.app.SaveWebsite(0, "symdiary.com", nil)
-	if saved, err := r.app.SaveWebsite(id, "symdiary.com", []string{symdiaryRepo.String()}); err != nil || saved != id {
+	id, _ := r.app.SaveWebsite(0, "example.org", nil)
+	if saved, err := r.app.SaveWebsite(id, "example.org", []string{widgetRepo.String()}); err != nil || saved != id {
 		t.Fatalf("edit = %d, %v", saved, err)
 	}
 	if err := r.app.DeleteWebsite(id); err != nil {
@@ -132,14 +132,14 @@ func TestEditAndDeleteAWebsite(t *testing.T) {
 
 func TestProposeAndConfirmPassThroughTheirRefusals(t *testing.T) {
 	r := newRig(t, nil)
-	p, err := r.app.Propose("symdiary.com", 0)
-	if err != nil || p.URL != "https://symdiary.com/" || p.Problem == "" {
+	p, err := r.app.Propose("example.org", 0)
+	if err != nil || p.URL != "https://example.org/" || p.Problem == "" {
 		t.Fatalf("a site that cannot be read: %+v, %v", p, err)
 	}
 	if _, err := r.app.Propose("", 0); err == nil {
 		t.Fatal("an empty address was proposed")
 	}
-	if name, err := r.app.ConfirmRepo(symdiaryRepo.String()); err != nil || name != symdiaryRepo.String() {
+	if name, err := r.app.ConfirmRepo(widgetRepo.String()); err != nil || name != widgetRepo.String() {
 		t.Fatalf("ConfirmRepo = %q, %v", name, err)
 	}
 }
@@ -256,7 +256,7 @@ func TestAPanicInTheSchedulerIsSurvived(t *testing.T) {
 func TestAPanicInACheckIsRecordedAsAFailedCheck(t *testing.T) {
 	r := newRig(t, nil)
 	// The panic is planted where a check reports its progress.
-	if _, err := r.app.SaveWebsite(0, "symdiary.com", nil); err != nil {
+	if _, err := r.app.SaveWebsite(0, "example.org", nil); err != nil {
 		t.Fatal(err)
 	}
 	r.app.emitter = panicker{}
@@ -279,7 +279,7 @@ func (panicker) Emit(_ string, data any) {
 
 func TestRefreshRunsACheckAndEndsWithAnEmptyProgress(t *testing.T) {
 	r := newRig(t, nil)
-	if _, err := r.app.SaveWebsite(0, "symdiary.com", []string{symdiaryRepo.String()}); err != nil {
+	if _, err := r.app.SaveWebsite(0, "example.org", []string{widgetRepo.String()}); err != nil {
 		t.Fatal(err)
 	}
 	if err := r.app.Refresh(); err != nil {

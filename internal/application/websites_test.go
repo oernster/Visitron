@@ -10,29 +10,29 @@ import (
 	"visitron/internal/domain"
 )
 
-var symRepo = domain.Repo{Owner: "someone", Name: "SymDiary"}
+var symRepo = domain.Repo{Owner: "someone", Name: "Widget"}
 
-// symdiarySite is symdiary.com as measured (Appendix A, M-3): the repo named
+// widgetSite is example.org as measured (Appendix A, M-3): the repo named
 // on the home page and through the API in site.js, the buttons on a second
 // page.
-func symdiarySite() *fakeFetcher {
+func widgetSite() *fakeFetcher {
 	return &fakeFetcher{pages: map[string]string{
-		"https://symdiary.com/": `<script src="site.js?v=1"></script>
-			<a href="download.html">Get</a> <a href="https://github.com/someone/SymDiary">Code</a>`,
-		"https://symdiary.com/site.js":       `fetch('https://api.github.com/repos/someone/SymDiary/releases/latest')`,
-		"https://symdiary.com/download.html": `<a href="https://github.com/someone/SymDiary/releases/latest/download/SymDiary.dmg">dmg</a>`,
+		"https://example.org/": `<script src="site.js?v=1"></script>
+			<a href="download.html">Get</a> <a href="https://github.com/someone/Widget">Code</a>`,
+		"https://example.org/site.js":       `fetch('https://api.github.com/repos/someone/Widget/releases/latest')`,
+		"https://example.org/download.html": `<a href="https://github.com/someone/Widget/releases/latest/download/Widget.dmg">dmg</a>`,
 	}}
 }
 
 func TestAddCrawlsAndOffers(t *testing.T) {
 	t.Parallel()
-	fetch := symdiarySite()
+	fetch := widgetSite()
 	svc := NewWebsites(newStore(), fetch, &fakeReleases{})
-	p, err := svc.Propose(context.Background(), "SymDiary.com", 0)
+	p, err := svc.Propose(context.Background(), "Example.org", 0)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if p.Address.URL() != "https://symdiary.com/" || p.Problem != "" {
+	if p.Address.URL() != "https://example.org/" || p.Problem != "" {
 		t.Errorf("proposal = %+v", p)
 	}
 	want := []domain.Repo{symRepo}
@@ -47,7 +47,7 @@ func TestAddCrawlsAndOffers(t *testing.T) {
 func TestProposeRefusesBadEntry(t *testing.T) {
 	t.Parallel()
 	svc := NewWebsites(newStore(), &fakeFetcher{}, &fakeReleases{})
-	if _, err := svc.Propose(context.Background(), "symdiary", 0); !errors.Is(err, domain.ErrHostNotDNS) {
+	if _, err := svc.Propose(context.Background(), "widget", 0); !errors.Is(err, domain.ErrHostNotDNS) {
 		t.Errorf("err = %v", err)
 	}
 	store := newStore()
@@ -60,13 +60,13 @@ func TestProposeRefusesBadEntry(t *testing.T) {
 func TestDuplicateRefused(t *testing.T) {
 	t.Parallel()
 	store := newStore()
-	addr, _ := domain.Normalise("symdiary.com")
+	addr, _ := domain.Normalise("example.org")
 	id, _ := store.AddWebsite(Website{Address: addr})
-	svc := NewWebsites(store, symdiarySite(), &fakeReleases{})
-	if _, err := svc.Propose(context.Background(), "https://SymDiary.com/", 0); !errors.Is(err, ErrDuplicate) {
+	svc := NewWebsites(store, widgetSite(), &fakeReleases{})
+	if _, err := svc.Propose(context.Background(), "https://Example.org/", 0); !errors.Is(err, ErrDuplicate) {
 		t.Errorf("err = %v; want ErrDuplicate", err)
 	}
-	if _, err := svc.Propose(context.Background(), "symdiary.com", id); err != nil {
+	if _, err := svc.Propose(context.Background(), "example.org", id); err != nil {
 		t.Errorf("editing a website to its own address was refused: %v", err)
 	}
 }
@@ -130,9 +130,9 @@ func TestCrawlStopsAtPageLimit(t *testing.T) {
 
 func TestManualRepository(t *testing.T) {
 	t.Parallel()
-	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{"someone/SymDiary": nil}}
+	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{"someone/Widget": nil}}
 	svc := NewWebsites(newStore(), &fakeFetcher{}, rel)
-	if r, err := svc.Confirm(context.Background(), "someone/SymDiary"); err != nil || r != symRepo {
+	if r, err := svc.Confirm(context.Background(), "someone/Widget"); err != nil || r != symRepo {
 		t.Errorf("Confirm = %v, %v", r, err)
 	}
 	if _, err := svc.Confirm(context.Background(), "someone/Nope"); !errors.Is(err, ErrRepoNotFound) {
@@ -142,7 +142,7 @@ func TestManualRepository(t *testing.T) {
 		t.Errorf("bad form = %v", err)
 	}
 	rel.existsErr = errPlanted
-	if _, err := svc.Confirm(context.Background(), "someone/SymDiary"); !errors.Is(err, errPlanted) {
+	if _, err := svc.Confirm(context.Background(), "someone/Widget"); !errors.Is(err, errPlanted) {
 		t.Errorf("GitHub failure = %v", err)
 	}
 }

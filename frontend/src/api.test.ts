@@ -19,7 +19,7 @@ describe('the bridge', () => {
   it('turns a refusal into a sentence and answers null', async () => {
     installBridge({ SaveWebsite: vi.fn(() => Promise.reject(new Error('the site was not saved'))) })
     const refused = vi.fn()
-    expect(await api.saveWebsite(0, 'https://symdiary.com', [], refused)).toBeNull()
+    expect(await api.saveWebsite(0, 'https://example.org', [], refused)).toBeNull()
     expect(refused).toHaveBeenCalledWith('The site was not saved')
   })
 
@@ -49,8 +49,8 @@ describe('the bridge', () => {
     const refused = vi.fn()
     await api.overview(refused)
     await api.detail(3, refused)
-    await api.propose('symdiary.com', 2, refused)
-    await api.confirmRepo('someone/SymDiary', refused)
+    await api.propose('example.org', 2, refused)
+    await api.confirmRepo('someone/Widget', refused)
     await api.settings(refused)
     await api.saveInterval(12, refused)
     await api.savePeriod(90, refused)
@@ -61,8 +61,8 @@ describe('the bridge', () => {
     await api.about(refused)
     await api.donate(refused)
     expect(bridge.Detail).toHaveBeenCalledWith(3)
-    expect(bridge.Propose).toHaveBeenCalledWith('symdiary.com', 2)
-    expect(bridge.ConfirmRepo).toHaveBeenCalledWith('someone/SymDiary')
+    expect(bridge.Propose).toHaveBeenCalledWith('example.org', 2)
+    expect(bridge.ConfirmRepo).toHaveBeenCalledWith('someone/Widget')
     expect(bridge.SaveInterval).toHaveBeenCalledWith(12)
     expect(bridge.SavePeriod).toHaveBeenCalledWith(90)
     expect(bridge.SaveUpdateCheck).toHaveBeenCalledWith(false)
@@ -78,8 +78,8 @@ describe('the bridge', () => {
     const events = installEvents()
     const seen = vi.fn()
     onProgress(seen)
-    events.send({ done: 1, total: 3, site: 'symdiary.com' })
-    expect(seen).toHaveBeenCalledWith({ done: 1, total: 3, site: 'symdiary.com' })
+    events.send({ done: 1, total: 3, site: 'example.org' })
+    expect(seen).toHaveBeenCalledWith({ done: 1, total: 3, site: 'example.org' })
   })
 
   it('leaves an empty reason alone', () => {

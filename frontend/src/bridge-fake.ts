@@ -47,10 +47,10 @@ export const periods = [7, 30, 90, 365]
 
 export const aState: State = { name: 'Visitron', version: '1.0.0', problem: '', periods }
 
-export const symdiary: WebsiteRow = {
+export const widget: WebsiteRow = {
   id: 1,
-  url: 'https://symdiary.com',
-  repos: ['someone/SymDiary'],
+  url: 'https://example.org',
+  repos: ['someone/Widget'],
   pageLoads: 120,
   downloads: 14,
   totalDownloads: 80,
@@ -68,7 +68,7 @@ export const app: WebsiteRow = {
 }
 
 export const anOverview: Overview = {
-  rows: [symdiary, app],
+  rows: [widget, app],
   period: 30,
   lastSuccess: '9 Oct 2026 20:00',
   lastFailure: '',
@@ -81,9 +81,9 @@ export const anOverview: Overview = {
 
 export const aDetail: Detail = {
   id: 1,
-  url: 'https://symdiary.com',
+  url: 'https://example.org',
   total: 80,
-  byRepo: [{ name: 'someone/SymDiary', count: 80 }],
+  byRepo: [{ name: 'someone/Widget', count: 80 }],
   byRelease: [{ name: 'v1.0.0', count: 80 }],
   byPlatform: [{ name: 'Windows', count: 70 }, { name: 'macOS', count: 10 }],
   dailyPageLoads: [{ day: '2026-10-08', count: 4 }, { day: '2026-10-09', count: 6 }],
@@ -91,9 +91,9 @@ export const aDetail: Detail = {
 }
 
 export const aProposal: Proposal = {
-  url: 'https://symdiary.com',
-  found: ['someone/SymDiary', 'someone/SymDiary-site'],
-  ticked: ['someone/SymDiary'],
+  url: 'https://example.org',
+  found: ['someone/Widget', 'someone/Widget-site'],
+  ticked: ['someone/Widget'],
   problem: '',
 }
 
