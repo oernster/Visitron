@@ -8,21 +8,21 @@ import (
 
 func TestLongestPrefixOwns(t *testing.T) {
 	t.Parallel()
-	hub, _ := Normalise("ernster.dev")
-	whatday, _ := Normalise("ernster.dev/WhatDay/")
+	hub, _ := Normalise("example.com")
+	app, _ := Normalise("example.com/App/")
 	sym, _ := Normalise("symdiary.com")
-	sites := []Address{hub, whatday, sym}
+	sites := []Address{hub, app, sym}
 	cases := map[string]Address{
-		"ernster.dev/index.html":         hub,
-		"ernster.dev/":                   hub,
-		"ernster.dev":                    hub,
-		"ernster.dev/applications.html":  hub,
-		"ernster.dev/?ref=x":             hub,
-		"ernster.dev/WhatDay/index.html": whatday,
-		"ernster.dev/WhatDay/":           whatday,
-		"ERNSTER.DEV/WhatDay/":           whatday,
-		"ernster.dev/whatday/":           hub,
-		"symdiary.com/download.html":     sym,
+		"example.com/index.html":        hub,
+		"example.com/":                  hub,
+		"example.com":                   hub,
+		"example.com/applications.html": hub,
+		"example.com/?ref=x":            hub,
+		"example.com/App/index.html":    app,
+		"example.com/App/":              app,
+		"EXAMPLE.COM/App/":              app,
+		"example.com/app/":              hub,
+		"symdiary.com/download.html":    sym,
 	}
 	for path, want := range cases {
 		if got, ok := Owner(path, sites); !ok || got != want {

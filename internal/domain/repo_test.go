@@ -31,7 +31,7 @@ func TestIgnoresWhatIsNotARepo(t *testing.T) {
 	t.Parallel()
 	text := `https://github.com/sponsors/someone https://gist.github.com/a/b
 	https://github.com/someone https://api.github.com/users/someone/x
-	https://notgithub.com/a/b https://someone.github.io/WhatDay/
+	https://notgithub.com/a/b https://someone.github.io/App/
 	https://www.github.com/someone/Locus.git https://github.com/SOMEONE/locus`
 	want := []Repo{{Owner: "someone", Name: "Locus"}}
 	if got := FindRepos(text); !reflect.DeepEqual(got, want) {
@@ -58,16 +58,16 @@ func TestParseRepo(t *testing.T) {
 func TestPreTick(t *testing.T) {
 	t.Parallel()
 	snark, _ := Normalise("snarkapi.com")
-	whatday, _ := Normalise("ernster.dev/WhatDay/")
-	hub, _ := Normalise("ernster.dev")
-	many := []Repo{{"someone", "snark-api"}, {"someone", "WhatDay"}, {"someone", "Locus"}}
+	app, _ := Normalise("example.com/App/")
+	hub, _ := Normalise("example.com")
+	many := []Repo{{"someone", "snark-api"}, {"someone", "App"}, {"someone", "Locus"}}
 	cases := []struct {
 		site  Address
 		found []Repo
 		want  []Repo
 	}{
 		{snark, many, []Repo{{"someone", "snark-api"}}},
-		{whatday, many, []Repo{{"someone", "WhatDay"}}},
+		{app, many, []Repo{{"someone", "App"}}},
 		{hub, many, nil},
 		{hub, many[2:], many[2:]},
 		{hub, nil, nil},

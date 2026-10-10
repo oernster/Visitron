@@ -74,7 +74,7 @@ func TestDailyPagesThroughPaths(t *testing.T) {
 			return
 		}
 		_, _ = w.Write([]byte(`{"more":false,"hits":[
-			{"path":"/ernster.dev/WhatDay/","path_id":3,"stats":[{"day":"2026-10-09","daily":3},{"day":"2026-10-09","daily":0}]}]}`))
+			{"path":"/example.com/App/","path_id":3,"stats":[{"day":"2026-10-09","daily":3},{"day":"2026-10-09","daily":0}]}]}`))
 	})
 	got, err := c.Daily(context.Background(), someone, "key", oct8, oct9)
 	if err != nil {
@@ -82,7 +82,7 @@ func TestDailyPagesThroughPaths(t *testing.T) {
 	}
 	want := []application.PathDay{
 		{Path: "symdiary.com/", Day: oct8, Count: 2},
-		{Path: "ernster.dev/WhatDay/", Day: oct9, Count: 3},
+		{Path: "example.com/App/", Day: oct9, Count: 3},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("Daily = %+v; want %+v", got, want)

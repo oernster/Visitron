@@ -12,7 +12,7 @@ import (
 func checkFixture() (*fakeStore, *fakeReleases, *fakePageLoads, *fakeSecrets, *fakeClock) {
 	store := newStore()
 	sym, _ := domain.Normalise("symdiary.com")
-	hub, _ := domain.Normalise("ernster.dev")
+	hub, _ := domain.Normalise("example.com")
 	_, _ = store.AddWebsite(Website{Address: sym, Repos: []domain.Repo{symRepo}})
 	_, _ = store.AddWebsite(Website{Address: hub, Repos: []domain.Repo{{Owner: "SOMEONE", Name: "symdiary"}}})
 	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{

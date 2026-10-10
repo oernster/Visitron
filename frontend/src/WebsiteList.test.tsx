@@ -18,7 +18,7 @@ describe('the website list', () => {
     const cells = (i: number) => Array.from(rows[i].querySelectorAll('td')).map((c) => c.textContent)
     expect(cells(2)).toEqual(['symdiary.com', '120', '14', '80', '+3'])
     expect(rows[2]).toHaveAttribute('aria-selected', 'true')
-    expect(cells(3)).toEqual(['ernster.dev/WhatDay', '9', '0', '0', '0'])
+    expect(cells(3)).toEqual(['example.com/App', '9', '0', '0', '0'])
     expect(rows[3]).toHaveAttribute('aria-selected', 'false')
     const headings = screen.getAllByRole('columnheader').map((h) => h.textContent)
     expect(headings).toEqual(['Website', 'Page loads', 'Downloads', 'Last 30 days', 'All time', 'Since last check'])
@@ -65,7 +65,7 @@ describe('the website list', () => {
 
   it('selects a clicked row and offers every period', () => {
     const { onSelect, onPeriod } = list(null)
-    fireEvent.click(screen.getByText('ernster.dev/WhatDay'))
+    fireEvent.click(screen.getByText('example.com/App'))
     expect(onSelect).toHaveBeenCalledWith(2)
 
     const period = screen.getByRole('combobox', { name: 'Period' })

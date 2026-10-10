@@ -62,7 +62,7 @@ func TestWebsitesRoundTrip(t *testing.T) {
 	if err != nil || len(got) != 1 || got[0].ID != id || !reflect.DeepEqual(got[0].Repos, []domain.Repo{sym, other}) {
 		t.Fatalf("websites %+v err %v", got, err)
 	}
-	moved := application.Website{ID: id, Address: addr(t, "ernster.dev/WhatDay/"), Repos: []domain.Repo{other}}
+	moved := application.Website{ID: id, Address: addr(t, "example.com/App/"), Repos: []domain.Repo{other}}
 	if err := s.UpdateWebsite(moved); err != nil {
 		t.Fatal(err)
 	}

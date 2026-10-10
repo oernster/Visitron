@@ -57,9 +57,9 @@ export const symdiary: WebsiteRow = {
   sinceLastCheck: 3,
 }
 
-export const whatday: WebsiteRow = {
+export const app: WebsiteRow = {
   id: 2,
-  url: 'https://ernster.dev/WhatDay',
+  url: 'https://example.com/App',
   repos: [],
   pageLoads: 9,
   downloads: 0,
@@ -68,7 +68,7 @@ export const whatday: WebsiteRow = {
 }
 
 export const anOverview: Overview = {
-  rows: [symdiary, whatday],
+  rows: [symdiary, app],
   period: 30,
   lastSuccess: '9 Oct 2026 20:00',
   lastFailure: '',

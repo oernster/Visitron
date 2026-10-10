@@ -11,9 +11,9 @@ func TestNormalise(t *testing.T) {
 		{"SymDiary.com", "symdiary.com/", "https://symdiary.com/"},
 		{"  https://SYMDIARY.com  ", "symdiary.com/", "https://symdiary.com/"},
 		{"http://symdiary.com/download.html?x=1#get", "symdiary.com/", "https://symdiary.com/"},
-		{"https://ernster.dev/WhatDay", "ernster.dev/WhatDay/", "https://ernster.dev/WhatDay/"},
-		{"ernster.dev/WhatDay/index.html", "ernster.dev/WhatDay/", "https://ernster.dev/WhatDay/"},
-		{"https://ernster.dev:443/a/b/", "ernster.dev/a/b/", "https://ernster.dev/a/b/"},
+		{"https://example.com/App", "example.com/App/", "https://example.com/App/"},
+		{"example.com/App/index.html", "example.com/App/", "https://example.com/App/"},
+		{"https://example.com:443/a/b/", "example.com/a/b/", "https://example.com/a/b/"},
 	}
 	for _, c := range cases {
 		a, err := Normalise(c.entry)
@@ -45,13 +45,13 @@ func TestRefusals(t *testing.T) {
 
 func TestSegmentsAndLabels(t *testing.T) {
 	t.Parallel()
-	root := Address{Host: "ernster.dev", Path: "/"}
-	sub := Address{Host: "ernster.dev", Path: "/WhatDay/"}
-	deep := Address{Host: "ernster.dev", Path: "/a/WhatDay/"}
-	if root.LastSegment() != "" || sub.LastSegment() != "WhatDay" || deep.LastSegment() != "WhatDay" {
+	root := Address{Host: "example.com", Path: "/"}
+	sub := Address{Host: "example.com", Path: "/App/"}
+	deep := Address{Host: "example.com", Path: "/a/App/"}
+	if root.LastSegment() != "" || sub.LastSegment() != "App" || deep.LastSegment() != "App" {
 		t.Errorf("LastSegment: %q %q %q", root.LastSegment(), sub.LastSegment(), deep.LastSegment())
 	}
-	if sub.FirstLabel() != "ernster" {
+	if sub.FirstLabel() != "example" {
 		t.Errorf("FirstLabel = %q", sub.FirstLabel())
 	}
 	if !root.Contains(sub) || sub.Contains(root) {

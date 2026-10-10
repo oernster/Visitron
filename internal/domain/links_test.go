@@ -26,18 +26,18 @@ func TestSiteLinksStayOnSite(t *testing.T) {
 
 func TestSiteLinksStayUnderPath(t *testing.T) {
 	t.Parallel()
-	site, _ := Normalise("ernster.dev/WhatDay/")
+	site, _ := Normalise("example.com/App/")
 	body := `<a href="features.html">F</a> <a href="/">Hub</a> <a href="/Locus/">L</a>`
-	want := []string{"https://ernster.dev/WhatDay/features.html"}
-	if got := SiteLinks(site, "https://ernster.dev/WhatDay/", body); !reflect.DeepEqual(got, want) {
+	want := []string{"https://example.com/App/features.html"}
+	if got := SiteLinks(site, "https://example.com/App/", body); !reflect.DeepEqual(got, want) {
 		t.Errorf("SiteLinks = %v; want %v", got, want)
 	}
 	if got := SiteLinks(site, "%zz", body); got != nil {
 		t.Errorf("an unreadable page URL gave %v", got)
 	}
-	root := `<a href="https://ernster.dev">Root</a>`
-	hub, _ := Normalise("ernster.dev")
-	if got := SiteLinks(hub, "https://ernster.dev/x.html", root); !reflect.DeepEqual(got, []string{"https://ernster.dev"}) {
+	root := `<a href="https://example.com">Root</a>`
+	hub, _ := Normalise("example.com")
+	if got := SiteLinks(hub, "https://example.com/x.html", root); !reflect.DeepEqual(got, []string{"https://example.com"}) {
 		t.Errorf("root link = %v", got)
 	}
 }
