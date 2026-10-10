@@ -55,10 +55,12 @@ export function useUpdateCheck() {
  * of its own. Skipped and off are never shown: a check asked for sends no skip
  * and ignores the switch, while an automatic one shows only an offer.
  */
-function said(outcome: UpdateOutcome, update: Update): string {
+function said(outcome: UpdateOutcome, update: Update, name: string): string {
   switch (outcome) {
     case 'current':
       return 'You are running the latest version.'
+    case 'none':
+      return `No release of ${name} has been published yet.`
     case 'uncomparable':
       return `This copy was built from source as ${update.running}, so there is no released version to compare it with.`
     default:
@@ -88,7 +90,7 @@ export function UpdateDialog({ name, found, onClose }: Props) {
   return (
     <Modal labelId="update-title" role="dialog" onClose={onClose}>
       <h2 id="update-title">{offered ? 'Update available' : 'Check for updates'}</h2>
-      <p>{offered ? `${name} ${found.latest} is available. You are running ${found.running}.` : said(found.outcome, found)}</p>
+      <p>{offered ? `${name} ${found.latest} is available. You are running ${found.running}.` : said(found.outcome, found, name)}</p>
       {problem && (
         <p className="problem" role="alert">
           {problem}

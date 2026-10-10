@@ -54,7 +54,7 @@ func TestTheEndpointIsVisitronsOwn(t *testing.T) {
 func TestEveryFailureIsAnError(t *testing.T) {
 	t.Parallel()
 	answers := map[string]http.HandlerFunc{
-		"refused":  func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNotFound) },
+		"refused":  func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusForbidden) },
 		"not JSON": func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("<html>")) },
 		"no tag": func(w http.ResponseWriter, _ *http.Request) {
 			_, _ = w.Write([]byte(`{"html_url":"https://github.com/x"}`))
@@ -72,6 +72,14 @@ func TestEveryFailureIsAnError(t *testing.T) {
 	unreachable := NewAt(web.NewClient(), "http://127.0.0.1:0")
 	if _, err := unreachable.Latest(context.Background()); err == nil {
 		t.Error("an unreachable host: no error")
+	}
+}
+
+func TestNoPublishedReleaseIsNamed(t *testing.T) {
+	t.Parallel()
+	s := source(t, func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNotFound) })
+	if _, err := s.Latest(context.Background()); !errors.Is(err, application.ErrNoRelease) {
+		t.Errorf("err = %v", err)
 	}
 }
 

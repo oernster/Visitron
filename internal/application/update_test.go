@@ -83,6 +83,15 @@ func TestAnUnreadableReleaseIsUnreachable(t *testing.T) {
 	}
 }
 
+func TestNoPublishedReleaseIsItsOwnAnswer(t *testing.T) {
+	t.Parallel()
+	u, source, _ := updatesFixture("1.1.0", "windows")
+	source.err = ErrNoRelease
+	if got := u.CheckManually(context.Background()); got.Outcome != UpdateNone || got.Address != "" {
+		t.Errorf("status %+v", got)
+	}
+}
+
 func TestASkippedReleaseIsNotOfferedUnasked(t *testing.T) {
 	t.Parallel()
 	u, _, store := updatesFixture("1.1.0", "windows")

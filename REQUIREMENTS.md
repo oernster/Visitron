@@ -699,3 +699,11 @@ preferences. Verified by
 `updates_test.go::TestAnOfferIsKeptForDownloadAndSkip` and
 `updates.test.tsx::checks 3 seconds after the page loads, then once a day`.
 
+**Amendment 6 (2026-10-10): no release yet is its own answer.** Measured on
+2026-10-10: GitHub answers 404 for `releases/latest` of a repository with no
+published release, which Amendment 5 read as unreachable. A 404 now reads as
+no release published; a check asked for says "No release of Visitron has been
+published yet." and an automatic one says nothing. Verified by
+`internal/infrastructure/update/github_test.go::TestNoPublishedReleaseIsNamed` and
+`internal/application/update_test.go::TestNoPublishedReleaseIsItsOwnAnswer`.
+

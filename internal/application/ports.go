@@ -142,10 +142,14 @@ type Release struct {
 	Assets []Asset
 }
 
+// ErrNoRelease is a source saying there is no published release at all,
+// which is an answer rather than a failure to reach it (Amendment 6).
+var ErrNoRelease = errors.New("no release has been published")
+
 // ReleaseSource answers Visitron's latest published release. Only a release
 // that is published, neither a draft nor a pre-release, is ever answered, so a
-// tag pushed while work is under way can never be offered. Any error means the
-// release could not be read; the update check treats every one alike.
+// tag pushed while work is under way can never be offered. ErrNoRelease means
+// none is published; any other error means the release could not be read.
 type ReleaseSource interface {
 	Latest(ctx context.Context) (Release, error)
 }

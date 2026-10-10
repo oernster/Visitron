@@ -5,6 +5,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/oernster/visitron/internal/domain"
@@ -19,6 +20,8 @@ const (
 	// UpdateOff means the automatic check is turned off in Settings, so
 	// nothing was asked.
 	UpdateOff UpdateOutcome = "off"
+	// UpdateNone means no release has been published yet (Amendment 6).
+	UpdateNone UpdateOutcome = "none"
 	// UpdateUnreachable means the release could not be read.
 	UpdateUnreachable UpdateOutcome = "unreachable"
 	// UpdateUncomparable means the running version is not dotted whole
@@ -94,6 +97,10 @@ func (u *Updates) Skip(version string) error {
 func (u *Updates) check(ctx context.Context, skipped string) UpdateStatus {
 	status := UpdateStatus{Outcome: UpdateUnreachable, Running: u.running}
 	release, err := u.source.Latest(ctx)
+	if errors.Is(err, ErrNoRelease) {
+		status.Outcome = UpdateNone
+		return status
+	}
 	if err != nil {
 		return status
 	}

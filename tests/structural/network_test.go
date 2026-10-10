@@ -22,6 +22,9 @@ var httpPackages = map[string]string{
 	// Reads GitHub's status codes off the shared client's answers; it opens
 	// nothing of its own.
 	"internal/infrastructure/github": "status codes only",
+	// Reads the update check's 404, GitHub's word for no release published;
+	// its request rides the shared client.
+	"internal/infrastructure/update": "status codes only",
 }
 
 // outboundAddresses are the only web addresses the Go source may name, each

@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -76,6 +77,11 @@ func (s *Source) Latest(ctx context.Context) (application.Release, error) {
 	resp, err := s.client.Get(ctx, s.address, map[string]string{"Accept": acceptHeader}, answerCap)
 	if err != nil {
 		return application.Release{}, fmt.Errorf("asking for the latest release: %w", err)
+	}
+	// GitHub answers 404 for a repository with no published release, which
+	// is the answer before the first one rather than a failure.
+	if resp.Status == http.StatusNotFound {
+		return application.Release{}, application.ErrNoRelease
 	}
 	if !resp.OK() {
 		return application.Release{}, resp.StatusError("GitHub")
