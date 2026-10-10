@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	goruntime "runtime"
 	"slices"
 	"time"
 
@@ -21,6 +22,7 @@ import (
 	"github.com/oernster/visitron/internal/infrastructure/startup"
 	"github.com/oernster/visitron/internal/infrastructure/store"
 	"github.com/oernster/visitron/internal/infrastructure/tray"
+	"github.com/oernster/visitron/internal/infrastructure/update"
 	"github.com/oernster/visitron/internal/infrastructure/web"
 	"github.com/oernster/visitron/internal/product"
 	"github.com/wailsapp/wails/v2"
@@ -95,6 +97,7 @@ func main() {
 		Figures:   application.NewFigures(data, clock),
 		Scheduler: application.NewScheduler(check, data, clock),
 		Settings:  application.NewSettings(data, vault, entry, releases, loads),
+		Updates:   application.NewUpdates(update.New(client), data, appVersion, goruntime.GOOS),
 		Store:     data,
 		Seed:      seed,
 	}

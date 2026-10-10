@@ -6,11 +6,14 @@ import { anAbout } from './bridge-fake'
 describe('About', () => {
   it('names the product, its author, every credit and the licence', () => {
     const onClose = vi.fn()
-    render(<AboutDialog about={anAbout} onClose={onClose} />)
+    const onCheckUpdates = vi.fn()
+    render(<AboutDialog about={anAbout} onCheckUpdates={onCheckUpdates} onClose={onClose} />)
     const about = screen.getByRole('dialog', { name: 'Visitron 1.0.0' })
     expect(within(about).getByText('By Oliver Ernster')).toBeInTheDocument()
     expect(within(about).getByText('Go: BSD 3-Clause, The Go Authors')).toBeInTheDocument()
     expect(within(about).getByText('GNU GENERAL PUBLIC LICENSE')).toBeInTheDocument()
+    fireEvent.click(within(about).getByRole('button', { name: 'Check for updates' }))
+    expect(onCheckUpdates).toHaveBeenCalled()
     fireEvent.click(within(about).getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalled()
   })

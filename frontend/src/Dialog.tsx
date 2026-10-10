@@ -33,10 +33,12 @@ export function ConfirmDialog({ text, confirmLabel, onConfirm, onCancel }: Confi
 
 interface AboutProps {
   about: About
+  /** Runs the update check asked for (FR-075): About is where it lives, as there is no Help menu. */
+  onCheckUpdates: () => void
   onClose: () => void
 }
 
-export function AboutDialog({ about, onClose }: AboutProps) {
+export function AboutDialog({ about, onCheckUpdates, onClose }: AboutProps) {
   // The credits and the licence run past the dialog's height, so the body is
   // the scroller and reads itself down gently, with Close pinned beneath it.
   const autoScroll = useAutoScroll()
@@ -61,6 +63,9 @@ export function AboutDialog({ about, onClose }: AboutProps) {
         <pre className="licence-text">{about.licence}</pre>
       </div>
       <div className="actions">
+        <button type="button" onClick={onCheckUpdates}>
+          Check for updates
+        </button>
         <button type="button" onClick={onClose}>
           Close
         </button>

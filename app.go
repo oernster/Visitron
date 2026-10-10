@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -43,6 +44,7 @@ type Services struct {
 	Figures   *application.Figures
 	Scheduler *application.Scheduler
 	Settings  *application.Settings
+	Updates   *application.Updates
 	Store     application.Store
 	Seed      []application.Website
 }
@@ -65,6 +67,10 @@ type App struct {
 	trayUp bool
 	// quitting is set once a Quit is under way, so closing asks nothing.
 	quitting atomic.Bool
+	// offered is the release the last update check offered; Download and Skip
+	// act on it, so the page never holds an address (Amendment 5).
+	mu      sync.Mutex
+	offered application.UpdateStatus
 	// followers each run on a goroutine of their own once the window has
 	// started, such as following the tray icon's clicks. The composition root
 	// supplies them, so the facade imports no infrastructure.

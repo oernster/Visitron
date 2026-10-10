@@ -87,6 +87,9 @@ type Preferences struct {
 	IntervalHours int
 	Period        domain.Period
 	UpdateCheck   bool
+	// SkippedUpdate is the release version the owner chose to skip; an
+	// automatic check does not offer it again (FR-075).
+	SkippedUpdate string
 }
 
 // CheckRecord is what is known of the latest checks (FR-044).
@@ -123,4 +126,26 @@ type Store interface {
 	SavePreferences(p Preferences) error
 	CheckRecord() (CheckRecord, error)
 	SaveCheckRecord(r CheckRecord) error
+}
+
+// Asset is one file attached to a release of Visitron.
+type Asset struct {
+	Name    string
+	Address string
+}
+
+// Release is Visitron's latest published release (FR-075): its tag, the
+// address of its page and the files attached to it.
+type Release struct {
+	Tag    string
+	Page   string
+	Assets []Asset
+}
+
+// ReleaseSource answers Visitron's latest published release. Only a release
+// that is published, neither a draft nor a pre-release, is ever answered, so a
+// tag pushed while work is under way can never be offered. Any error means the
+// release could not be read; the update check treats every one alike.
+type ReleaseSource interface {
+	Latest(ctx context.Context) (Release, error)
 }

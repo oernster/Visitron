@@ -229,13 +229,16 @@ func (a *App) About() (about AboutDTO, err error) {
 func (a *App) Donate() (err error) {
 	defer guard(&err)
 	if a.opener == nil {
-		return errors.New("no browser opener is wired")
+		return errNoOpener
 	}
 	a.opener.Open(product.DonateURL)
 	return nil
 }
 
 var errSecretName = errors.New("there is no such secret")
+
+// errNoOpener refuses a hand-over to the browser when none is wired.
+var errNoOpener = errors.New("no browser opener is wired")
 
 func secretNamed(which string) (application.Secret, error) {
 	switch which {

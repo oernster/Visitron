@@ -70,6 +70,21 @@ func (f *fakeSecrets) Delete(name application.Secret) error {
 	return nil
 }
 
+// fakePublished answers a fixed release of Visitron or fails.
+type fakePublished struct {
+	release application.Release
+	err     error
+}
+
+func (f *fakePublished) Latest(context.Context) (application.Release, error) { return f.release, f.err }
+
+// published is the release every rig sees: newer than the rig's 1.1.0.
+var published = &fakePublished{release: application.Release{
+	Tag:    "v1.2.0",
+	Page:   "https://github.com/oernster/Visitron/releases/tag/v1.2.0",
+	Assets: []application.Asset{{Name: "VisitronSetup.exe", Address: "https://github.com/setup.exe"}},
+}}
+
 type fakeStartup struct{ on bool }
 
 func (f *fakeStartup) Enabled() (bool, error)   { return f.on, nil }
@@ -144,6 +159,7 @@ func newRig(t *testing.T, data application.Store) *rig {
 		Figures:   application.NewFigures(data, clock),
 		Scheduler: application.NewScheduler(check, data, clock),
 		Settings:  application.NewSettings(data, vault, &fakeStartup{}, releases, fakePageLoads{}),
+		Updates:   application.NewUpdates(published, data, "1.1.0", "windows"),
 		Store:     data,
 	}
 	app := newApp(services, "1.2.3", "", func() error { return nil })

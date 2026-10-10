@@ -98,3 +98,13 @@ type AboutDTO struct {
 	Licence string      `json:"licence"`
 	Credits []CreditDTO `json:"credits"`
 }
+
+// UpdateDTO is what one update check found: available, current, skipped,
+// unreachable, uncomparable or off; the running version; the release's, empty
+// where it could not be read. No address crosses: Download acts on the release
+// the facade offered (Amendment 5).
+type UpdateDTO struct {
+	Outcome string `json:"outcome"`
+	Running string `json:"running"`
+	Latest  string `json:"latest"`
+}

@@ -9,6 +9,7 @@ import { themeLabel } from './theme'
 import { api, onCloseRequest, onProgress, type About, type Detail, type Overview, type Progress, type State } from './api'
 import { AboutDialog, ConfirmDialog } from './Dialog'
 import { CloseChoiceDialog } from './CloseChoiceDialog'
+import { UpdateDialog, useUpdateCheck } from './updates'
 import { GuideDialog } from './GuideDialog'
 import { SettingsDialog } from './SettingsDialog'
 import { WebsiteDialog } from './WebsiteDialog'
@@ -68,6 +69,7 @@ export function App() {
   const [open, setOpen] = useState<Open>(null)
   const [about, setAbout] = useState<About | null>(null)
   const [closing, setClosing] = useState(false)
+  const updates = useUpdateCheck()
   const [message, setMessage] = useState('')
   const refused = useCallback((text: string) => setMessage(text), [])
 
@@ -185,7 +187,8 @@ export function App() {
         <GuideDialog onClose={() => setOpen(null)}
           onAbout={() => void api.about(refused).then((found) => found && setAbout(found))} />
       )}
-      {about && <AboutDialog about={about} onClose={() => setAbout(null)} />}
+      {about && <AboutDialog about={about} onCheckUpdates={updates.checkNow} onClose={() => setAbout(null)} />}
+      {updates.found && <UpdateDialog name={state?.name ?? ''} found={updates.found} onClose={updates.dismiss} />}
       {closing && (
         <CloseChoiceDialog onCancel={() => setClosing(false)}
           onMinimise={() => { setClosing(false); void api.minimiseToTray(refused) }}

@@ -6,7 +6,7 @@
 
 import { vi } from 'vitest'
 import { closeRequestEvent, noWindow, progressEvent, sentence } from './api'
-import type { About, Detail, Overview, Progress, Proposal, Settings, State, WebsiteRow } from './api'
+import type { About, Detail, Overview, Progress, Proposal, Settings, State, Update, WebsiteRow } from './api'
 
 /** noWindowShown is that refusal as the status line shows it. */
 export const noWindowShown = sentence(noWindow)
@@ -33,6 +33,9 @@ export interface FakeBridge {
   Donate: Fn
   MinimiseToTray: Fn
   RequestQuit: Fn
+  CheckForUpdates: Fn
+  DownloadUpdate: Fn
+  SkipUpdate: Fn
 }
 
 export const periods = [7, 30, 90, 365]
@@ -105,6 +108,12 @@ export const anAbout: About = {
   credits: [{ work: 'Go', licence: 'BSD 3-Clause', holder: 'The Go Authors' }],
 }
 
+/** current is what a check answers by default: nothing newer. */
+export const current: Update = { outcome: 'current', running: '1.0.0', latest: '1.0.0' }
+
+/** anOffer is a check that found a newer release. */
+export const anOffer: Update = { outcome: 'available', running: '1.0.0', latest: '1.1.0' }
+
 /** installBridge puts a fake facade on the window and answers it. */
 export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
   const refuse = () => Promise.reject(new Error('this call was not expected'))
@@ -128,6 +137,9 @@ export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
     Donate: vi.fn(refuse),
     MinimiseToTray: vi.fn(refuse),
     RequestQuit: vi.fn(refuse),
+    CheckForUpdates: vi.fn(() => Promise.resolve(current)),
+    DownloadUpdate: vi.fn(refuse),
+    SkipUpdate: vi.fn(refuse),
     ...answers,
   } as FakeBridge
   ;(window as unknown as { go: unknown }).go = { main: { App: bridge } }

@@ -95,6 +95,16 @@ export interface About {
   credits: Credit[]
 }
 
+/** UpdateOutcome is what one update check found (FR-075, Amendment 5). */
+export type UpdateOutcome = 'available' | 'current' | 'skipped' | 'unreachable' | 'uncomparable' | 'off'
+
+/** Update is one check's answer. No address crosses; Download acts on Go's kept offer. */
+export interface Update {
+  outcome: UpdateOutcome
+  running: string
+  latest: string
+}
+
 /** The two secrets, as the facade names them. */
 export type SecretName = 'goatcounter' | 'github'
 
@@ -118,6 +128,9 @@ interface Bridge {
   Donate(): Promise<void>
   MinimiseToTray(): Promise<void>
   RequestQuit(): Promise<void>
+  CheckForUpdates(manual: boolean): Promise<Update>
+  DownloadUpdate(): Promise<void>
+  SkipUpdate(): Promise<void>
 }
 
 interface WailsRuntime {
@@ -207,4 +220,7 @@ export const api = {
   donate: (refused: Refused) => act((b) => b.Donate(), refused),
   minimiseToTray: (refused: Refused) => act((b) => b.MinimiseToTray(), refused),
   requestQuit: (refused: Refused) => act((b) => b.RequestQuit(), refused),
+  checkForUpdates: (manual: boolean, refused: Refused) => ask((b) => b.CheckForUpdates(manual), refused),
+  downloadUpdate: (refused: Refused) => act((b) => b.DownloadUpdate(), refused),
+  skipUpdate: (refused: Refused) => act((b) => b.SkipUpdate(), refused),
 }

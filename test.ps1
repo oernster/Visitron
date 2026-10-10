@@ -76,9 +76,9 @@ try {
 # The rest of the tree, each package at the number it actually reaches,
 # measured on 2026-10-09.
 #
-# The four adapters at 100 talk to something a test can stand up for real: a
-# local HTTP server for the web client, GitHub and GoatCounter, an in-memory
-# keyring for the secrets. The root package holds the facade, which is tested,
+# The five adapters at 100 talk to something a test can stand up for real: a
+# local HTTP server for the web client, GitHub, GoatCounter and the update
+# check, an in-memory keyring for the secrets. The root package holds the facade, which is tested,
 # plus main, the window's runtime calls and the single-instance lock, which need
 # a window. The store and the startup entry reach everything but operating-
 # system failures that cannot be forced without breaking the disk or the
@@ -87,11 +87,12 @@ try {
 # their figures are the portable halves alone; they are listed so that the
 # little that can be tested stays tested.
 $measured = [ordered]@{
-    '.'                                       = 69
+    '.'                                       = 72
     './internal/infrastructure/github'        = 100
     './internal/infrastructure/goatcounter'   = 100
     './internal/infrastructure/secrets'       = 100
     './internal/infrastructure/web'           = 100
+    './internal/infrastructure/update'        = 100
     './internal/infrastructure/store'         = 88
     './internal/infrastructure/startup'       = 85
     './internal/infrastructure/runlog'        = 81

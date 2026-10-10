@@ -679,3 +679,23 @@ reach; a Quit from the tray or the choice does not ask again. Verified by
 `closing_test.go::TestMinimiseHidesAndQuitDoesNotAskAgain`,
 `closing_test.go::TestTheTrayRevealsAndQuitsThroughTheSameWindow` and
 `CloseChoiceDialog.test.tsx::warns of open work and opens on Go back`.
+
+**Amendment 5 (2026-10-09): the update check.** FR-075 is built per the house
+`updates` model in the form Bridge Talk takes, where the page holds no
+address: the facade keeps the release it offered and Download and Skip act on
+it. The automatic check runs 3 s after the window opens, then every 24 hours;
+it asks nothing while Settings has it off; it shows only an offer and never
+offers the version the owner skipped. Check for updates on About runs the
+check asked for, ignoring the skip and the switch; it reports every outcome.
+The request goes unauthenticated through the shared web client to
+`releases/latest` of Visitron's own repository with a 5 s limit; a page or a
+file in the answer that is not under `https://github.com/` is refused rather
+than handed to the browser. The skipped version is kept with the other
+preferences. Verified by
+`internal/domain/version_test.go::TestNewer`,
+`internal/application/update_test.go::TestASkippedReleaseIsNotOfferedUnasked`,
+`internal/application/update_test.go::TestTheSwitchTurnsTheAutomaticCheckOff`,
+`internal/infrastructure/update/github_test.go::TestLatestAsksTheRightPlaceUnauthenticated`,
+`updates_test.go::TestAnOfferIsKeptForDownloadAndSkip` and
+`updates.test.tsx::checks 3 seconds after the page loads, then once a day`.
+

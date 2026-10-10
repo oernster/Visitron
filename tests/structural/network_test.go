@@ -31,6 +31,9 @@ var outboundAddresses = map[string]string{
 	"https://api.github.com":                           "GitHub's API (FR-021)",
 	"https://oernster.goatcounter.com":                 "GoatCounter's API (FR-020)",
 	"https://www.paypal.com/ncp/payment/NRXS4SP24A6C8": "the donate link, opened in the browser (FR-073)",
+	// The only host an update's page or file may name; anything else in
+	// GitHub's answer is refused before it can reach the browser.
+	"https://github.com/": "a release of Visitron, opened in the browser (FR-075)",
 	// The scheme the domain puts on an address typed without one.
 	"https://": "the default scheme (FR-001)",
 }

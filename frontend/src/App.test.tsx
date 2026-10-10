@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { App } from './App'
-import { aState, anOverview, installBridge, installEvents, noWindowShown } from './bridge-fake'
+import { aState, anOffer, anOverview, installBridge, installEvents, noWindowShown } from './bridge-fake'
 
 const band = () => screen.getByRole('navigation', { name: 'Visitron' })
 const bandButton = (name: string | RegExp) => within(band()).getByRole('button', { name })
@@ -238,6 +238,18 @@ describe('the band', () => {
     expect(screen.queryByRole('heading', { name: 'Visitron 1.0.0' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByRole('heading', { name: 'How Visitron works' })).toBeNull()
+  })
+
+  it('checks for updates from About and names the product in the offer', async () => {
+    installBridge({ CheckForUpdates: vi.fn(() => Promise.resolve(anOffer)) })
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    fireEvent.click(bandButton('Help'))
+    fireEvent.click(screen.getByRole('button', { name: 'About' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Check for updates' }))
+    expect(await screen.findByRole('dialog', { name: 'Update available' })).toHaveTextContent(
+      'Visitron 1.1.0 is available. You are running 1.0.0.',
+    )
   })
 
   it('asks Go for the donation page and swaps the theme', async () => {

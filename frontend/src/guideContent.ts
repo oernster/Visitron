@@ -44,7 +44,7 @@ export const guideSections: GuideSection[] = [
       { icon: settingsIcon, name: 'Settings', text: 'Your GoatCounter key, an optional GitHub token, how often to check, starting with Windows and the update check.' },
       { icon: donateIcon, name: 'Donate', text: 'Opens the donation page in your browser.' },
       { icon: lightModeIcon, name: 'Light or dark', text: 'Switches the window between light and dark; the picture is the mode you would move to.' },
-      { icon: guideIcon, name: 'Help', text: 'This guide, with About at its foot.' },
+      { icon: guideIcon, name: 'Help', text: 'This guide, with About at its foot. About also checks GitHub for a newer Visitron when you ask; with the update check on in Settings, Visitron asks by itself shortly after it opens and once a day.' },
     ],
   },
   {
