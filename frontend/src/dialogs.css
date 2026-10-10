@@ -37,6 +37,13 @@
   overflow-y: auto;
   /* A gutter, so the words do not run under the scrollbar. */
   padding-right: 8px;
+  /* A scroller clips whatever stands outside it, a control's ring included:
+     room for the ring on the other three sides, with the left edge drawn out
+     by the same amount so the content still lines up under the title. */
+  padding-top: var(--ring-reach);
+  padding-bottom: var(--ring-reach);
+  padding-left: var(--ring-reach);
+  margin-left: calc(-1 * var(--ring-reach));
 }
 
 /*

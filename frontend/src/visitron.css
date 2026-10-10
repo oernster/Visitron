@@ -172,6 +172,9 @@ main.split {
 .secret-entry {
   display: flex;
   gap: 6px;
+  /* Two rows stacked: each ring stands out by --ring-reach, so this much on
+     each side keeps one row's ring off the other row's box. */
+  margin: var(--ring-reach) 0;
 }
 
 .secret-entry input {

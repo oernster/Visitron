@@ -1,3 +1,15 @@
+/*
+  The focus ring's geometry, stated once. --ring-reach is how far a ring stands
+  outside its control. A scroller must leave that much room at its edges, else
+  the ring is cut off; two stacked rows need that much space each side, else
+  one ring runs into its neighbour.
+*/
+:root {
+  --ring-width: 2px;
+  --ring-offset: 2px;
+  --ring-reach: calc(var(--ring-width) + var(--ring-offset));
+}
+
 * {
   box-sizing: border-box;
 }
@@ -35,8 +47,8 @@ button:disabled,
 input:disabled,
 textarea:disabled {
   cursor: default;
-  outline: 2px solid var(--danger);
-  outline-offset: 2px;
+  outline: var(--ring-width) solid var(--danger);
+  outline-offset: var(--ring-offset);
   background: var(--muted-fill);
   border-color: var(--border);
   color: var(--muted);
@@ -96,8 +108,8 @@ input:enabled:hover,
 input:enabled:focus-visible,
 textarea:enabled:hover,
 textarea:enabled:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  outline: var(--ring-width) solid var(--ring);
+  outline-offset: var(--ring-offset);
 }
 
 /*
