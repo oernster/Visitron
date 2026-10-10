@@ -19,7 +19,7 @@ var appliesAsItChanges = regexp.MustCompile(`type="(checkbox|radio|number)"`)
 // what its button does, so the owner never has to reach for the mouse. Every
 // text or password box carries the shared onEnter handler from keys.ts.
 //
-// Proved by planting: removing onEnter from the GoatCounter site box in
+// Proved by planting: removing onEnter from the GoatCounter account name box in
 // SettingsDialog.tsx fails it by name.
 func TestEveryTextBoxAppliesOnEnter(t *testing.T) {
 	boxes := 0

@@ -155,7 +155,7 @@ export function App() {
           <span>
             {overview.lastSuccess ? `Last checked ${overview.lastSuccess}.` : 'Not checked yet.'}
             {overview.lastFailure && ` The check at ${overview.lastFailure} failed: ${overview.failure}`}
-            {overview.noKey && ' Page loads need your GoatCounter site and key in Settings.'}
+            {overview.noKey && ' Page loads need your GoatCounter account name and key in Settings.'}
           </span>
         )}
         {message && (

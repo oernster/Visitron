@@ -128,7 +128,7 @@ func (s *Settings) SaveSecret(ctx context.Context, name Secret, value string) (s
 
 // NoSiteToTry is why a GoatCounter key saved before any site was set could
 // not be tried (Amendment 11).
-const NoSiteToTry = "there is no GoatCounter site to try it on yet; enter your site above"
+const NoSiteToTry = "there is no GoatCounter account name to try it on yet; enter it above"
 
 // SaveGoatCounterSite keeps the owner's GoatCounter site, read from a code or
 // an address (Amendment 11). A stored key is then tried against it once; the

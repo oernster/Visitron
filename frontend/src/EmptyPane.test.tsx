@@ -13,7 +13,7 @@ describe('the empty detail pane', () => {
     expect(pane().querySelector('img.empty-mark')).toHaveAttribute('alt', '')
     const items = screen.getAllByRole('listitem').map((li) => li.textContent)
     expect(items).toEqual([
-      'GoatCounter API key: Needed for page loads, with your GoatCounter site: without them every Page loads figure stays at 0.',
+      'GoatCounter API key: Needed for page loads, with your GoatCounter account name: without them every Page loads figure stays at 0.',
       'GitHub token (optional): Downloads are read without one; GitHub then allows 60 requests an hour, which a token raises to 5,000.',
     ])
   })

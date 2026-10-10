@@ -93,7 +93,7 @@ func (c *Check) readPageLoads(ctx context.Context, now time.Time, out *Outcome) 
 	}
 	prefs, err := Preferred(c.store)
 	if err != nil {
-		out.Failures = append(out.Failures, fmt.Sprintf("reading the GoatCounter site: %v", err))
+		out.Failures = append(out.Failures, fmt.Sprintf("reading the GoatCounter account name: %v", err))
 		return
 	}
 	site := prefs.Site()

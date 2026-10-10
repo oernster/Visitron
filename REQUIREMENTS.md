@@ -797,7 +797,7 @@ owner's own.** Ruled by the owner on 2026-10-10.
   `internal/application/settings_test.go::TestKeyVerified`,
   `internal/application/check_test.go::TestAKeyWithNoSiteIsNotSetUp`,
   `internal/infrastructure/goatcounter/client_test.go::TestTheSiteNamesTheAddress`,
-  `SettingsDialog.test.tsx::keeps the GoatCounter site as its code and says whether a stored key works there` and
+  `SettingsDialog.test.tsx::keeps the GoatCounter account name as its code and says whether a stored key works there` and
   `SettingsDialog.test.tsx::says where the key and the token come from`.
 
 **Amendment 12 (2026-10-10): nothing of the owner's is built in; Enter
@@ -815,4 +815,13 @@ applies a box.** Ruled by the owner on 2026-10-10.
   `tests/structural/enter_test.go::TestEveryTextBoxAppliesOnEnter`,
   `SettingsDialog.test.tsx::applies the site and a secret on Enter only when the Save button would` and
   `WebsiteDialog.test.tsx::does nothing on Enter in an empty address, as the disabled button would`.
+
+**Amendment 13 (2026-10-10): the GoatCounter account name.** Ruled by the owner
+on 2026-10-10. What Amendments 11 and 12 call the GoatCounter site is asked for
+by GoatCounter's own name for it: the account name, which its sign-up form
+says is reached at `https://[account-name].goatcounter.com` (read 2026-10-10).
+Settings asks for the account name alone (placeholder `yourname`, button Save
+name); a whole address is still accepted and kept as the name. Verified by
+`SettingsDialog.test.tsx::says where the key and the token come from` and
+`SettingsDialog.test.tsx::keeps the GoatCounter account name as its code and says whether a stored key works there`.
 

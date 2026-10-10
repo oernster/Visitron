@@ -112,7 +112,7 @@ func TestAKeyWithNoSiteIsNotSetUp(t *testing.T) {
 	}
 	store.failOn = "Preferences"
 	out, _ = NewCheck(store, rel, loads, secrets, clock).Run(context.Background(), noProgress)
-	if len(out.Failures) == 0 || !strings.Contains(strings.Join(out.Failures, " "), "GoatCounter site") {
+	if len(out.Failures) == 0 || !strings.Contains(strings.Join(out.Failures, " "), "GoatCounter account name") {
 		t.Errorf("a preferences fault is not reported: %v", out.Failures)
 	}
 }

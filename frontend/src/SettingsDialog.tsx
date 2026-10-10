@@ -30,7 +30,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
   // The steps under each secret make Settings taller than a short window, so
   // the body scrolls and Close stays pinned beneath it, as in the Guide.
   const autoScroll = useAutoScroll()
-  // The GoatCounter site as typed; null until the settings first arrive, so a
+  // The GoatCounter account name as typed; null until the settings first arrive, so a
   // later reload never overwrites what the owner is part way through typing.
   const [site, setSite] = useState<string | null>(null)
   const reload = useCallback(
@@ -72,7 +72,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
   const saveSite = async () => {
     const problem = await api.saveGoatCounterSite(site ?? '', refused)
     if (problem === null) return
-    setNote(problem ? `Site saved; the key did not work there: ${problem}` : 'Site saved.')
+    setNote(problem ? `Account name saved; the key did not work there: ${problem}` : 'Account name saved.')
     const found = await api.settings(refused)
     if (!found) return
     setSettings(found)
@@ -105,15 +105,15 @@ export function SettingsDialog({ refused, onClose }: Props) {
               </ol>
               {which === 'goatcounter' && (
                 <>
-                  <span>GoatCounter site: {settings.goatCounterSite || 'not set'}</span>
+                  <span>GoatCounter account name: {settings.goatCounterSite || 'not set'}</span>
                   <div className="secret-entry">
-                    <input type="text" autoComplete="off" spellCheck={false} aria-label="GoatCounter site"
-                      placeholder="yourname.goatcounter.com" value={site ?? ''}
+                    <input type="text" autoComplete="off" spellCheck={false} aria-label="GoatCounter account name"
+                      placeholder="yourname" value={site ?? ''}
                       onChange={(e) => setSite(e.target.value)}
                       onKeyDown={onEnter(() => void saveSite(), canSaveSite())} />
                     <button type="button" disabled={!canSaveSite()}
                       onClick={() => void saveSite()}>
-                      Save site
+                      Save name
                     </button>
                   </div>
                 </>

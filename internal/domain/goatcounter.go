@@ -8,7 +8,7 @@ import (
 // ErrGoatCounterSite refuses an entry that names no goatcounter.com site
 // (Amendment 11).
 var ErrGoatCounterSite = errors.New(
-	"a GoatCounter site is the code before .goatcounter.com in its address, as in yourname")
+	"a GoatCounter account name is the part before .goatcounter.com in its address, as in yourname")
 
 // goatCounterHost is the domain every hosted GoatCounter site sits under. The
 // site is held to it, so the key is only ever sent to GoatCounter
