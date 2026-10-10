@@ -61,9 +61,10 @@ executable against another folder:
 $env:LOCALAPPDATA = "$env:TEMP\visitron-sandbox"; ./build/bin/Visitron.exe
 ```
 
-The log is `%LOCALAPPDATA%\Visitron\Log.txt`. It holds each run's start line,
-the failures the declared writers report and any crash; never the key or the
-token.
+The log is `%LOCALAPPDATA%\Visitron\Log.txt`. It holds each run's start line;
+each check's start, every website's outcome, the page loads and the end with
+its duration; the failures the declared writers report and any crash. Never
+the key or the token.
 
 ## Generated assets
 
@@ -73,7 +74,8 @@ The artwork masters live in `assets/`.
 python tools/genicons.py
 ```
 
-It writes `build/windows/icon.ico`, `build/appicon.png` and the page icons in
+It writes `build/windows/icon.ico` with a byte-for-byte copy at
+`installer/build/windows/icon.ico` for the setup program, `build/appicon.png` and the page icons in
 `frontend/src/assets/icons`. The output is committed, so building needs
 neither Python nor Pillow. Run it whenever a master changes.
 

@@ -27,6 +27,12 @@ type Outcome struct {
 // Succeeded reports whether the check read everything it asked for.
 func (o Outcome) Succeeded() bool { return len(o.Failures) == 0 && o.RateLimitedUntil.IsZero() }
 
+// Log is where a check says what it did (NFR-OBS-001): its start, each
+// website's outcome and its end with the time it took.
+type Log interface {
+	Printf(format string, args ...any)
+}
+
 // Check is one pass over every website.
 type Check struct {
 	store     Store
@@ -34,11 +40,12 @@ type Check struct {
 	pageLoads PageLoads
 	secrets   Secrets
 	clock     Clock
+	log       Log
 }
 
 // NewCheck builds the check service.
-func NewCheck(store Store, releases Releases, pageLoads PageLoads, secrets Secrets, clock Clock) *Check {
-	return &Check{store: store, releases: releases, pageLoads: pageLoads, secrets: secrets, clock: clock}
+func NewCheck(store Store, releases Releases, pageLoads PageLoads, secrets Secrets, clock Clock, log Log) *Check {
+	return &Check{store: store, releases: releases, pageLoads: pageLoads, secrets: secrets, clock: clock, log: log}
 }
 
 // Run reads every chosen repo's release files from GitHub, then a year of
@@ -51,12 +58,15 @@ func (c *Check) Run(ctx context.Context, progress Progress) (Outcome, error) {
 		// A check that could not start is still a failed check, so the window
 		// warns of it like any other (Amendment 3).
 		failed := Outcome{Failures: []string{fmt.Sprintf("reading the websites: %v", err)}}
+		c.log.Printf("check could not start: %s", failed.Failures[0])
 		return failed, errors.Join(err, c.record(now, failed))
 	}
+	c.log.Printf("check started: %d websites", len(sites))
 	var out Outcome
 	read := map[string]bool{}
 	for i, w := range sites {
 		progress(i, len(sites), w.Address.URL())
+		before := len(out.Failures)
 		for _, repo := range w.Repos {
 			key := strings.ToLower(repo.String())
 			if read[key] || !out.RateLimitedUntil.IsZero() {
@@ -65,10 +75,44 @@ func (c *Check) Run(ctx context.Context, progress Progress) (Outcome, error) {
 			read[key] = true
 			c.readRepo(ctx, DayOf(now), repo, &out)
 		}
+		c.log.Printf("%s: %s", w.Address.URL(), siteOutcome(len(w.Repos), out.Failures[before:], out.RateLimitedUntil))
 	}
 	progress(len(sites), len(sites), "")
+	before := len(out.Failures)
 	c.readPageLoads(ctx, now, &out)
+	c.log.Printf("page loads: %s", loadsOutcome(out.NoKey, out.Failures[before:]))
+	verdict := "succeeded"
+	if !out.Succeeded() {
+		verdict = "failed"
+	}
+	c.log.Printf("check %s in %s", verdict, c.clock.Now().Sub(now).Round(time.Millisecond))
 	return out, c.record(now, out)
+}
+
+// siteOutcome words one website's part of a check for the log.
+func siteOutcome(repos int, failures []string, limited time.Time) string {
+	switch {
+	case len(failures) > 0:
+		return strings.Join(failures, "; ")
+	case !limited.IsZero():
+		return ErrRateLimited.Error()
+	case repos == 0:
+		return "no repositories chosen"
+	default:
+		return fmt.Sprintf("%d repositories read", repos)
+	}
+}
+
+// loadsOutcome words the page-load read for the log.
+func loadsOutcome(noKey bool, failures []string) string {
+	switch {
+	case len(failures) > 0:
+		return strings.Join(failures, "; ")
+	case noKey:
+		return "not read; GoatCounter is not set up"
+	default:
+		return "read"
+	}
 }
 
 func (c *Check) readRepo(ctx context.Context, day domain.Day, repo domain.Repo, out *Outcome) {

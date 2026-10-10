@@ -23,6 +23,11 @@ type fixedClock struct{ now time.Time }
 
 func (c fixedClock) Now() time.Time { return c.now }
 
+// discardLog is a check log that keeps nothing; the facade tests do not read it.
+type discardLog struct{}
+
+func (discardLog) Printf(string, ...any) {}
+
 type fakeFetcher struct{ pages map[string]string }
 
 func (f fakeFetcher) Fetch(_ context.Context, url string) (string, error) {
@@ -153,7 +158,7 @@ func newRig(t *testing.T, data application.Store) *rig {
 		{Repo: widgetRepo, Release: "v1.0.0", Name: "Widget.dmg", Raw: 3},
 	}}}
 	vault := &fakeSecrets{values: map[application.Secret]string{}}
-	check := application.NewCheck(data, releases, fakePageLoads{}, vault, clock)
+	check := application.NewCheck(data, releases, fakePageLoads{}, vault, clock, discardLog{})
 	services := Services{
 		Websites:  application.NewWebsites(data, fakeFetcher{}, releases),
 		Figures:   application.NewFigures(data, clock),

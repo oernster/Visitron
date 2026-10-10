@@ -88,7 +88,10 @@ func main() {
 	loads := goatcounter.NewClient(client, domain.GoatCounterSite.URL)
 	exe, _ := os.Executable()
 	entry := startup.Entry{Name: product.Name, Exe: filepath.Clean(exe)}
-	check := application.NewCheck(data, releases, loads, vault, clock)
+	// The error output already writes to the run log (keepLog above), so the
+	// check's log is a stamped writer over it; where the log could not be
+	// opened, its lines go nowhere and the check runs regardless.
+	check := application.NewCheck(data, releases, loads, vault, clock, runlog.NewLogger(os.Stderr, time.Now))
 	services := Services{
 		Websites:  application.NewWebsites(data, web.NewFetcher(client), releases),
 		Figures:   application.NewFigures(data, clock),

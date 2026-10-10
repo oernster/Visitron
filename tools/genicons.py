@@ -3,7 +3,8 @@
 Three things come out of it.
 
 The Windows icon: assets/application-icon.png becomes build/windows/icon.ico,
-placed on the application and the setup program, plus build/appicon.png, which
+placed on the application, with the same file copied byte for byte to
+installer/build/windows/icon.ico for the setup program, plus build/appicon.png, which
 Wails reads. Both are squared by padding the trimmed artwork with transparency,
 so Windows is never handed a frame that is not square.
 
@@ -26,6 +27,7 @@ Python nor Pillow to build anything.
 from __future__ import annotations
 
 import pathlib
+import shutil
 import sys
 
 try:
@@ -52,6 +54,9 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 MASTERS = REPO / "assets"
 PAGE_ICONS = REPO / "frontend" / "src" / "assets" / "icons"
 ICO = REPO / "build" / "windows" / "icon.ico"
+# SETUP_ICO is the setup program's copy. Wails builds setup from its own
+# folder, so it needs a file there; a copy of the bytes keeps the two the same.
+SETUP_ICO = REPO / "installer" / "build" / "windows" / "icon.ico"
 APPICON = REPO / "build" / "appicon.png"
 
 
@@ -98,6 +103,8 @@ def main() -> int:
             square = squared(artwork)
             square.save(ICO, format="ICO", sizes=ICO_SIZES)
             report(ICO)
+            shutil.copyfile(ICO, SETUP_ICO)
+            report(SETUP_ICO)
             square.resize((APPICON_SIZE, APPICON_SIZE), Image.LANCZOS).save(APPICON, optimize=True)
             report(APPICON)
     return 0

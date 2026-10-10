@@ -31,8 +31,10 @@ var logWriters = map[string]int{
 	// A refresh's check failed.
 	"actions.go": 1,
 	// The data could not be opened; no tray
-	// icon (a fixed sentence); the window could not be run.
-	"main.go": 3,
+	// icon (a fixed sentence); the window could not be run; the check's own
+	// log, which writes its start, each website's outcome and its end
+	// (NFR-OBS-001, Amendment 21) and never a key or a token.
+	"main.go": 4,
 	// Handing over the keyboard panicked; following the tray panicked (value
 	// and stack each); a refresh asked for from the tray was refused.
 	"window.go": 3,

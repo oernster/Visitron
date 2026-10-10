@@ -10,7 +10,7 @@ import (
 
 func schedulerFixture() (*Scheduler, *fakeStore, *fakeReleases, *fakeClock) {
 	store, rel, loads, secrets, clock := checkFixture()
-	return NewScheduler(NewCheck(store, rel, loads, secrets, clock), store, clock), store, rel, clock
+	return NewScheduler(NewCheck(store, rel, loads, secrets, clock, &fakeLog{}), store, clock), store, rel, clock
 }
 
 func TestDueAfterInterval(t *testing.T) {

@@ -967,3 +967,15 @@ on by default while nothing turned it on.
   `internal/infrastructure/setup/plan_test.go::TestInstallWritesThenRegistersThenAppliesTheChoices`,
   `internal/infrastructure/setup/plan_test.go::TestInstallSaysWhenTheSignInEntryCouldNotBeSet` and
   `internal/infrastructure/setup/plan_test.go::TestRemoveTakesTheShortcutsBeforeTheRegistryEntry`.
+
+**Amendment 21 (2026-10-10): the specification and the tree agree.** Ruled by
+the owner on 2026-10-10, after the documentation pass found two gaps.
+
+- C-2: the layers are `internal/{domain,application,infrastructure}`; the UI is
+  the root package (the Wails facade and `main.go`, the composition root) plus
+  `frontend/`, as in the house Go and Wails layout. There is no `internal/ui`.
+- NFR-OBS-001: each check now writes its start with the number of websites,
+  one line per website naming what was read or what failed, a line for the
+  page loads and its end with the verdict and the time taken. Verified by
+  `internal/application/check_test.go::TestCheckLogsItsStartEachWebsiteAndItsEnd` and
+  `internal/application/check_test.go::TestCheckLogsWhatEachOutcomeMeans`.

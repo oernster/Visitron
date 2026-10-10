@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sort"
 	"strings"
 	"time"
@@ -16,6 +17,13 @@ var errPlanted = errors.New("planted failure")
 type fakeClock struct{ now time.Time }
 
 func (c *fakeClock) Now() time.Time { return c.now }
+
+// fakeLog keeps each line a check writes, so a test can read the log back.
+type fakeLog struct{ lines []string }
+
+func (l *fakeLog) Printf(format string, args ...any) {
+	l.lines = append(l.lines, fmt.Sprintf(format, args...))
+}
 
 func london() *time.Location {
 	loc, err := time.LoadLocation("Europe/London")
