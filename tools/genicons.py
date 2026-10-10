@@ -13,6 +13,10 @@ frontend/src/assets/icons, trimmed of its transparent margin and written at
 PAGE_WIDTH pixels wide with its own proportions, since squaring a drawing
 somebody made would stretch it.
 
+The site's pictures: GitHub Pages serves docs/ alone, so the site cannot reach
+assets/. Each picture the site shows is a byte for byte copy of its page icon,
+so the site never carries a master's megabytes and never falls out of step.
+
 Nothing here resamples the artwork upwards. Reframing is a crop or a pad; an
 upscale invents detail the master does not have.
 
@@ -58,6 +62,14 @@ ICO = REPO / "build" / "windows" / "icon.ico"
 # folder, so it needs a file there; a copy of the bytes keeps the two the same.
 SETUP_ICO = REPO / "installer" / "build" / "windows" / "icon.ico"
 APPICON = REPO / "build" / "appicon.png"
+SITE = REPO / "docs"
+# SITE_PICTURES are the page icons the site shows, copied into SITE.
+SITE_PICTURES = (
+    "application-icon.png",
+    "light-mode.png",
+    "dark-mode.png",
+    "donate.png",
+)
 
 
 def trimmed(master: pathlib.Path) -> Image.Image:
@@ -93,19 +105,33 @@ def main() -> int:
     if not (MASTERS / MASTER).exists():
         print(f"missing {(MASTERS / MASTER).relative_to(REPO)}", file=sys.stderr)
         return 1
+    missing = [name for name in SITE_PICTURES if not (MASTERS / name).exists()]
+    if missing:
+        print(
+            f"no master in assets for the site's {', '.join(missing)}", file=sys.stderr
+        )
+        return 1
     for master in masters:
         artwork = trimmed(master)
         if artwork.width < PAGE_WIDTH:
-            print(f"{master.name} is narrower than {PAGE_WIDTH}; refusing to upscale it", file=sys.stderr)
+            print(
+                f"{master.name} is narrower than {PAGE_WIDTH}; refusing to upscale it",
+                file=sys.stderr,
+            )
             return 1
         write_page_icon(artwork, PAGE_ICONS / master.name)
+        if master.name in SITE_PICTURES:
+            shutil.copyfile(PAGE_ICONS / master.name, SITE / master.name)
+            report(SITE / master.name)
         if master.name == MASTER:
             square = squared(artwork)
             square.save(ICO, format="ICO", sizes=ICO_SIZES)
             report(ICO)
             shutil.copyfile(ICO, SETUP_ICO)
             report(SETUP_ICO)
-            square.resize((APPICON_SIZE, APPICON_SIZE), Image.LANCZOS).save(APPICON, optimize=True)
+            square.resize((APPICON_SIZE, APPICON_SIZE), Image.LANCZOS).save(
+                APPICON, optimize=True
+            )
             report(APPICON)
     return 0
 

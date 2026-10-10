@@ -76,7 +76,8 @@ python tools/genicons.py
 
 It writes `build/windows/icon.ico` with a byte-for-byte copy at
 `installer/build/windows/icon.ico` for the setup program, `build/appicon.png` and the page icons in
-`frontend/src/assets/icons`. The output is committed, so building needs
+`frontend/src/assets/icons`, with byte-for-byte copies of the ones the site shows in `docs/`
+(GitHub Pages serves that folder alone). The output is committed, so building needs
 neither Python nor Pillow. Run it whenever a master changes.
 
 ## Versioning
