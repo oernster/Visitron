@@ -73,7 +73,14 @@ main.split {
 }
 
 .chart {
-  margin: 0 0 12px;
+  margin: 0 0 16px;
+}
+
+/* A rule between one chart and the next, so a chart's title is not read as
+   the caption of the chart above it. */
+.chart + .chart {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
 }
 
 .chart svg {
