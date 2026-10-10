@@ -37,18 +37,35 @@ func TestLongestPrefixOwns(t *testing.T) {
 func TestSelfDownloadAllowance(t *testing.T) {
 	t.Parallel()
 	cases := []struct {
-		name      string
-		raw, want int
+		name            string
+		raw, self, want int
 	}{
-		{"SymDiary.dmg", 1, 0},
-		{"SymDiary.dmg", 0, 0},
-		{"SymDiary.DMG", 5, 4},
-		{"SymDiarySetup.exe", 4, 4},
-		{"symdiary.flatpak", 0, 0},
+		{"SymDiary.dmg", 5, DefaultSelfDownloads, 5},
+		{"SymDiary.dmg", 1, 1, 0},
+		{"SymDiary.dmg", 0, 1, 0},
+		{"SymDiary.DMG", 5, 1, 4},
+		{"SymDiary.dmg", 5, 3, 2},
+		{"SymDiary.dmg", 5, -2, 5},
+		{"SymDiarySetup.exe", 4, 1, 4},
+		{"symdiary.flatpak", 0, 1, 0},
 	}
 	for _, c := range cases {
-		if got := Counted(c.name, c.raw); got != c.want {
-			t.Errorf("Counted(%q, %d) = %d; want %d", c.name, c.raw, got, c.want)
+		if got := Counted(c.name, c.raw, c.self); got != c.want {
+			t.Errorf("Counted(%q, %d, %d) = %d; want %d", c.name, c.raw, c.self, got, c.want)
+		}
+	}
+}
+
+func TestSelfDownloadsRange(t *testing.T) {
+	t.Parallel()
+	for _, ok := range []int{MinSelfDownloads, DefaultSelfDownloads, MaxSelfDownloads} {
+		if err := ValidSelfDownloads(ok); err != nil {
+			t.Errorf("ValidSelfDownloads(%d) = %v", ok, err)
+		}
+	}
+	for _, bad := range []int{MinSelfDownloads - 1, MaxSelfDownloads + 1} {
+		if err := ValidSelfDownloads(bad); !errors.Is(err, ErrSelfDownloads) {
+			t.Errorf("ValidSelfDownloads(%d) = %v; want ErrSelfDownloads", bad, err)
 		}
 	}
 }
@@ -76,7 +93,7 @@ func TestTotals(t *testing.T) {
 		{sym, "v1.2.0", "symdiary.flatpak", 2},
 		{tr, "v1.3.0", "TimeRibbonSetup.exe", 1},
 	}
-	got := Total(files)
+	got := Total(files, 1)
 	want := Totals{
 		All:        10,
 		ByRepo:     map[string]int{"someone/SymDiary": 9, "someone/TimeRibbon": 1},
@@ -94,10 +111,10 @@ func TestDailyRise(t *testing.T) {
 	file := func(raw int) []ReleaseFile { return []ReleaseFile{{sym, "v1", "SymDiarySetup.exe", raw}} }
 	oct1, oct3, oct5 := Day{2026, 10, 1}, Day{2026, 10, 3}, Day{2026, 10, 5}
 	snaps := []Snapshot{
-		SnapshotOf(oct3, file(14)),
-		SnapshotOf(oct1, file(8)),
-		SnapshotOf(oct1, file(10)),
-		SnapshotOf(oct5, file(20)),
+		SnapshotOf(oct3, file(14), DefaultSelfDownloads),
+		SnapshotOf(oct1, file(8), DefaultSelfDownloads),
+		SnapshotOf(oct1, file(10), DefaultSelfDownloads),
+		SnapshotOf(oct5, file(20), DefaultSelfDownloads),
 	}
 	want := []DayCount{{oct3, 4}, {oct5, 6}}
 	if got := DailyRises(snaps); !reflect.DeepEqual(got, want) {

@@ -53,36 +53,24 @@ func (s *Store) LatestFiles(repo domain.Repo) ([]domain.ReleaseFile, error) {
 	if err != nil || len(byDay) == 0 {
 		return nil, err
 	}
-	return byDay[0].files, nil
+	return byDay[0].Files, nil
 }
 
-// Snapshots answers repo's snapshot of each day from first onwards.
-func (s *Store) Snapshots(repo domain.Repo, first domain.Day) ([]domain.Snapshot, error) {
-	byDay, err := s.filesByDay(`SELECT day, owner, name, release, file, raw FROM release_files
+// History answers repo's release files of each day from first onwards, with
+// GitHub's own counts.
+func (s *Store) History(repo domain.Repo, first domain.Day) ([]domain.DayFiles, error) {
+	return s.filesByDay(`SELECT day, owner, name, release, file, raw FROM release_files
 		WHERE repo = ? AND day >= ? ORDER BY day, release, file`, repoKey(repo), first.String())
-	if err != nil {
-		return nil, err
-	}
-	snaps := make([]domain.Snapshot, len(byDay))
-	for i, d := range byDay {
-		snaps[i] = domain.SnapshotOf(d.day, d.files)
-	}
-	return snaps, nil
-}
-
-type dayFiles struct {
-	day   domain.Day
-	files []domain.ReleaseFile
 }
 
 // filesByDay runs a query ordered by day and groups its rows by day.
-func (s *Store) filesByDay(query string, args ...any) ([]dayFiles, error) {
+func (s *Store) filesByDay(query string, args ...any) ([]domain.DayFiles, error) {
 	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer func() { _ = rows.Close() }()
-	var out []dayFiles
+	var out []domain.DayFiles
 	for rows.Next() {
 		var dayText string
 		var f domain.ReleaseFile
@@ -93,10 +81,10 @@ func (s *Store) filesByDay(query string, args ...any) ([]dayFiles, error) {
 		if err != nil {
 			return nil, err
 		}
-		if n := len(out); n == 0 || out[n-1].day != day {
-			out = append(out, dayFiles{day: day})
+		if n := len(out); n == 0 || out[n-1].Day != day {
+			out = append(out, domain.DayFiles{Day: day})
 		}
-		out[len(out)-1].files = append(out[len(out)-1].files, f)
+		out[len(out)-1].Files = append(out[len(out)-1].Files, f)
 	}
 	return out, rows.Err()
 }

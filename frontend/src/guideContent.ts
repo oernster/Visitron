@@ -80,7 +80,7 @@ export const guideSections: GuideSection[] = [
   {
     heading: 'Rules behind the figures',
     rules: [
-      { title: 'One download of every macOS disk image is yours.', text: 'You download each release\'s .dmg once to confirm notarisation, so Visitron takes one away from every .dmg file and never goes below nothing.' },
+      { title: 'Your own downloads of macOS disk images can be left out.', text: 'If you download each release\'s .dmg yourself, to confirm notarisation say, set how many times under Checking and counting in Settings. Visitron takes that many off every .dmg file, never going below nothing, across the whole history. It is 0 until you set it.' },
       { title: 'Page loads are visitors per page per day.', text: 'GoatCounter reports how many people read each page each day; one person reading a page twice in a day counts once.' },
       { title: 'A website owns the pages under its own address.', text: 'example.com/app/ counts its own pages; example.com counts the rest, so nothing is counted twice.' },
       { title: 'Download history starts at the first check.', text: 'GitHub keeps only a running total, so days before Visitron first checked cannot be filled in.' },

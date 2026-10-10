@@ -89,6 +89,10 @@ type SettingsDTO struct {
 	// GoatCounterSite is the code of the owner's GoatCounter site, "" until
 	// set (Amendment 11).
 	GoatCounterSite string `json:"goatCounterSite"`
+	// SelfDownloads is the owner's own downloads of each macOS disk image,
+	// taken off its count, within MaxSelfDownloads (Amendment 19).
+	SelfDownloads    int `json:"selfDownloads"`
+	MaxSelfDownloads int `json:"maxSelfDownloads"`
 }
 
 // CreditDTO is one open source credit in About (FR-072).

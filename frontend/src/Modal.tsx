@@ -24,10 +24,12 @@ interface Props {
    * the content grows and never drifts as the body reads itself.
    */
   pinnedActions?: boolean
+  /** Whether the dialog lays its content out in columns and so needs more width. */
+  wide?: boolean
   children: ReactNode
 }
 
-export function Modal({ labelId, role, onClose, pinnedActions, children }: Props) {
+export function Modal({ labelId, role, onClose, pinnedActions, wide, children }: Props) {
   const box = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -51,7 +53,7 @@ export function Modal({ labelId, role, onClose, pinnedActions, children }: Props
   return (
     <div className="backdrop">
       <div
-        className={pinnedActions ? 'dialog pinned-actions' : 'dialog'}
+        className={['dialog', pinnedActions && 'pinned-actions', wide && 'wide'].filter(Boolean).join(' ')}
         role={role}
         aria-modal="true"
         aria-labelledby={labelId}

@@ -34,6 +34,23 @@ func TestIntervalRange(t *testing.T) {
 	}
 }
 
+func TestOwnDownloadsRemembered(t *testing.T) {
+	t.Parallel()
+	s, store, _, _, _, _ := settingsFixture()
+	if v, _ := s.View(); v.SelfDownloads != domain.DefaultSelfDownloads {
+		t.Errorf("fresh: %d own downloads; want the default", v.SelfDownloads)
+	}
+	if err := s.SaveSelfDownloads(1); err != nil || store.prefs.SelfDownloads != 1 {
+		t.Errorf("save 1: %v", err)
+	}
+	if err := s.SaveSelfDownloads(domain.MaxSelfDownloads + 1); !errors.Is(err, domain.ErrSelfDownloads) {
+		t.Errorf("save over the top: %v", err)
+	}
+	if store.prefs.SelfDownloads != 1 {
+		t.Error("a refused value replaced the kept one")
+	}
+}
+
 func TestPeriodRemembered(t *testing.T) {
 	t.Parallel()
 	s, store, _, _, _, _ := settingsFixture()

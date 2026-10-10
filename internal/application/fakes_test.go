@@ -215,17 +215,17 @@ func (s *fakeStore) LatestFiles(repo domain.Repo) ([]domain.ReleaseFile, error) 
 	return s.files[strings.ToLower(repo.String())][days[len(days)-1]], nil
 }
 
-func (s *fakeStore) Snapshots(repo domain.Repo, first domain.Day) ([]domain.Snapshot, error) {
-	if err := s.fail("Snapshots"); err != nil {
+func (s *fakeStore) History(repo domain.Repo, first domain.Day) ([]domain.DayFiles, error) {
+	if err := s.fail("History"); err != nil {
 		return nil, err
 	}
-	var snaps []domain.Snapshot
+	var held []domain.DayFiles
 	for _, d := range s.days(repo) {
 		if !d.Before(first) {
-			snaps = append(snaps, domain.SnapshotOf(d, s.files[strings.ToLower(repo.String())][d]))
+			held = append(held, domain.DayFiles{Day: d, Files: s.files[strings.ToLower(repo.String())][d]})
 		}
 	}
-	return snaps, nil
+	return held, nil
 }
 
 func (s *fakeStore) SavePageLoads(_, _ domain.Day, loads []PathDay) error {

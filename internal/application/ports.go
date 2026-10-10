@@ -94,6 +94,10 @@ type Preferences struct {
 	// GoatCounterSite is the code of the owner's GoatCounter site, "" until
 	// it is set in Settings (Amendment 11).
 	GoatCounterSite string
+	// SelfDownloads is the owner's own downloads of each macOS disk image,
+	// taken off its count (Amendment 19). Preferences saved before it existed
+	// read as none.
+	SelfDownloads int
 }
 
 // Site answers the GoatCounter site the preferences name; the zero site when
@@ -126,8 +130,10 @@ type Store interface {
 	SaveFiles(day domain.Day, repo domain.Repo, files []domain.ReleaseFile) error
 	// LatestFiles lists the most recent release files of repo.
 	LatestFiles(repo domain.Repo) ([]domain.ReleaseFile, error)
-	// Snapshots lists repo's kept snapshots from first onwards, in day order.
-	Snapshots(repo domain.Repo, first domain.Day) ([]domain.Snapshot, error)
+	// History lists repo's release files as read on each day from first
+	// onwards, in day order, with GitHub's own counts. Counting them is the
+	// figures service's job, since what is taken off is a setting.
+	History(repo domain.Repo, first domain.Day) ([]domain.DayFiles, error)
 
 	// SavePageLoads replaces the page loads held for the days covered.
 	SavePageLoads(first, last domain.Day, loads []PathDay) error

@@ -29,7 +29,7 @@ func TestLiveRepository(t *testing.T) {
 		t.Fatalf("files %d err %v", len(files), err)
 	}
 	for _, f := range files {
-		t.Logf("%s %s raw %d counted %d %s", f.Release, f.Name, f.Raw, f.Counted(), f.Platform())
+		t.Logf("%s %s raw %d counted %d %s", f.Release, f.Name, f.Raw, f.Counted(domain.DefaultSelfDownloads), f.Platform())
 	}
 	missing := domain.Repo{Owner: repo.Owner, Name: "no-such-repo-xyz"}
 	if ok, err := c.Exists(context.Background(), missing); ok || err != nil {

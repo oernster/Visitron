@@ -24,6 +24,15 @@
   scrolling: the inner body is the scroller, which is also the surface the
   self-reading cycle drives, so the buttons never drift as it reads.
 */
+/*
+  A dialog laid out in columns (Settings) takes most of the window instead of
+  the reading width the others keep, so its groups can sit side by side.
+*/
+.dialog.wide {
+  width: min(960px, 92vw);
+  max-width: none;
+}
+
 .dialog.pinned-actions {
   display: flex;
   flex-direction: column;

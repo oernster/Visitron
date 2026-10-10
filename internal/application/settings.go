@@ -11,6 +11,7 @@ var DefaultPreferences = Preferences{
 	IntervalHours: domain.DefaultIntervalHours,
 	Period:        domain.DefaultPeriod,
 	UpdateCheck:   true,
+	SelfDownloads: domain.DefaultSelfDownloads,
 }
 
 // Preferred answers the saved preferences, else the defaults.
@@ -81,6 +82,15 @@ func (s *Settings) SavePeriod(days int) error {
 		return err
 	}
 	return s.change(func(p *Preferences) { p.Period = period })
+}
+
+// SaveSelfDownloads keeps the owner's own downloads of each macOS disk image,
+// taken off its count from then on and across the history kept (Amendment 19).
+func (s *Settings) SaveSelfDownloads(n int) error {
+	if err := domain.ValidSelfDownloads(n); err != nil {
+		return err
+	}
+	return s.change(func(p *Preferences) { p.SelfDownloads = n })
 }
 
 // SaveUpdateCheck turns the update check on or off (FR-075).

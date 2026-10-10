@@ -164,6 +164,62 @@ main.split {
   padding-left: 20px;
 }
 
+/* The heading over a secret's steps, quieter than the group's legend. */
+.secret-steps-title {
+  margin: 10px 0 2px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/*
+  Settings in groups (Amendment 19), ported from TimeRibbon's fieldsets: two
+  columns where the dialog is wide enough, one where it is not. Columns rather
+  than grid rows, because the groups differ in height: rows left a hole under
+  the shorter group of each pair, while columns stack each group straight under
+  the one before. Reading order (so the ring too) runs down the left column
+  and then down the right. Each group leaves its controls room for their rings
+  inside its border.
+*/
+.settings-groups {
+  columns: 2 380px;
+  column-gap: 16px;
+}
+
+.settings-group {
+  break-inside: avoid;
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 8px 14px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.settings-group legend {
+  padding: 0 4px;
+  font-weight: 600;
+}
+
+/*
+  A switch on a line of its own, its box beside its words. The margins collapse
+  into one gap between two switches, the same gap a field keeps from the next,
+  which is well clear of both rings.
+*/
+.settings-group .check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+/* A number of a few digits needs a short box, not the column's whole width. */
+.settings-group input[type='number'] {
+  max-width: 8em;
+}
+
+.settings-group .field:last-of-type {
+  margin-bottom: 6px;
+}
+
 /* The detail side while nothing is selected (Amendment 9). It sticks to the
    top of the scroller and is exactly as tall as the visible part of it, so the
    mark and the words stay centred in view however long the list beside them

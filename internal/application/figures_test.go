@@ -10,22 +10,22 @@ import (
 func figuresFixture() (*Figures, *fakeStore, *fakeClock, int64, int64) {
 	store := newStore()
 	clock := &fakeClock{now: at(2026, 10, 9, 12)}
-	hub, _ := domain.Normalise("ernster.dev")
-	wd, _ := domain.Normalise("ernster.dev/WhatDay/")
+	hub, _ := domain.Normalise("example.com")
+	wd, _ := domain.Normalise("example.com/App/")
 	hubID, _ := store.AddWebsite(Website{Address: hub})
-	wdRepo := domain.Repo{Owner: "someone", Name: "WhatDay"}
+	wdRepo := domain.Repo{Owner: "someone", Name: "App"}
 	wdID, _ := store.AddWebsite(Website{Address: wd, Repos: []domain.Repo{wdRepo}})
 	day := func(d int) domain.Day { return domain.Day{Year: 2026, Month: 10, Date: d} }
 	file := func(raw int) []domain.ReleaseFile {
-		return []domain.ReleaseFile{{Repo: wdRepo, Release: "v1", Name: "WhatDaySetup.exe", Raw: raw}}
+		return []domain.ReleaseFile{{Repo: wdRepo, Release: "v1", Name: "AppSetup.exe", Raw: raw}}
 	}
 	_ = store.SaveFiles(day(7), wdRepo, file(10))
 	_ = store.SaveFiles(day(8), wdRepo, file(12))
 	_ = store.SaveFiles(day(9), wdRepo, file(15))
 	store.loads = []PathDay{
-		{Path: "ernster.dev/index.html", Day: day(8), Count: 3},
-		{Path: "ernster.dev/WhatDay/index.html", Day: day(8), Count: 5},
-		{Path: "ernster.dev/WhatDay/", Day: day(9), Count: 2},
+		{Path: "example.com/index.html", Day: day(8), Count: 3},
+		{Path: "example.com/App/index.html", Day: day(8), Count: 5},
+		{Path: "example.com/App/", Day: day(9), Count: 2},
 		{Path: "elsewhere.com/", Day: day(9), Count: 99},
 	}
 	return NewFigures(store, clock), store, clock, hubID, wdID
@@ -43,7 +43,7 @@ func TestOverviewSeparatesSubSites(t *testing.T) {
 		t.Errorf("hub %+v", hub)
 	}
 	if wd.PageLoads != 7 || wd.TotalDownloads != 15 || wd.Downloads != 5 || wd.SinceLastCheck != 3 {
-		t.Errorf("WhatDay %+v; want loads 7, total 15, period 5, since last 3", wd)
+		t.Errorf("App %+v; want loads 7, total 15, period 5, since last 3", wd)
 	}
 }
 
@@ -68,7 +68,7 @@ func TestCountedSinceNamesAHistoryShorterThanThePeriod(t *testing.T) {
 	if _, ok, err := f.CountedSince(domain.Period(2)); ok || err != nil {
 		t.Errorf("two days from a snapshot on the day before: ok %v err %v; want covered whole", ok, err)
 	}
-	store.failOn = "Snapshots"
+	store.failOn = "History"
 	if _, _, err := f.CountedSince(domain.Week); !errors.Is(err, errPlanted) {
 		t.Errorf("snapshot fault: %v", err)
 	}
@@ -108,9 +108,43 @@ func TestDetailFillsEveryDay(t *testing.T) {
 	}
 }
 
+func TestOwnDownloadsAreTakenOffEachDiskImageAsSet(t *testing.T) {
+	t.Parallel()
+	for _, c := range []struct {
+		self, total, rise int
+	}{
+		{domain.DefaultSelfDownloads, 3, 3},
+		{1, 2, 2},
+	} {
+		store := newStore()
+		repo := domain.Repo{Owner: "someone", Name: "App"}
+		site, _ := domain.Normalise("example.com")
+		id, _ := store.AddWebsite(Website{Address: site, Repos: []domain.Repo{repo}})
+		dmg := func(raw int) []domain.ReleaseFile {
+			return []domain.ReleaseFile{{Repo: repo, Release: "v1", Name: "App.dmg", Raw: raw}}
+		}
+		_ = store.SaveFiles(domain.Day{Year: 2026, Month: 10, Date: 8}, repo, dmg(0))
+		_ = store.SaveFiles(domain.Day{Year: 2026, Month: 10, Date: 9}, repo, dmg(3))
+		prefs := DefaultPreferences
+		prefs.SelfDownloads = c.self
+		store.prefs = &prefs
+		f := NewFigures(store, &fakeClock{now: at(2026, 10, 9, 12)})
+		d, err := f.Detail(id, domain.Week)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := d.Totals.All; got != c.total {
+			t.Errorf("own downloads %d: total %d; want %d", c.self, got, c.total)
+		}
+		if got := d.DailyDownloads[len(d.DailyDownloads)-1].Count; got != c.rise {
+			t.Errorf("own downloads %d: the 9th rose %d; want %d", c.self, got, c.rise)
+		}
+	}
+}
+
 func TestFiguresFaults(t *testing.T) {
 	t.Parallel()
-	for _, op := range []string{"Websites", "PageLoads", "LatestFiles", "Snapshots"} {
+	for _, op := range []string{"Websites", "PageLoads", "Preferences", "LatestFiles", "History"} {
 		f, store, _, _, wdID := figuresFixture()
 		store.failOn = op
 		if _, err := f.Overview(domain.Week); !errors.Is(err, errPlanted) {

@@ -109,12 +109,14 @@ func TestFilesBySnapshot(t *testing.T) {
 	if err != nil || len(latest) != 2 || latest[0].Raw != 3 || latest[0].Repo != sym {
 		t.Fatalf("latest %+v err %v; a later save on a day replaces it", latest, err)
 	}
-	snaps, err := s.Snapshots(sym, oct8)
-	if err != nil || len(snaps) != 2 || snaps[0].Day != oct8 || snaps[1].Counts[latest[0].FileKey()] != 2 {
-		t.Fatalf("snapshots %+v err %v", snaps, err)
+	// The history keeps GitHub's own counts; nothing is taken off a disk image
+	// until it is counted, since how much is a setting (Amendment 19).
+	held, err := s.History(sym, oct8)
+	if err != nil || len(held) != 2 || held[0].Day != oct8 || held[1].Files[0].Name != "SymDiary.dmg" || held[1].Files[0].Raw != 3 {
+		t.Fatalf("history %+v err %v", held, err)
 	}
-	if snaps, _ := s.Snapshots(sym, oct9); len(snaps) != 1 {
-		t.Errorf("from the 9th: %d snapshots", len(snaps))
+	if held, _ := s.History(sym, oct9); len(held) != 1 {
+		t.Errorf("from the 9th: %d days", len(held))
 	}
 	if none, err := s.LatestFiles(domain.Repo{Owner: "x", Name: "y"}); none != nil || err != nil {
 		t.Errorf("unknown repo: %v %v", none, err)
@@ -238,7 +240,7 @@ func TestClosedFileRefusesEverything(t *testing.T) {
 	_, e1 := s.Websites()
 	_, e2 := s.AddWebsite(w)
 	_, e4 := s.LatestFiles(sym)
-	_, e5 := s.Snapshots(sym, oct9)
+	_, e5 := s.History(sym, oct9)
 	_, e6 := s.PageLoads(oct9, oct9)
 	_, _, e7 := s.Preferences()
 	_, e8 := s.CheckRecord()
@@ -259,7 +261,7 @@ func TestUnavailableRefusesEverything(t *testing.T) {
 	_, e1 := u.Websites()
 	_, e2 := u.AddWebsite(application.Website{})
 	_, e4 := u.LatestFiles(sym)
-	_, e5 := u.Snapshots(sym, oct9)
+	_, e5 := u.History(sym, oct9)
 	_, e6 := u.PageLoads(oct9, oct9)
 	_, _, e7 := u.Preferences()
 	_, e8 := u.CheckRecord()

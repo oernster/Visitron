@@ -2,11 +2,6 @@ package domain
 
 import "strings"
 
-// SelfDownloadAllowance is the number of downloads the owner makes himself of
-// every .dmg release file, once per release to confirm notarisation. It is
-// fixed, not a setting (decided 2026-10-09).
-const SelfDownloadAllowance = 1
-
 // Platform is the operating system a release file is for.
 type Platform string
 
@@ -41,11 +36,13 @@ func PlatformOf(fileName string) Platform {
 	return Other
 }
 
-// Counted is a release file's downloads less the self-download allowance when
-// it is a .dmg, never below zero (FR-021).
-func Counted(fileName string, raw int) int {
+// Counted is a release file's downloads less selfDownloads when it is a .dmg,
+// never below zero (FR-021, Amendment 19). selfDownloads is the owner's own
+// downloads of each disk image, as set in Settings; a value below none is read
+// as none, so a damaged setting can never add downloads.
+func Counted(fileName string, raw, selfDownloads int) int {
 	if strings.HasSuffix(strings.ToLower(fileName), dmgExt) {
-		raw -= SelfDownloadAllowance
+		raw -= max(selfDownloads, MinSelfDownloads)
 	}
 	return max(raw, 0)
 }
@@ -58,8 +55,8 @@ type ReleaseFile struct {
 	Raw     int
 }
 
-// Counted is this file's counted downloads.
-func (f ReleaseFile) Counted() int { return Counted(f.Name, f.Raw) }
+// Counted is this file's counted downloads, less selfDownloads on a .dmg.
+func (f ReleaseFile) Counted(selfDownloads int) int { return Counted(f.Name, f.Raw, selfDownloads) }
 
 // Platform is this file's platform.
 func (f ReleaseFile) Platform() Platform { return PlatformOf(f.Name) }
@@ -77,16 +74,17 @@ type Totals struct {
 	ByPlatform map[Platform]int
 }
 
-// Total sums the counted downloads of files. Releases are keyed owner/name
-// then the release tag, so two repos with the same tag stay apart.
-func Total(files []ReleaseFile) Totals {
+// Total sums the counted downloads of files, less selfDownloads on each .dmg.
+// Releases are keyed owner/name then the release tag, so two repos with the
+// same tag stay apart.
+func Total(files []ReleaseFile, selfDownloads int) Totals {
 	t := Totals{
 		ByRepo:     map[string]int{},
 		ByRelease:  map[string]int{},
 		ByPlatform: map[Platform]int{},
 	}
 	for _, f := range files {
-		n := f.Counted()
+		n := f.Counted(selfDownloads)
 		t.All += n
 		t.ByRepo[f.Repo.String()] += n
 		t.ByRelease[f.Repo.String()+pathSep+f.Release] += n

@@ -922,3 +922,32 @@ PigeonPost's Help menu the one ported. It replaces the Guide's way to About
 - Amendment 5: Check for updates in the Help menu runs the check asked for,
   which reports every outcome. Verified by
   `App.test.tsx::checks for updates from the Help menu and names the product in the offer`.
+
+**Amendment 19 (2026-10-10): own downloads are a setting; Settings is
+grouped.** Ruled by the owner on 2026-10-10. Visitron is released for anyone,
+so it cannot assume every owner downloads each disk image once; and Settings
+had grown too dense to read in one column.
+
+- FR-021, A-3, section 3.11: the downloads taken off each `.dmg` file are the
+  owner's own downloads of each disk image, a setting from 0 to 10, 0 until it
+  is set; a stored value below 0 counts as 0, so a damaged setting can never
+  add downloads. The store keeps GitHub's own counts and the figures service
+  counts them when it reads, so a change applies to the whole history at once.
+  Preferences saved before the setting existed read as 0. Verified by
+  `internal/domain/figures_test.go::TestSelfDownloadAllowance`,
+  `internal/domain/figures_test.go::TestSelfDownloadsRange`,
+  `internal/application/figures_test.go::TestOwnDownloadsAreTakenOffEachDiskImageAsSet`,
+  `internal/application/settings_test.go::TestOwnDownloadsRemembered` and
+  `internal/infrastructure/store/store_test.go::TestFilesBySnapshot`.
+- FR-060: Settings is wider than the other dialogs and groups its settings by
+  what they feed, each group a fieldset with its legend: Page loads:
+  GoatCounter; Downloads: GitHub; Checking and counting (the interval and the
+  own downloads); Visitron (start with Windows, the update check). The groups
+  sit two to a row where the window allows. In a key's group the boxes come
+  first, with Save and Remove beside the box, then the steps to get the key; a
+  save's result is said in that group. Verified by
+  `SettingsDialog.test.tsx::groups the settings by what they feed, in a wide dialog`,
+  `SettingsDialog.test.tsx::says what a save found in the group of the secret saved` and
+  `SettingsDialog.test.tsx::saves your own downloads of each disk image within their bounds, starting at none`.
+- FR-071: the Guide's rule on disk images says the own downloads are set in
+  Settings and are 0 until set.

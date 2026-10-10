@@ -84,6 +84,9 @@ export interface Settings {
   gitHubTokenSet: boolean
   /** The code of the owner's GoatCounter site; '' until set (Amendment 11). */
   goatCounterSite: string
+  /** The owner's own downloads of each macOS disk image, taken off its count (Amendment 19). */
+  selfDownloads: number
+  maxSelfDownloads: number
 }
 
 export interface Credit {
@@ -128,6 +131,7 @@ interface Bridge {
   SavePeriod(days: number): Promise<void>
   SaveUpdateCheck(on: boolean): Promise<void>
   SaveStartWithWindows(on: boolean): Promise<void>
+  SaveSelfDownloads(n: number): Promise<void>
   SaveSecret(which: SecretName, value: string): Promise<string>
   Secret(which: SecretName): Promise<string>
   SaveGoatCounterSite(text: string): Promise<string>
@@ -219,6 +223,7 @@ export const api = {
   saveUpdateCheck: (on: boolean, refused: Refused) => act((b) => b.SaveUpdateCheck(on), refused),
   saveStartWithWindows: (on: boolean, refused: Refused) =>
     act((b) => b.SaveStartWithWindows(on), refused),
+  saveSelfDownloads: (n: number, refused: Refused) => act((b) => b.SaveSelfDownloads(n), refused),
   saveSecret: (which: SecretName, value: string, refused: Refused) =>
     ask((b) => b.SaveSecret(which, value), refused),
   secret: (which: SecretName, refused: Refused) => ask((b) => b.Secret(which), refused),

@@ -178,7 +178,15 @@ func (a *App) Settings() (settings SettingsDTO, err error) {
 		UpdateCheck: v.UpdateCheck, StartWithWindows: v.StartWithWindows,
 		GoatCounterSet: v.GoatCounterSet, GitHubTokenSet: v.GitHubTokenSet,
 		GoatCounterSite: v.GoatCounterSite,
+		SelfDownloads:   v.SelfDownloads, MaxSelfDownloads: domain.MaxSelfDownloads,
 	}, nil
+}
+
+// SaveSelfDownloads keeps the owner's own downloads of each macOS disk image
+// (Amendment 19).
+func (a *App) SaveSelfDownloads(n int) (err error) {
+	defer guard(&err)
+	return a.services.Settings.SaveSelfDownloads(n)
 }
 
 // SaveGoatCounterSite keeps the owner's GoatCounter site, typed as its code

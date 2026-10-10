@@ -31,8 +31,8 @@ func (u Unavailable) SaveFiles(domain.Day, domain.Repo, []domain.ReleaseFile) er
 // LatestFiles refuses.
 func (u Unavailable) LatestFiles(domain.Repo) ([]domain.ReleaseFile, error) { return nil, u.Reason }
 
-// Snapshots refuses.
-func (u Unavailable) Snapshots(domain.Repo, domain.Day) ([]domain.Snapshot, error) {
+// History refuses.
+func (u Unavailable) History(domain.Repo, domain.Day) ([]domain.DayFiles, error) {
 	return nil, u.Reason
 }
 

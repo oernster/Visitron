@@ -25,6 +25,28 @@ func ValidInterval(hours int) error {
 	return nil
 }
 
+// The bounds of the owner's own downloads of each macOS disk image, taken off
+// its count (Amendment 19). None is the default, since most owners download
+// nothing of their own; the top is a guard against a slip of the finger
+// emptying every disk image's count, not a measured limit.
+const (
+	MinSelfDownloads     = 0
+	MaxSelfDownloads     = 10
+	DefaultSelfDownloads = MinSelfDownloads
+)
+
+// ErrSelfDownloads refuses an own-download count outside its bounds.
+var ErrSelfDownloads = fmt.Errorf("your own downloads of each disk image are a whole number from %d to %d",
+	MinSelfDownloads, MaxSelfDownloads)
+
+// ValidSelfDownloads accepts an own-download count, else refuses it.
+func ValidSelfDownloads(n int) error {
+	if n < MinSelfDownloads || n > MaxSelfDownloads {
+		return ErrSelfDownloads
+	}
+	return nil
+}
+
 // Period is a span of days the window reports over (FR-043).
 type Period int
 

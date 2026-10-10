@@ -174,6 +174,42 @@ describe('the settings', () => {
     expect(bridge.SaveStartWithWindows).toHaveBeenCalledWith(true)
   })
 
+  it('groups the settings by what they feed, in a wide dialog', async () => {
+    installBridge()
+    dialog()
+    await screen.findByText('GoatCounter API key: not set')
+    const legends = Array.from(document.querySelectorAll('fieldset > legend')).map((l) => l.textContent)
+    expect(legends).toEqual(['Page loads: GoatCounter', 'Downloads: GitHub', 'Checking and counting', 'Visitron'])
+    expect(screen.getByRole('dialog', { name: 'Settings' })).toHaveClass('wide')
+    const counting = screen.getByText('Checking and counting').closest('fieldset') as HTMLElement
+    expect(counting).toContainElement(screen.getByRole('spinbutton', { name: 'Check every (hours)' }))
+    expect(counting).toContainElement(
+      screen.getByRole('spinbutton', { name: 'Your own downloads of each macOS disk image' }),
+    )
+  })
+
+  it('says what a save found in the group of the secret saved', async () => {
+    installBridge({ SaveSecret: vi.fn(() => Promise.resolve('')) })
+    dialog()
+    await screen.findByText('GoatCounter API key: not set')
+    fireEvent.change(keyBox(), { target: { value: 'key' } })
+    fireEvent.click(button(keyField(), 'Save'))
+    const said = await screen.findByText('Saved; it works.')
+    expect(said.closest('fieldset')).toHaveTextContent('Page loads: GoatCounter')
+  })
+
+  it('saves your own downloads of each disk image within their bounds, starting at none', async () => {
+    const bridge = installBridge({ SaveSelfDownloads: vi.fn(() => Promise.resolve()) })
+    dialog()
+    const own = await screen.findByRole('spinbutton', { name: 'Your own downloads of each macOS disk image' })
+    expect(own).toHaveValue(0)
+    expect(own).toHaveAttribute('min', '0')
+    expect(own).toHaveAttribute('max', '10')
+    fireEvent.change(own, { target: { value: '1' } })
+    await waitFor(() => expect(bridge.SaveSelfDownloads).toHaveBeenCalledWith(1))
+    await waitFor(() => expect(bridge.Settings).toHaveBeenCalledTimes(2))
+  })
+
   it('leaves the interval alone when the save is refused', async () => {
     const bridge = installBridge({ SaveInterval: vi.fn(() => Promise.reject('out of range')) })
     const { refused } = dialog()

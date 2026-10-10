@@ -31,11 +31,19 @@ type Snapshot struct {
 	Counts map[string]int
 }
 
-// SnapshotOf takes the counted downloads of files as a snapshot on day.
-func SnapshotOf(day Day, files []ReleaseFile) Snapshot {
+// DayFiles is the release files of one repo as read at a check on Day, with
+// GitHub's own counts; nothing is taken off them until they are counted.
+type DayFiles struct {
+	Day   Day
+	Files []ReleaseFile
+}
+
+// SnapshotOf takes the counted downloads of files as a snapshot on day, less
+// selfDownloads on each .dmg.
+func SnapshotOf(day Day, files []ReleaseFile, selfDownloads int) Snapshot {
 	counts := make(map[string]int, len(files))
 	for _, f := range files {
-		counts[f.FileKey()] = f.Counted()
+		counts[f.FileKey()] = f.Counted(selfDownloads)
 	}
 	return Snapshot{Day: day, Counts: counts}
 }

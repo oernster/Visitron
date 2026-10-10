@@ -151,6 +151,7 @@ func TestSettingsRoundTrip(t *testing.T) {
 		r.app.SavePeriod(int(domain.Week)),
 		r.app.SaveUpdateCheck(false),
 		r.app.SaveStartWithWindows(true),
+		r.app.SaveSelfDownloads(1),
 	}
 	for i, err := range steps {
 		if err != nil {
@@ -169,7 +170,7 @@ func TestSettingsRoundTrip(t *testing.T) {
 	}
 	want := SettingsDTO{IntervalHours: domain.MinIntervalHours, MinInterval: domain.MinIntervalHours,
 		MaxInterval: domain.MaxIntervalHours, StartWithWindows: true, GoatCounterSet: true,
-		GoatCounterSite: "someone"}
+		GoatCounterSite: "someone", SelfDownloads: 1, MaxSelfDownloads: domain.MaxSelfDownloads}
 	if s != want {
 		t.Fatalf("settings = %+v, want %+v", s, want)
 	}
