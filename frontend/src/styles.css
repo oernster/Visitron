@@ -100,10 +100,16 @@ textarea:enabled:focus-visible {
   outline-offset: 2px;
 }
 
+/*
+  The shell is exactly the window's height, so the document never scrolls: the
+  band, the problem line and the status line are fixed furniture and main below
+  them is the one scroller. A shell allowed to grow past the window made the
+  body the scroller, which carried the band away with the content.
+*/
 .shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 /*
@@ -206,7 +212,18 @@ textarea:enabled:focus-visible {
 
 main {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 0 16px 24px;
+}
+
+/*
+  main is a pane, not a control: while it overflows the engine makes it a
+  keyboard stop of its own; it must paint nothing while it is one.
+*/
+main:focus,
+main:focus-visible {
+  outline: none;
 }
 
 .pane {
