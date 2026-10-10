@@ -57,12 +57,12 @@ describe('the menu, opening', () => {
     expect(shown()).toBeNull()
   })
 
-  it('heads the dropdown with its name and draws the divider', () => {
+  it('draws no heading repeating the trigger, only the entries and the divider', () => {
     renderMenu()
     fireEvent.click(trigger())
     const menu = shown() as HTMLElement
-    expect(menu.querySelector('.menu-header')).toHaveTextContent('Help')
-    expect(menu.querySelector('.menu-header')).toHaveAttribute('aria-hidden', 'true')
+    expect(menu.firstElementChild).toBe(entry('First'))
+    expect(menu).not.toHaveTextContent('Help')
     expect(screen.getByRole('separator')).toHaveClass('menu-sep')
   })
 })

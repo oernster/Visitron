@@ -240,7 +240,7 @@ describe('the band', () => {
     expect(within(menu).getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
       'Guide', 'About Visitron', 'Licence', 'Check for updates',
     ])
-    expect(menu.children[2]).toHaveAttribute('role', 'separator')
+    expect(menu.children[1]).toHaveAttribute('role', 'separator')
   })
 
   it('opens the Guide from the Help menu and closes the menu as it does', async () => {

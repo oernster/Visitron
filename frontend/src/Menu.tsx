@@ -33,7 +33,10 @@ function leaves(key: string): boolean {
 }
 
 interface Props {
-  /** The trigger's label, also the heading the open dropdown carries. */
+  /**
+   * The trigger's label, also the dropdown's accessible name. It is not drawn
+   * as a heading: the trigger already says it, right above the dropdown.
+   */
   label: string
   icon: string
   items: MenuItem[]
@@ -139,9 +142,6 @@ export function Menu({ label, icon, items }: Props) {
       </button>
       {open && (
         <div className="menu-dropdown" role="menu" aria-label={label} ref={dropdown} onKeyDown={onDropdownKey}>
-          <div className="menu-header" aria-hidden="true">
-            {label}
-          </div>
           {items.map((item, i) =>
             'separator' in item ? (
               <div key={i} className="menu-sep" role="separator" />

@@ -36,14 +36,6 @@
   border-radius: 8px;
 }
 
-/* The open dropdown's heading, naming the menu its trigger stands for. */
-.menu-header {
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-}
-
 .menu-item {
   width: 100%;
   padding: 6px 12px;

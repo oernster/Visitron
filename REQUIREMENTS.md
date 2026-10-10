@@ -894,8 +894,9 @@ PigeonPost's Help menu the one ported. It replaces the Guide's way to About
 (FR-072) and About's way to the update check (Amendment 5).
 
 - FR-040, FR-071: the Help band button keeps its picture and label but opens a
-  menu headed "Help", holding in order the Guide, a divider, About Visitron,
-  Licence and Check for updates. Choosing an entry closes the menu and opens
+  menu holding in order the Guide, a divider, About Visitron, Licence and
+  Check for updates. The dropdown carries no heading: the trigger right above
+  it already says Help. Choosing an entry closes the menu and opens
   its dialog. Verified by
   `App.test.tsx::lists the Help menu as Amendment 18 states: Guide first, then About, Licence and the check` and
   `App.test.tsx::opens the Guide from the Help menu and closes the menu as it does`.
