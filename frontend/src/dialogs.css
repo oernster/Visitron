@@ -9,6 +9,7 @@
 }
 
 .dialog {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -74,6 +75,31 @@
 .crest {
   width: 72px;
   height: 72px;
+}
+
+/* The close cross in a dialog's top-right corner (Amendment 10), ported from
+   PigeonPost. It turns the danger colour under the mouse, as a window's own
+   close button does. */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.modal-close:enabled:hover {
+  background: var(--danger);
+  color: var(--on-danger);
 }
 
 .credits {

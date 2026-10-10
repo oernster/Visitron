@@ -1,10 +1,11 @@
 // The close choice (FR-050, Amendment 4), ported from PigeonPost: the window's
 // close button asks whether to keep Visitron running in the tray or to quit.
-// Dismissing it (Escape) cancels the close and leaves the window open, so an
-// accidental click costs nothing.
+// Dismissing it (Escape or the cross, Amendment 10) cancels the close and
+// leaves the window open, so an accidental click costs nothing.
 
 import { useState } from 'react'
 import { Modal } from './Modal'
+import { ModalClose } from './ModalClose'
 
 interface Props {
   onMinimise: () => void
@@ -45,6 +46,7 @@ export function CloseChoiceDialog({ onMinimise, onQuit, onCancel }: Props) {
           Quit
         </button>
       </div>
+      <ModalClose onClose={onCancel} />
     </Modal>
   )
 }

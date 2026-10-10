@@ -26,6 +26,18 @@ describe('the close choice', () => {
     expect(onCancel).toHaveBeenCalled()
   })
 
+  it('cancels on its cross, once per click, from the mouse or the keyboard', () => {
+    const { onCancel, onQuit, onMinimise } = dialog()
+    const cross = screen.getByRole('button', { name: 'Close' })
+    fireEvent.mouseDown(cross)
+    fireEvent.click(cross, { detail: 1 })
+    expect(onCancel).toHaveBeenCalledTimes(1)
+    fireEvent.click(cross, { detail: 0 })
+    expect(onCancel).toHaveBeenCalledTimes(2)
+    expect(onQuit).not.toHaveBeenCalled()
+    expect(onMinimise).not.toHaveBeenCalled()
+  })
+
   it('warns of open work and opens on Go back', () => {
     const work = document.createElement('div')
     work.className = 'dialog'

@@ -768,3 +768,11 @@ the owner on 2026-10-10 after the first run with both secrets set.
   `EmptyPane.test.tsx::says nothing of Settings once both secrets are set; asks for a website when there is none` and
   `App.test.tsx::shows the selected website in detail and enables Edit and Delete`.
 
+**Amendment 10 (2026-10-10): the close choice has a cross.** Ruled by the owner
+on 2026-10-10. FR-050's close choice gains a window-style close cross in its
+top-right corner, ported from PigeonPost; it cancels exactly as Escape does,
+leaving the window open. It comes last in the dialog's order, so the choice
+still opens on its safe answer. Verified by
+`CloseChoiceDialog.test.tsx::cancels on its cross, once per click, from the mouse or the keyboard` and
+`CloseChoiceDialog.test.tsx::opens on Minimise to tray, so a stray Enter never quits`.
+
