@@ -64,7 +64,7 @@ is lost.
 | `./installer` | 69 | The Wails runtime beneath the setup facade. |
 | `internal/infrastructure/setup` | 63 | The registry and shortcut writes need a real profile. |
 | `internal/infrastructure/windowfocus` | 27 | Win32 calls against a real window; the portable half alone. |
-| `internal/infrastructure/tray` | 5 | Win32 calls against a real desktop; the portable half alone. |
+| `internal/infrastructure/tray` | 4 | Win32 calls against a real desktop; the portable half alone. |
 
 Not gated: `internal/product` (constants), `internal/licence` (compared with
 `LICENSE` by `tests/structural`), `internal/infrastructure/setup/setuptest`

@@ -67,7 +67,12 @@ var (
 	procGetCursorPos        = moduser32.NewProc("GetCursorPos")
 	procLoadIcon            = moduser32.NewProc("LoadIconW")
 	procSetForegroundWindow = moduser32.NewProc("SetForegroundWindow")
+	procRegisterWindowMsg   = moduser32.NewProc("RegisterWindowMessageW")
 )
+
+// taskbarCreatedMessage is the message the shell broadcasts to every top-level
+// window when the taskbar starts again; it has forgotten every icon by then.
+const taskbarCreatedMessage = "TaskbarCreated"
 
 // notifyIconData mirrors NOTIFYICONDATAW. cbSize is set to the whole structure so
 // the shell treats it as the modern version.

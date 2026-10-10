@@ -28,6 +28,9 @@ type Tray struct {
 	started  sync.Once
 	stopped  sync.Once
 	ready    chan error
+	// taskbarCreated is the shell's TaskbarCreated message, on which the icon
+	// is added again; zero where it could not be registered.
+	taskbarCreated uint32
 }
 
 // New builds a tray; Start shows it.
@@ -86,6 +89,7 @@ func (t *Tray) run() {
 }
 
 func (t *Tray) create() error {
+	t.registerTaskbarCreated()
 	instance, _, _ := procGetModuleHandle.Call(0)
 	name, err := windows.UTF16PtrFromString(className)
 	if err != nil {
@@ -103,13 +107,37 @@ func (t *Tray) create() error {
 	}
 	t.window = windows.HWND(handle)
 	t.icon = ownIcon()
-	data := t.iconData()
-	if ret, _, callErr := procShellNotifyIcon.Call(nimAdd, uintptr(unsafe.Pointer(&data))); ret == 0 {
+	if err := t.addIcon(); err != nil {
 		_, _, _ = procDestroyWindow.Call(handle)
 		t.window = 0
-		return fmt.Errorf("adding the tray icon: %w", callErr)
+		return err
 	}
 	t.posted.Store(handle)
+	return nil
+}
+
+// registerTaskbarCreated learns the shell's TaskbarCreated message, so the
+// icon comes back when Explorer restarts rather than leaving a process the
+// owner cannot reach. Without it the icon still shows; it is only not restored.
+func (t *Tray) registerTaskbarCreated() {
+	name, err := windows.UTF16PtrFromString(taskbarCreatedMessage)
+	if err != nil {
+		return
+	}
+	message, _, callErr := procRegisterWindowMsg.Call(uintptr(unsafe.Pointer(name)))
+	if message == 0 {
+		fmt.Fprintf(os.Stderr, "registering %s: %v\n", taskbarCreatedMessage, callErr)
+		return
+	}
+	t.taskbarCreated = uint32(message)
+}
+
+// addIcon puts the icon in the notification area.
+func (t *Tray) addIcon() error {
+	data := t.iconData()
+	if ret, _, callErr := procShellNotifyIcon.Call(nimAdd, uintptr(unsafe.Pointer(&data))); ret == 0 {
+		return fmt.Errorf("adding the tray icon: %w", callErr)
+	}
 	return nil
 }
 
@@ -145,6 +173,12 @@ func (t *Tray) destroy() {
 }
 
 func (t *Tray) windowProc(hwnd windows.HWND, message uint32, wParam, lParam uintptr) uintptr {
+	if t.taskbarCreated != 0 && message == t.taskbarCreated {
+		if err := t.addIcon(); err != nil {
+			fmt.Fprintf(os.Stderr, "restoring the tray icon after the taskbar restarted: %v\n", err)
+		}
+		return 0
+	}
 	switch message {
 	case wmTrayCallback:
 		switch lParam {

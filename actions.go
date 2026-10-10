@@ -90,19 +90,10 @@ func (a *App) Detail(id int64) (detail DetailDTO, err error) {
 	if err != nil {
 		return DetailDTO{}, err
 	}
-	platforms := map[string]int{}
-	for p, n := range d.Totals.ByPlatform {
-		platforms[string(p)] = n
-	}
-	byPlatform := []NamedCountDTO{}
-	for _, p := range domain.Platforms {
-		if n, ok := platforms[string(p)]; ok {
-			byPlatform = append(byPlatform, NamedCountDTO{Name: string(p), Count: n})
-		}
-	}
 	return DetailDTO{
 		ID: id, URL: d.Website.Address.URL(), Total: d.Totals.All,
-		ByRepo: named(d.Totals.ByRepo), ByRelease: named(d.Totals.ByRelease), ByPlatform: byPlatform,
+		ByRepo: named(d.Totals.ByRepo), ByRelease: named(d.Totals.ByRelease),
+		ByPlatform:     platformCounts(d.Totals.ByPlatform),
 		DailyPageLoads: days(d.DailyPageLoads), DailyDownloads: days(d.DailyDownloads),
 	}, nil
 }
@@ -304,11 +295,27 @@ func repoNames(repos []domain.Repo) []string {
 	return out
 }
 
-// named sorts totals largest first, then by name, for a stable table.
+// platformCounts lists the platforms in the domain's order. A platform with no
+// counted downloads is left out, as a .dmg brought to none by the owner's own
+// downloads would otherwise stand as a row of 0.
+func platformCounts(counts map[domain.Platform]int) []NamedCountDTO {
+	out := []NamedCountDTO{}
+	for _, p := range domain.Platforms {
+		if n := counts[p]; n > 0 {
+			out = append(out, NamedCountDTO{Name: string(p), Count: n})
+		}
+	}
+	return out
+}
+
+// named sorts totals largest first, then by name, for a stable table; a
+// total of none is left out, for the same reason as platformCounts.
 func named(counts map[string]int) []NamedCountDTO {
 	out := make([]NamedCountDTO, 0, len(counts))
 	for name, n := range counts {
-		out = append(out, NamedCountDTO{Name: name, Count: n})
+		if n > 0 {
+			out = append(out, NamedCountDTO{Name: name, Count: n})
+		}
 	}
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].Count != out[j].Count {

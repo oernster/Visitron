@@ -38,8 +38,11 @@ var logWriters = map[string]int{
 	// Handing over the keyboard panicked; following the tray panicked (value
 	// and stack each); a refresh asked for from the tray was refused.
 	"window.go": 3,
-	// The tray's message loop panicked: the recovered value and the stack.
-	"internal/infrastructure/tray/tray_windows.go": 1,
+	// The tray's message loop panicked: the recovered value and the stack;
+	// the TaskbarCreated message could not be registered; the icon could not
+	// be put back after the taskbar restarted (each a fixed sentence and the
+	// Windows error).
+	"internal/infrastructure/tray/tray_windows.go": 3,
 }
 
 // TestOnlyTheKnownPlacesWriteToTheLog keeps NFR-SEC-001's promise checkable.

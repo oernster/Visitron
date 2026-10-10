@@ -329,6 +329,28 @@ func TestNamedSortsLargestFirstThenByName(t *testing.T) {
 	}
 }
 
+func TestNamedLeavesOutWhatHasNoDownloads(t *testing.T) {
+	got := named(map[string]int{"v1.0.0": 0, "v1.1.0": 3})
+	if len(got) != 1 || got[0] != (NamedCountDTO{"v1.1.0", 3}) {
+		t.Fatalf("named = %v, want only v1.1.0", got)
+	}
+}
+
+func TestPlatformCountsKeepTheDomainOrderAndLeaveOutNone(t *testing.T) {
+	got := platformCounts(map[domain.Platform]int{
+		domain.Other: 2, domain.MacOS: 0, domain.Linux: 1, domain.Windows: 4,
+	})
+	want := []NamedCountDTO{{string(domain.Windows), 4}, {string(domain.Linux), 1}, {string(domain.Other), 2}}
+	if len(got) != len(want) {
+		t.Fatalf("platformCounts = %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("platformCounts = %v, want %v", got, want)
+		}
+	}
+}
+
 // waitFor polls cond until it holds or the test's patience runs out.
 func waitFor(t *testing.T, cond func() bool) {
 	t.Helper()

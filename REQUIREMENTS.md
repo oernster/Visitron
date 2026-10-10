@@ -979,3 +979,17 @@ the owner on 2026-10-10, after the documentation pass found two gaps.
   page loads and its end with the verdict and the time taken. Verified by
   `internal/application/check_test.go::TestCheckLogsItsStartEachWebsiteAndItsEnd` and
   `internal/application/check_test.go::TestCheckLogsWhatEachOutcomeMeans`.
+
+**Amendment 22 (2026-10-10): the icon survives the taskbar; a row of none is
+left out.** Ruled by the owner on 2026-10-10.
+
+- FR-050: when the taskbar starts again (Explorer restarted, by hand or by
+  Windows), it has forgotten every icon; Visitron answers the shell's
+  TaskbarCreated message by adding its icon again. Before this a window
+  minimised to the tray after such a restart left a process nobody could
+  reach. Checked by hand in a real build, since only a real shell restarts.
+- FR-042: the platform, repository and release tables leave out any row whose
+  counted downloads are none, such as a disk image brought to none by the
+  owner's own downloads (Amendment 19). Verified by
+  `app_test.go::TestNamedLeavesOutWhatHasNoDownloads` and
+  `app_test.go::TestPlatformCountsKeepTheDomainOrderAndLeaveOutNone`.

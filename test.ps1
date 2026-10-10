@@ -102,7 +102,7 @@ $measured = [ordered]@{
     './internal/infrastructure/startup'       = 85
     './internal/infrastructure/runlog'        = 81
     './internal/infrastructure/windowfocus'   = 27
-    './internal/infrastructure/tray'          = 5
+    './internal/infrastructure/tray'          = 4
     './installer'                             = 69
     './internal/infrastructure/setup'         = 63
 }
