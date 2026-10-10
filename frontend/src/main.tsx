@@ -5,6 +5,7 @@ import './theme.css'
 import './styles.css'
 import './lists.css'
 import './dialogs.css'
+import './menu.css'
 import './visitron.css'
 
 const root = document.getElementById('root')

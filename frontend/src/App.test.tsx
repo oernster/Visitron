@@ -231,27 +231,70 @@ describe('the band', () => {
     await waitFor(() => expect(bridge.Overview).toHaveBeenCalledTimes(2))
   })
 
-  it('opens the guide, then About from it', async () => {
+  it('lists the Help menu as Amendment 18 states: Guide first, then About, Licence and the check', async () => {
     installBridge()
     render(<App />)
     await screen.findByText('symdiary.com')
     fireEvent.click(bandButton('Help'))
+    const menu = screen.getByRole('menu', { name: 'Help' })
+    expect(within(menu).getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      'Guide', 'About Visitron', 'Licence', 'Check for updates',
+    ])
+    expect(menu.children[2]).toHaveAttribute('role', 'separator')
+  })
+
+  it('opens the Guide from the Help menu and closes the menu as it does', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    fireEvent.click(bandButton('Help'))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Guide' }))
+    expect(screen.queryByRole('menu')).toBeNull()
     expect(screen.getByRole('heading', { name: 'How Visitron works' })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'About' }))
-    expect(await screen.findByRole('heading', { name: 'Visitron 1.0.0' })).toBeInTheDocument()
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Visitron 1.0.0' })).getByRole('button', { name: 'Close' }))
-    expect(screen.queryByRole('heading', { name: 'Visitron 1.0.0' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByRole('heading', { name: 'How Visitron works' })).toBeNull()
   })
 
-  it('checks for updates from About and names the product in the offer', async () => {
+  it('opens About from the Help menu, without the licence text', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    fireEvent.click(bandButton('Help'))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'About Visitron' }))
+    const about = await screen.findByRole('dialog', { name: 'Visitron 1.0.0' })
+    expect(within(about).queryByText('GNU GENERAL PUBLIC LICENSE')).toBeNull()
+    fireEvent.click(within(about).getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('dialog', { name: 'Visitron 1.0.0' })).toBeNull()
+  })
+
+  it('opens the licence from the Help menu', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    fireEvent.click(bandButton('Help'))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Licence' }))
+    const licence = await screen.findByRole('dialog', { name: 'Licence' })
+    expect(within(licence).getByText('GNU GENERAL PUBLIC LICENSE')).toBeInTheDocument()
+    fireEvent.click(within(licence).getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('dialog', { name: 'Licence' })).toBeNull()
+  })
+
+  it('says why About could not be read, opening nothing', async () => {
+    installBridge({ About: vi.fn(() => Promise.reject('the licence is missing')) })
+    render(<App />)
+    await screen.findByText('symdiary.com')
+    fireEvent.click(bandButton('Help'))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Licence' }))
+    expect(await screen.findByText('The licence is missing')).toBeInTheDocument()
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('checks for updates from the Help menu and names the product in the offer', async () => {
     installBridge({ CheckForUpdates: vi.fn(() => Promise.resolve(anOffer)) })
     render(<App />)
     await screen.findByText('symdiary.com')
     fireEvent.click(bandButton('Help'))
-    fireEvent.click(screen.getByRole('button', { name: 'About' }))
-    fireEvent.click(await screen.findByRole('button', { name: 'Check for updates' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Check for updates' }))
     expect(await screen.findByRole('dialog', { name: 'Update available' })).toHaveTextContent(
       'Visitron 1.1.0 is available. You are running 1.0.0.',
     )

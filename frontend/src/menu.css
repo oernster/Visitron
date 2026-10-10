@@ -1,0 +1,61 @@
+/*
+  A band dropdown (Amendment 18), ported from PigeonPost's menu rules. Its
+  entries are buttons, so they wear the house ring from styles.css like every
+  other control; PigeonPost's background-only cue is deliberately not copied.
+  The ring stands outside each entry, so the dropdown leaves that much room at
+  its edges and twice that between entries, else one ring runs into the next.
+*/
+/*
+  The band stretches its members to one height. The wrapper passes that on to
+  its trigger, so Help stands as tall as its neighbours and the dropdown opens
+  just under the button rather than under the empty foot of the wrapper.
+*/
+.menu {
+  position: relative;
+  display: flex;
+}
+
+/* Open, the trigger is drawn as held down, the way a pressed band button is. */
+.band-button[aria-expanded='true'] {
+  background: var(--selected);
+  border-color: var(--border);
+}
+
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: calc(2 * var(--ring-reach));
+  min-width: 190px;
+  padding: calc(2 * var(--ring-reach));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* The open dropdown's heading, naming the menu its trigger stands for. */
+.menu-header {
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.menu-item {
+  width: 100%;
+  padding: 6px 12px;
+  text-align: left;
+  white-space: nowrap;
+  background: transparent;
+  border-color: transparent;
+}
+
+/* A divider between groups of entries. */
+.menu-sep {
+  height: 1px;
+  margin: 0 6px;
+  background: var(--border);
+}

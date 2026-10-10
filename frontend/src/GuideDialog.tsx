@@ -8,11 +8,9 @@ import { useAutoScroll } from './useAutoScroll'
 
 interface Props {
   onClose: () => void
-  /** Opens About, which the Guide leads to (FR-072). */
-  onAbout: () => void
 }
 
-export function GuideDialog({ onClose, onAbout }: Props) {
+export function GuideDialog({ onClose }: Props) {
   // The Guide is longer than anything else the window shows, so the body reads
   // itself down gently and steps aside the moment the reader takes over. The
   // scroller is the body rather than the dialog, so Close never drifts away
@@ -56,9 +54,6 @@ export function GuideDialog({ onClose, onAbout }: Props) {
         ))}
       </div>
       <div className="actions">
-        <button type="button" onClick={onAbout}>
-          About
-        </button>
         <button type="button" className="close-guide" onClick={onClose}>
           Close
         </button>

@@ -1,5 +1,6 @@
-// The confirmation shown before a website is deleted (FR-010) and About
-// (FR-072), ported from SymDiary. Both are drawn in the shared Modal.
+// The confirmation shown before a website is deleted (FR-010), About (FR-072)
+// and the licence (Amendment 18), ported from SymDiary and PigeonPost. Each is
+// drawn in the shared Modal.
 
 import type { About } from './api'
 import { Modal } from './Modal'
@@ -33,14 +34,13 @@ export function ConfirmDialog({ text, confirmLabel, onConfirm, onCancel }: Confi
 
 interface AboutProps {
   about: About
-  /** Runs the update check asked for (FR-075): About is where it lives, as there is no Help menu. */
-  onCheckUpdates: () => void
   onClose: () => void
 }
 
-export function AboutDialog({ about, onCheckUpdates, onClose }: AboutProps) {
-  // The credits and the licence run past the dialog's height, so the body is
-  // the scroller and reads itself down gently, with Close pinned beneath it.
+export function AboutDialog({ about, onClose }: AboutProps) {
+  // The credits can run past the dialog's height, so the body is the scroller
+  // and reads itself down gently, with Close pinned beneath it. The licence and
+  // the update check each have an entry of their own in the Help menu.
   const autoScroll = useAutoScroll()
   return (
     <Modal labelId="about-title" role="dialog" onClose={onClose} pinnedActions>
@@ -59,13 +59,36 @@ export function AboutDialog({ about, onCheckUpdates, onClose }: AboutProps) {
             </li>
           ))}
         </ul>
-        <h3>Licence</h3>
-        <pre className="licence-text">{about.licence}</pre>
       </div>
       <div className="actions">
-        <button type="button" onClick={onCheckUpdates}>
-          Check for updates
+        <button type="button" onClick={onClose}>
+          Close
         </button>
+      </div>
+    </Modal>
+  )
+}
+
+interface LicenceProps {
+  /** The licence's full text, as Go carries it on About. */
+  text: string
+  onClose: () => void
+}
+
+/**
+ * LicenceDialog shows the licence Visitron is released under (Amendment 18),
+ * ported from PigeonPost's LicenceModal. It is far longer than the dialog, so
+ * the text is the scroller and reads itself down, with Close pinned beneath.
+ */
+export function LicenceDialog({ text, onClose }: LicenceProps) {
+  const autoScroll = useAutoScroll()
+  return (
+    <Modal labelId="licence-title" role="dialog" onClose={onClose} pinnedActions>
+      <h2 id="licence-title">Licence</h2>
+      <div className="dialog-body" ref={autoScroll}>
+        <pre className="licence-text">{text}</pre>
+      </div>
+      <div className="actions">
         <button type="button" onClick={onClose}>
           Close
         </button>

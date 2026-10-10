@@ -887,3 +887,37 @@ nothing on the chart said so.
   `Chart.test.tsx::names the first, middle and last day of a long period, oldest on the left`,
   `Chart.test.tsx::rounds the largest count up to 1, 2 or 5 of a power of ten` and
   `Chart.test.tsx::names a day without shifting it across a time zone`.
+
+**Amendment 18 (2026-10-10): Help is a menu.** Ruled by the owner on
+2026-10-10, following the pattern of the owner's other applications, with
+PigeonPost's Help menu the one ported. It replaces the Guide's way to About
+(FR-072) and About's way to the update check (Amendment 5).
+
+- FR-040, FR-071: the Help band button keeps its picture and label but opens a
+  menu headed "Help", holding in order the Guide, a divider, About Visitron,
+  Licence and Check for updates. Choosing an entry closes the menu and opens
+  its dialog. Verified by
+  `App.test.tsx::lists the Help menu as Amendment 18 states: Guide first, then About, Licence and the check` and
+  `App.test.tsx::opens the Guide from the Help menu and closes the menu as it does`.
+- The menu follows the house keyboard model: Down, Enter or Space at the
+  trigger opens it with the first entry focused; Up and Down walk the entries,
+  wrapping at both ends; Home and End jump to them; Escape, Tab, Left and Right
+  close it back onto the trigger; Up or Escape at the trigger retracts it. A
+  click or hover opens it without moving the focus; it closes on a click
+  outside it and 200 ms after the pointer leaves. Every key it answers is kept
+  from the window's ring. Its entries wear the house ring like every other
+  control. Verified by `Menu.test.tsx`, each case named for the rule it holds.
+- FR-071: the Guide no longer carries About; its Help entry describes the menu.
+  Verified by `GuideDialog.test.tsx::offers no About (the Help menu holds it) and closes`.
+- FR-072: About shows the icon, the name, the author, the version and the
+  credits, without the licence text or an update button. The licence opens in
+  a dialog of its own titled "Licence", whose text reads itself down with
+  Close pinned beneath it; it opens on Close. A licence that could not be read
+  opens nothing and says why. Verified by
+  `Dialog.test.tsx::names the product, its author and every credit, leaving the licence and the check to the menu`,
+  `Dialog.test.tsx::shows the full text, opens on Close and closes`,
+  `App.test.tsx::opens the licence from the Help menu` and
+  `App.test.tsx::says why About could not be read, opening nothing`.
+- Amendment 5: Check for updates in the Help menu runs the check asked for,
+  which reports every outcome. Verified by
+  `App.test.tsx::checks for updates from the Help menu and names the product in the offer`.

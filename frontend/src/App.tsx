@@ -7,7 +7,8 @@ import { useRing } from './useRing'
 import { useTheme } from './useTheme'
 import { themeLabel } from './theme'
 import { api, onCloseRequest, onProgress, type About, type Detail, type Overview, type Progress, type State } from './api'
-import { AboutDialog, ConfirmDialog } from './Dialog'
+import { AboutDialog, ConfirmDialog, LicenceDialog } from './Dialog'
+import { Menu } from './Menu'
 import { CloseChoiceDialog } from './CloseChoiceDialog'
 import { UpdateDialog, useUpdateCheck } from './updates'
 import { GuideDialog } from './GuideDialog'
@@ -62,6 +63,9 @@ const donateHint = 'Buy the author a drink (opens your browser)'
 
 type Open = 'add' | 'edit' | 'delete' | 'settings' | 'guide' | null
 
+/** About and the licence both read Go's About, so one fetch serves either. */
+type Shown = { kind: 'about' | 'licence'; about: About }
+
 export function App() {
   const [state, setState] = useState<State | null>(null)
   const [overview, setOverview] = useState<Overview | null>(null)
@@ -69,7 +73,7 @@ export function App() {
   const [detail, setDetail] = useState<Detail | null>(null)
   const [progress, setProgress] = useState<Progress | null>(null)
   const [open, setOpen] = useState<Open>(null)
-  const [about, setAbout] = useState<About | null>(null)
+  const [shown, setShown] = useState<Shown | null>(null)
   const [closing, setClosing] = useState(false)
   const updates = useUpdateCheck()
   const [message, setMessage] = useState('')
@@ -122,11 +126,15 @@ export function App() {
   const period = async (days: number) => {
     if (await api.savePeriod(days, refused)) reload()
   }
+  const show = (kind: Shown['kind']) => {
+    void api.about(refused).then((about) => about && setShown({ kind, about }))
+  }
+  const name = state?.name ?? 'Visitron'
 
   return (
     <div className="shell">
       <div ref={start} className="focus-sink" tabIndex={-1} aria-hidden="true" />
-      <nav className="band" aria-label={state?.name ?? 'Visitron'}>
+      <nav className="band" aria-label={name}>
         <div className="band-group">
           <BandButton label="Add website" icon={addIcon} onClick={() => setOpen('add')} />
           <BandButton label="Edit website" icon={editIcon} disabled={!row} onClick={() => setOpen('edit')} />
@@ -143,7 +151,13 @@ export function App() {
           <Separator />
           <BandButton label={themeLabel(theme)} icon={theme === 'dark' ? lightModeIcon : darkModeIcon}
             hint={`${themeLabel(theme)} (the picture is the one you would move to)`} onClick={toggleTheme} />
-          <BandButton label="Help" icon={guideIcon} onClick={() => setOpen('guide')} />
+          <Menu label="Help" icon={guideIcon} items={[
+            { label: 'Guide', onClick: () => setOpen('guide') },
+            { separator: true },
+            { label: `About ${name}`, onClick: () => show('about') },
+            { label: 'Licence', onClick: () => show('licence') },
+            { label: 'Check for updates', onClick: updates.checkNow },
+          ]} />
         </div>
       </nav>
 
@@ -189,12 +203,10 @@ export function App() {
           onConfirm={() => void remove()} onCancel={() => setOpen(null)} />
       )}
       {open === 'settings' && <SettingsDialog refused={refused} onClose={() => { setOpen(null); reload() }} />}
-      {open === 'guide' && (
-        <GuideDialog onClose={() => setOpen(null)}
-          onAbout={() => void api.about(refused).then((found) => found && setAbout(found))} />
-      )}
-      {about && <AboutDialog about={about} onCheckUpdates={updates.checkNow} onClose={() => setAbout(null)} />}
-      {updates.found && <UpdateDialog name={state?.name ?? ''} found={updates.found} onClose={updates.dismiss} />}
+      {open === 'guide' && <GuideDialog onClose={() => setOpen(null)} />}
+      {shown?.kind === 'about' && <AboutDialog about={shown.about} onClose={() => setShown(null)} />}
+      {shown?.kind === 'licence' && <LicenceDialog text={shown.about.licence} onClose={() => setShown(null)} />}
+      {updates.found && <UpdateDialog name={name} found={updates.found} onClose={updates.dismiss} />}
       {closing && (
         <CloseChoiceDialog onCancel={() => setClosing(false)}
           onMinimise={() => { setClosing(false); void api.minimiseToTray(refused) }}

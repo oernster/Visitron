@@ -20,7 +20,7 @@ const unreached: Update = { outcome: 'unreachable', running: '', latest: '' }
 
 /**
  * useUpdateCheck runs the automatic checks and answers what the dialog should
- * show, with the check About asks for. An automatic check shows only a release
+ * show, with the check the Help menu asks for. An automatic check shows only a release
  * it offers; one asked for shows whatever it found.
  */
 export function useUpdateCheck() {
