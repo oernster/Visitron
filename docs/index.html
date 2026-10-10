@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Visitron: page loads and downloads for every website you run</title>
+<meta name="description" content="Visitron is a free Windows tray app that shows, for each website you run, its page loads from GoatCounter beside the downloads of the GitHub releases it offers, with a daily history as tables and charts."/>
+<link rel="canonical" href="https://ernster.dev/Visitron/"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Visitron"/>
+<meta property="og:title" content="Visitron: page loads and downloads for every website you run"/>
+<meta property="og:description" content="Visitron is a free Windows tray app that shows, for each website you run, its page loads from GoatCounter beside the downloads of the GitHub releases it offers, with a daily history as tables and charts."/>
+<meta property="og:url" content="https://ernster.dev/Visitron/"/>
+<meta property="og:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="1254"/>
+<meta property="og:image:height" content="1254"/>
+<meta property="og:image:alt" content="Visitron app icon"/>
+<meta property="og:locale" content="en_GB"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Visitron: page loads and downloads for every website you run"/>
+<meta name="twitter:description" content="Visitron is a free Windows tray app that shows, for each website you run, its page loads from GoatCounter beside the downloads of the GitHub releases it offers, with a daily history as tables and charts."/>
+<meta name="twitter:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta name="twitter:image:alt" content="Visitron app icon"/>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Visitron",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Windows",
+    "description": "A Windows tray app that shows, for each website you run, its page loads from GoatCounter beside the downloads of the GitHub releases it offers, with a daily history as tables and charts.",
+    "url": "https://ernster.dev/Visitron/",
+    "image": "https://ernster.dev/Visitron/application-icon.png",
+    "author": {
+        "@type": "Person",
+        "name": "Oliver Ernster",
+        "url": "https://ernster.dev"
+    },
+    "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "downloadUrl": "https://github.com/oernster/Visitron/releases/latest",
+    "dateModified": "2026-10-10",
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP"
+    }
+}
+</script>
+<link rel="icon" href="application-icon.png"/>
+<link rel="stylesheet" href="styles.css"/>
+<script>window.goatcounter = {path: function (p) { return location.host + p }}</script>
+<script data-goatcounter="https://oernster.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="bar">
+    <div class="wrap">
+        <a class="mark" href="./"><img src="application-icon.png" alt=""/>Visitron</a>
+        <nav>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="download.html">Get it</a>
+            <button type="button" class="toggle" id="theme-toggle" title="Change the appearance">
+                <img id="theme-face" src="light-mode.png" alt="Switch to light mode"/>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<div class="wrap hero">
+    <img class="icon" src="application-icon.png" alt="The Visitron icon."/>
+    <div class="pill">Version <!--VERSION-->1.0.0<!--/VERSION--></div>
+    <h1>See how often your sites are read and your apps downloaded.</h1>
+    <p class="lead">Visitron sits in the Windows tray and keeps a daily record for
+        every website you run: how many people read its pages and how many times
+        the GitHub releases it offers were downloaded. Both figures, side by side,
+        over days, months or a year.</p>
+    <div class="actions">
+        <a class="button primary" href="download.html#get">Get Visitron</a>
+        <a class="button plain" href="features.html#figures">See what it shows</a>
+    </div>
+    <p class="under">Free and open source for Windows. It only reads your figures;
+        it never changes anything on GoatCounter or GitHub.</p>
+
+    <!-- screenshot: main window (the website list beside a selected website's tables and charts) -->
+</div>
+
+<section id="who">
+    <div class="wrap">
+        <h2>Made for people who publish</h2>
+        <p class="intro">You run websites. Some of them offer an application through
+            GitHub releases. GoatCounter counts the page loads; GitHub counts the
+            downloads of each file. The two never meet: neither keeps a trend of
+            downloads, neither knows which site goes with which repository. Visitron
+            brings them together in one window, one row per website.</p>
+    </div>
+</section>
+
+<section id="how">
+    <div class="wrap">
+        <h2>How it works</h2>
+        <p class="intro">Add a website once. After that it looks after itself.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="number">1</div>
+                <h3>Add your website</h3>
+                <p>Type its address. Visitron reads the site, lists the GitHub
+                    repositories it links to and ticks the likely ones. Tick the
+                    ones whose downloads belong to it; type one in by hand if the
+                    site never names it.</p>
+            </div>
+            <div class="step">
+                <div class="number">2</div>
+                <h3>It checks for you</h3>
+                <p>While it runs in the tray it checks every website once a day
+                    by default. Set it to check as often as every hour or as
+                    rarely as once a week. Press
+                    Refresh whenever you want the figures now.</p>
+            </div>
+            <div class="step">
+                <div class="number">3</div>
+                <h3>Read the trend</h3>
+                <p>Pick 7 days, 30 days, 90 days or a year. Each website shows its
+                    downloads by repository, release and platform in tables, with
+                    charts of page loads and downloads per day.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="support">
+    <div class="wrap">
+        <h2>Supporting Visitron</h2>
+        <p class="intro donate-words">Visitron is free and stays free. There is no
+            paid tier, no licence key and no feature held back behind a donation. If
+            it saves you opening two dashboards every morning, there is a Donate
+            button in its window; there is also one here.</p>
+        <a class="button plain btn-donate" href="https://www.paypal.com/ncp/payment/NRXS4SP24A6C8"><img src="donate.png" alt=""/>Donate</a>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        <div class="links">
+            <a href="./">Home</a>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="download.html">Get it</a>
+            <a href="https://github.com/oernster/Visitron">Source on GitHub</a>
+            <a href="https://github.com/oernster/Visitron/blob/main/LICENSE">Licence</a>
+            <a href="https://ernster.dev/commercial-licensing.html">Commercial licensing</a>
+            <a href="https://ernster.dev">More of my work</a>
+        </div>
+        <p>Visitron is free software under the GNU General Public Licence, version 3.
+            You may use it, study it, share it and change it; anything you pass on
+            carries the same freedoms.</p>
+        <p>Visitron reads figures from GoatCounter and GitHub and shows them back to
+            you. It never changes anything on either service.</p>
+        <p>&#169; Oliver Ernster</p>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

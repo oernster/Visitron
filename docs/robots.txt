@@ -1,0 +1,7 @@
+# robots.txt for Visitron (https://ernster.dev/Visitron/)
+# A project page: crawlers read robots.txt only at the domain root, so this
+# file records intent. Submit the sitemap below to search consoles directly.
+User-agent: *
+Allow: /
+
+Sitemap: https://ernster.dev/Visitron/sitemap.xml

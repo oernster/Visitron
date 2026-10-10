@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Visitron features: page loads, downloads and a daily history</title>
+<meta name="description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; daily charts; repositories found by reading your site; figures that survive a failed check."/>
+<link rel="canonical" href="https://ernster.dev/Visitron/features.html"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Visitron"/>
+<meta property="og:title" content="Visitron features: page loads, downloads and a daily history"/>
+<meta property="og:description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; daily charts; repositories found by reading your site; figures that survive a failed check."/>
+<meta property="og:url" content="https://ernster.dev/Visitron/features.html"/>
+<meta property="og:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="1254"/>
+<meta property="og:image:height" content="1254"/>
+<meta property="og:image:alt" content="Visitron app icon"/>
+<meta property="og:locale" content="en_GB"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Visitron features: page loads, downloads and a daily history"/>
+<meta name="twitter:description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; daily charts; repositories found by reading your site; figures that survive a failed check."/>
+<meta name="twitter:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta name="twitter:image:alt" content="Visitron app icon"/>
+<link rel="icon" href="application-icon.png"/>
+<link rel="stylesheet" href="styles.css"/>
+<script>window.goatcounter = {path: function (p) { return location.host + p }}</script>
+<script data-goatcounter="https://oernster.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="bar">
+    <div class="wrap">
+        <a class="mark" href="./"><img src="application-icon.png" alt=""/>Visitron</a>
+        <nav>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="download.html">Get it</a>
+            <button type="button" class="toggle" id="theme-toggle" title="Change the appearance">
+                <img id="theme-face" src="light-mode.png" alt="Switch to light mode"/>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<section id="features">
+    <div class="wrap">
+        <div class="eyebrow">Features</div>
+        <h2>What Visitron does</h2>
+        <p class="intro">One list of your websites; for the one you pick, the detail
+            behind its numbers. Each part is below.</p>
+    </div>
+</section>
+
+<section id="figures">
+    <div class="wrap">
+        <h2>Every website in one list</h2>
+        <div class="split">
+            <div>
+                <p class="intro">Each row is one website with its page loads and its
+                    downloads for the period you chose, plus how much each rose since
+                    the check before. Pick 7 days, 30 days, 90 days or a year; it
+                    remembers your choice.</p>
+                <ul class="plain-list">
+                    <li><strong>Downloads in detail.</strong> Select a website to see
+                        its downloads by repository, by release and by platform, as
+                        tables.</li>
+                    <li><strong>Charts per day.</strong> Page loads per day and
+                        downloads per day, oldest on the left and today on the right,
+                        against a count axis you can read at a glance.</li>
+                    <li><strong>It says when.</strong> The window states when the last
+                        successful check finished.</li>
+                </ul>
+            </div>
+            <!-- screenshot: a selected website's detail (downloads tables and the two daily charts) -->
+        </div>
+    </div>
+</section>
+
+<section id="repositories">
+    <div class="wrap">
+        <h2>It finds your repositories for you</h2>
+        <div class="split">
+            <!-- screenshot: the Add website dialog listing the repositories it found, with the likely ones ticked -->
+            <div>
+                <p class="intro">Type a website's address and Visitron reads the site:
+                    the page you gave plus the pages it links to under the same
+                    address, up to fifty of them. Every GitHub repository those pages
+                    name is listed with a tick box.</p>
+                <ul class="plain-list">
+                    <li><strong>The likely ones come ticked.</strong> When only one
+                        repository is found it is ticked for you; so is one whose name
+                        matches the site's.</li>
+                    <li><strong>Add one by hand.</strong> Type it as owner/name; it
+                        is added once GitHub confirms it exists.</li>
+                    <li><strong>A site that cannot be read can still be saved</strong>,
+                        with its repositories typed in.</li>
+                    <li><strong>Several sites on one domain.</strong> A website at
+                        example.com/app/ counts its own pages; example.com counts the
+                        rest, so nothing is counted twice.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="honest">
+    <div class="wrap">
+        <h2>Figures you can believe</h2>
+        <p class="intro">A number is only useful when you know what it counts.
+            Visitron says.</p>
+        <ul class="plain-list">
+            <li><strong>Your own disk image downloads can be left out.</strong> If
+                you download each release's macOS .dmg yourself, to confirm
+                notarisation say, set how many times in Settings. Visitron takes that
+                many off every .dmg file across the whole history. It is 0 until you
+                set it.</li>
+            <li><strong>Page loads are visitors per page per day.</strong> That is the
+                figure GoatCounter reports; one person reading a page twice in a day
+                counts once.</li>
+            <li><strong>No negative days.</strong> If GitHub's count for a file falls,
+                because a release was deleted or a file uploaded again, that day
+                records no rise rather than a loss.</li>
+            <li><strong>A failed check keeps the figures you had.</strong> Visitron
+                says what failed and when, puts a warning sign on Refresh until a
+                check succeeds and tries again half an hour later.</li>
+            <li><strong>It waits out GitHub's limit.</strong> If GitHub says too many
+                requests, Visitron keeps what it has, states when GitHub will answer
+                again and carries on after that.</li>
+        </ul>
+    </div>
+</section>
+
+<section id="settings">
+    <div class="wrap">
+        <h2>Settings that explain themselves</h2>
+        <div class="split">
+            <div>
+                <p class="intro">Settings is grouped by what each part feeds: page
+                    loads, downloads, checking and counting, then Visitron itself.
+                    Under each key is what it is for and numbered steps to get
+                    one.</p>
+                <ul class="plain-list">
+                    <li><strong>Keys stay in Windows.</strong> Your GoatCounter key
+                        and GitHub token are kept in Windows Credential Manager, never
+                        in a file or the log; each goes only to its own service.</li>
+                    <li><strong>Tried as you save.</strong> Save a key and Visitron
+                        tries it once, then tells you whether it works.</li>
+                    <li><strong>Hidden until you ask.</strong> A stored key is masked
+                        until you press its eye button.</li>
+                </ul>
+            </div>
+            <!-- screenshot: the Settings dialog with its four groups -->
+        </div>
+    </div>
+</section>
+
+<section id="tray">
+    <div class="wrap">
+        <h2>Out of the way in the tray</h2>
+        <ul class="plain-list">
+            <li><strong>Close asks first.</strong> Closing the window asks whether to
+                minimise to the tray or quit, opening on the safe answer.</li>
+            <li><strong>A small tray menu.</strong> Open, Refresh now and Quit.</li>
+            <li><strong>Start with Windows</strong>, its window hidden, if you switch
+                it on in Settings.</li>
+            <li><strong>One copy at a time.</strong> Start it again and the running
+                copy simply shows its window.</li>
+            <li><strong>Every control from the keyboard.</strong> Tab and the arrow
+                keys move between controls; Enter or Space presses one; Escape closes
+                a dialog.</li>
+            <li><strong>Dark or light.</strong> It opens dark; one press of the button
+                in the bar changes it, remembered from then on.</li>
+            <li><strong>A Guide built in.</strong> The Help menu holds a guide that
+                walks you through setting up GoatCounter and names every
+                button.</li>
+        </ul>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        <div class="links">
+            <a href="./">Home</a>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="download.html">Get it</a>
+            <a href="https://github.com/oernster/Visitron">Source on GitHub</a>
+            <a href="https://github.com/oernster/Visitron/blob/main/LICENSE">Licence</a>
+            <a href="https://ernster.dev/commercial-licensing.html">Commercial licensing</a>
+            <a href="https://ernster.dev">More of my work</a>
+        </div>
+        <p>Visitron is free software under the GNU General Public Licence, version 3.
+            You may use it, study it, share it and change it; anything you pass on
+            carries the same freedoms.</p>
+        <p>Visitron reads figures from GoatCounter and GitHub and shows them back to
+            you. It never changes anything on either service.</p>
+        <p>&#169; Oliver Ernster</p>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

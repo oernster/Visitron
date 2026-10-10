@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Why Visitron: two counters that never meet, in one window</title>
+<meta name="description" content="Why Visitron exists; what it needs from you (Windows, your own GoatCounter account and key, public GitHub releases); exactly what it talks to over the network; what it will not do."/>
+<link rel="canonical" href="https://ernster.dev/Visitron/why.html"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Visitron"/>
+<meta property="og:title" content="Why Visitron: two counters that never meet, in one window"/>
+<meta property="og:description" content="Why Visitron exists; what it needs from you (Windows, your own GoatCounter account and key, public GitHub releases); exactly what it talks to over the network; what it will not do."/>
+<meta property="og:url" content="https://ernster.dev/Visitron/why.html"/>
+<meta property="og:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="1254"/>
+<meta property="og:image:height" content="1254"/>
+<meta property="og:image:alt" content="Visitron app icon"/>
+<meta property="og:locale" content="en_GB"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Why Visitron: two counters that never meet, in one window"/>
+<meta name="twitter:description" content="Why Visitron exists; what it needs from you (Windows, your own GoatCounter account and key, public GitHub releases); exactly what it talks to over the network; what it will not do."/>
+<meta name="twitter:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta name="twitter:image:alt" content="Visitron app icon"/>
+<link rel="icon" href="application-icon.png"/>
+<link rel="stylesheet" href="styles.css"/>
+<script>window.goatcounter = {path: function (p) { return location.host + p }}</script>
+<script data-goatcounter="https://oernster.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="bar">
+    <div class="wrap">
+        <a class="mark" href="./"><img src="application-icon.png" alt=""/>Visitron</a>
+        <nav>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="download.html">Get it</a>
+            <button type="button" class="toggle" id="theme-toggle" title="Change the appearance">
+                <img id="theme-face" src="light-mode.png" alt="Switch to light mode"/>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<section id="why">
+    <div class="wrap">
+        <div class="eyebrow">Why</div>
+        <h2>Two counters that never meet.</h2>
+        <p class="intro">GoatCounter knows how many people read your pages. GitHub
+            knows how many times each release file was downloaded. To see both you
+            open two dashboards; to see a trend in downloads you open none, because
+            GitHub keeps only a running total.</p>
+        <p class="intro">Visitron asks both on a schedule, keeps a snapshot each day
+            and turns those totals into downloads per day. It knows which
+            repositories belong to which website, so every figure lands on the right
+            row.</p>
+        <p class="note">One thing it cannot do: fill in the past. GitHub publishes a
+            running total only, so the download history starts at Visitron's first
+            check. Until the history covers the period you chose, the column names
+            the day counting began, so a 0 is never mistaken for a quiet month.</p>
+    </div>
+</section>
+
+<section id="needs">
+    <div class="wrap">
+        <h2>What it needs from you</h2>
+        <ul class="plain-list">
+            <li><strong>Windows.</strong> Visitron is a Windows application; there is
+                no macOS or Linux version.</li>
+            <li><strong>For page loads: your own GoatCounter account.</strong> Each
+                page you want counted carries GoatCounter's two-line tag, which the
+                Guide gives you to copy. In Settings you enter your account name and
+                an API key from GoatCounter. Without them Visitron still shows
+                downloads and says where the page loads would be.</li>
+            <li><strong>For downloads: public GitHub releases.</strong> No account is
+                needed. An optional GitHub token lets Visitron ask GitHub more often
+                before GitHub's rate limit stops it. Private repositories are not
+                read.</li>
+        </ul>
+    </div>
+</section>
+
+<section id="network">
+    <div class="wrap">
+        <h2>Exactly what it talks to</h2>
+        <p class="intro">Visitron contacts these places and nothing else. It sends
+            no telemetry.</p>
+        <ul class="plain-list">
+            <li><strong>GoatCounter</strong>, at your own account, with your key, to
+                read page loads.</li>
+            <li><strong>GitHub's API</strong>, without a login or with your token, to
+                read the download counts of the repositories you ticked.</li>
+            <li><strong>Your own websites</strong>, when you add or edit one, to find
+                the repositories they name.</li>
+            <li><strong>Visitron's own GitHub releases</strong>, shortly after it
+                opens and once a day, to see whether a newer Visitron exists. Turn it
+                off in Settings; Check for updates in the Help menu still asks when
+                you choose it.</li>
+            <li><strong>The donation page</strong>, opened in your browser, only when
+                you press Donate.</li>
+        </ul>
+        <p class="note">Your figures stay on your computer, in one file in your own
+            profile. Your keys stay in Windows Credential Manager and each one is
+            sent only to its own service.</p>
+    </div>
+</section>
+
+<section id="not">
+    <div class="wrap">
+        <h2>What it will not do</h2>
+        <p class="intro">Said plainly, so nothing comes as a surprise.</p>
+        <ul class="plain-list">
+            <li>It does not run on macOS or Linux.</li>
+            <li>It does not count clicks or any event other than a page load.</li>
+            <li>It does not show referrers, browsers or countries, though GoatCounter
+                holds them.</li>
+            <li>It does not change anything on GoatCounter or GitHub; it only
+                reads.</li>
+            <li>It does not read releases from anywhere but GitHub, nor statistics
+                from anywhere but one GoatCounter account.</li>
+            <li>It does not send notifications when figures change.</li>
+            <li>It does not export its figures.</li>
+        </ul>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        <div class="links">
+            <a href="./">Home</a>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="download.html">Get it</a>
+            <a href="https://github.com/oernster/Visitron">Source on GitHub</a>
+            <a href="https://github.com/oernster/Visitron/blob/main/LICENSE">Licence</a>
+            <a href="https://ernster.dev/commercial-licensing.html">Commercial licensing</a>
+            <a href="https://ernster.dev">More of my work</a>
+        </div>
+        <p>Visitron is free software under the GNU General Public Licence, version 3.
+            You may use it, study it, share it and change it; anything you pass on
+            carries the same freedoms.</p>
+        <p>Visitron reads figures from GoatCounter and GitHub and shows them back to
+            you. It never changes anything on either service.</p>
+        <p>&#169; Oliver Ernster</p>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>
