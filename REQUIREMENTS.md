@@ -7,20 +7,21 @@ with a reason (section 6). No question remains open.
 
 ### 1.1 Purpose
 
-Visitron tells its user how often each of his websites is visited and how often
-each of his applications is downloaded. Both figures exist already, in two
+Visitron tells its user how often each of their websites is visited and how often
+each of their applications is downloaded. Both figures exist already, in two
 places that never meet: GoatCounter counts page loads on the sites, while
 GitHub counts downloads of each release file. Neither shows a trend for
 downloads, neither knows which site belongs to which repository and neither
-removes the one download of every macOS disk image that the owner makes himself
+removes the one download of every macOS disk image that the owner makes themselves
 to confirm notarisation. Visitron gathers both, applies that correction and
 keeps a daily history so the figures can be read over time.
 
 ### 1.2 Intended audience
 
-The owner (Oliver Ernster), who is both the only user and the developer, plus
-any AI assistant working on the code. The repository is public; the product is
-built for one person and makes no attempt to serve anyone else.
+Anyone who publishes websites and GitHub releases and wants to watch both,
+plus any AI assistant working on the code. The repository is public and
+Visitron is released for anyone to use, so it holds no one's identity: each
+owner supplies their own account, sites and keys (Amendment 15).
 
 ### 1.3 Scope
 
@@ -44,7 +45,7 @@ In scope:
 - A Settings dialog, a Guide, Help | About, a donate button and the house
   update check.
 - A setup program in the house style.
-- A GitHub Pages site at `ernster.dev/Visitron/` carrying the page counter.
+- A GitHub Pages project site carrying the page counter.
 
 Out of scope (decided; see also 3.11 Won't this time):
 
@@ -64,15 +65,15 @@ Out of scope (decided; see also 3.11 Won't this time):
 | Term | Meaning |
 |---|---|
 | Website | One record in Visitron: a site address plus a set of chosen repositories. |
-| Site address | An `https` URL reduced to host plus path, lower-case host, no query, no fragment, ending in `/`. `https://ernster.dev/WhatDay/` and `https://symdiary.com/` are site addresses. The path keeps its case, because GitHub Pages paths are case sensitive. |
-| Sub-site | A website whose address begins with another website's address: `ernster.dev/WhatDay/` is a sub-site of `ernster.dev/`. |
-| Page load | One count recorded by GoatCounter when a page carrying the tag loads in a browser. GoatCounter stores it under the path `host + path`, for example `symdiary.com/download.html`. |
+| Site address | An `https` URL reduced to host plus path, lower-case host, no query, no fragment, ending in `/`. `https://example.com/app/` and `https://example.org/` are site addresses. The path keeps its case, because GitHub Pages paths are case sensitive. |
+| Sub-site | A website whose address begins with another website's address: `example.com/app/` is a sub-site of `example.com/`. |
+| Page load | One count recorded by GoatCounter when a page carrying the tag loads in a browser. GoatCounter stores it under the path `host + path`, for example `example.org/download.html`. |
 | Owned path | A GoatCounter path belongs to the website with the longest address that is a prefix of it. |
 | Repository | A public GitHub repository named `owner/name`. |
 | Chosen repository | A repository ticked for a website; only chosen repositories count towards its downloads. |
 | Release file | One asset attached to a GitHub release. |
 | Raw downloads | GitHub's `download_count` for a release file. |
-| Self-download allowance | The downloads the owner makes himself: exactly 1 per `.dmg` release file, a named constant (decided 2026-10-09: not a setting). |
+| Self-download allowance | The downloads the owner makes themselves: exactly 1 per `.dmg` release file, a named constant (decided 2026-10-09: not a setting). |
 | Counted downloads | Raw downloads less the self-download allowance, never below 0. |
 | Platform | Windows for a file ending `.exe`, macOS for `.dmg`, Linux for `.flatpak`, Other for anything else. Case is ignored. |
 | Check | One pass over every website: page loads from GoatCounter, downloads from GitHub, a snapshot saved. |
@@ -80,20 +81,16 @@ Out of scope (decided; see also 3.11 Won't this time):
 | Day | A calendar day in the time zone Windows is set to. |
 | Check interval | The time between automatic checks; 24 hours unless changed in Settings. |
 | Crawl | The fetch of a website's pages that finds the repositories it mentions. |
-| Site record | `sites.seed.json`, the owner's record of every site carrying the counter. Kept in the repository; not built into Visitron (Amendment 12). |
-| Reference machine | Oliver's desktop, Windows 11. |
+| Reference machine | The owner's desktop, Windows 11. |
 
 ### 1.5 References
 
-- `sites.seed.json` in this repository: the site record, the 32 sites measured
-  2026-10-09.
 - GoatCounter JSON API, `https://www.goatcounter.com/api.json`, read
   2026-10-09.
 - GitHub REST API, releases endpoints.
-- `C:\Users\Oliver\Development\ed-voyage-companion\installer\`: the setup
-  program to port.
-- `C:\Users\Oliver\Development\SymDiary\frontend\src\GuideDialog.tsx` and
-  `guideContent.ts`: the Guide to port. It follows the shape of ClearBudget's
+- ED Voyage Companion's `installer/`: the setup program to port.
+- SymDiary's `frontend/src/GuideDialog.tsx` and `guideContent.ts`: the Guide
+  to port. It follows the shape of ClearBudget's
   How It Works dialog (one scrolling page naming each control with its real
   picture, then the rules the window cannot state, with the house auto-scroll).
 - The house skills `keeb`, `noborderfocus`, `scroll`, `installer`, `updates`
@@ -139,11 +136,11 @@ figures it holds (FR-034).
 
 | ID | Assumption | Owner | Status |
 |---|---|---|---|
-| A-1 | Every site to be measured carries the GoatCounter tag that records `host + path`. | Oliver | Met 2026-10-09 for the 32 seeded sites (Appendix A, M-4). |
-| A-2 | GoatCounter stays free for this volume ("reasonable public usage"). | Oliver | Accepted 2026-10-09. |
-| A-3 | The owner downloads each `.dmg` exactly once per release to test notarisation; he never downloads other files. | Oliver | Stated 2026-10-09; consistent with Appendix A, M-2. |
-| A-4 | Artwork is supplied as master PNGs with transparent backgrounds. | Oliver | Met: ten RGBA PNGs in `assets/` (Appendix A, M-1). |
-| A-5 | A site names its repositories in links or scripts somewhere within its own pages. Where it does not, the owner adds them by hand (FR-009). | Oliver | Holds for symdiary.com (Appendix A, M-3); unmeasured elsewhere. |
+| A-1 | Every site to be measured carries the GoatCounter tag that records `host + path`. | Owner | Met 2026-10-09 for the 32 sites measured (Appendix A, M-4). |
+| A-2 | GoatCounter stays free for this volume ("reasonable public usage"). | Owner | Accepted 2026-10-09. |
+| A-3 | The owner downloads each `.dmg` exactly once per release to test notarisation; they never download other files. | Owner | Stated 2026-10-09; consistent with Appendix A, M-2. |
+| A-4 | Artwork is supplied as master PNGs with transparent backgrounds. | Owner | Met: ten RGBA PNGs in `assets/` (Appendix A, M-1). |
+| A-5 | A site names its repositories in links or scripts somewhere within its own pages. Where it does not, the owner adds them by hand (FR-009). | Owner | Holds for the site measured (Appendix A, M-3); unmeasured elsewhere. |
 
 ## 3. Requirements
 
@@ -157,8 +154,8 @@ that verifies it; test names are the intended ones until the code exists.
 - Requirement: When the owner submits an address in the Add website dialog,
   the website service shall reduce it to a site address, crawl it (FR-005) and
   offer the repositories found for choosing (FR-007).
-- Acceptance: Given the entry `SymDiary.com`, the dialog shows the site
-  address `https://symdiary.com/` and offers `oernster/SymDiary`.
+- Acceptance: Given the entry `Example.com`, the dialog shows the site
+  address `https://example.com/` and offers `someone/Example`.
 - Verified by: `internal/domain/address_test.go::TestNormalise`,
   `internal/application/websites_test.go::TestAddCrawlsAndOffers`
 
@@ -167,7 +164,7 @@ that verifies it; test names are the intended ones until the code exists.
 - Requirement: If the entry cannot be read as an `http` or `https` address with
   a host, then the dialog shall refuse it, name what is wrong and keep the
   entry for correction.
-- Acceptance: `ftp://x.com`, `symdiary` and an empty entry are each refused
+- Acceptance: `ftp://x.com`, `example` and an empty entry are each refused
   with a reason; nothing is recorded.
 - Verified by: `address_test.go::TestRefusals`
 
@@ -191,7 +188,7 @@ that verifies it; test names are the intended ones until the code exists.
   `href` and `src` attributes that stay on the same host and under the same
   path, up to 50 pages, reading at most 2 MiB of each response, with a 20 s
   limit per request.
-- Rationale: symdiary.com names its repository in `site.js` and keeps its
+- Rationale: a measured site names its repository in `site.js` and keeps its
   download buttons on `download.html` (Appendix A, M-3), so the home page alone
   is not enough. The caps keep a hostile or broken site from holding Visitron.
 - Verified by: `internal/domain/links_test.go::TestSiteLinksStayOnSite`,
@@ -206,8 +203,8 @@ that verifies it; test names are the intended ones until the code exists.
 - Requirement: The crawler shall report every repository named by a
   `github.com/<owner>/<name>` link or an `api.github.com/repos/<owner>/<name>`
   address in the fetched pages, once each, ignoring case.
-- Acceptance: Given the pages of symdiary.com, the crawl reports exactly
-  `oernster/SymDiary`, although the home page names it twice.
+- Acceptance: Given pages that name `someone/App` twice, the crawl reports
+  exactly `someone/App`, once.
 - Verified by: `internal/domain/repo_test.go::TestFindsBothForms`
 
 **FR-007 Choosing repositories**
@@ -216,8 +213,8 @@ that verifies it; test names are the intended ones until the code exists.
   tick box, pre-ticked where it is the only one found or where its name, with
   punctuation removed, equals the site's last path segment or the first label
   of its host.
-- Acceptance: `snarkapi.com` pre-ticks `oernster/snark-api`; `ernster.dev/WhatDay/`
-  pre-ticks `oernster/WhatDay`; `ernster.dev/` pre-ticks nothing.
+- Acceptance: `toolkit.example` pre-ticks `someone/tool-kit`; `example.com/App/`
+  pre-ticks `someone/App`; `example.com/` pre-ticks nothing.
 - Verified by: `repo_test.go::TestPreTick`
 
 **FR-008 Crawl fails**
@@ -254,17 +251,17 @@ that verifies it; test names are the intended ones until the code exists.
 - Priority: Must
 - Requirement: For each website and each day, the figures service shall report
   the sum of GoatCounter page loads over the paths that website owns.
-- Acceptance: Given paths `ernster.dev/index.html` (3 loads) and
-  `ernster.dev/WhatDay/index.html` (5 loads) with both websites recorded,
-  ernster.dev reports 3 and ernster.dev/WhatDay reports 5.
+- Acceptance: Given paths `example.com/index.html` (3 loads) and
+  `example.com/app/index.html` (5 loads) with both websites recorded,
+  example.com reports 3 and example.com/app reports 5.
 - Verified by: `internal/domain/figures_test.go::TestLongestPrefixOwns`
 
 **FR-021 Counted downloads**
 - Priority: Must
 - Requirement: The figures service shall report each release file's counted
   downloads as its raw downloads less 1 when it ends `.dmg`, never below 0.
-- Acceptance: `SymDiary.dmg` with 1 raw download counts 0; with 0 it counts 0;
-  `SymDiarySetup.exe` with 4 counts 4.
+- Acceptance: `App.dmg` with 1 raw download counts 0; with 0 it counts 0;
+  `AppSetup.exe` with 4 counts 4.
 - Verified by: `internal/domain/figures_test.go::TestSelfDownloadAllowance`
 
 **FR-022 Download totals**
@@ -452,7 +449,7 @@ that verifies it; test names are the intended ones until the code exists.
 **FR-072 Help | About**
 - Priority: Must
 - Requirement: The Guide shall lead to About, which shows the application icon,
-  the name Visitron, "by Oliver Ernster", "© Oliver Ernster", the version from
+  the name Visitron, "by" and "©" with the author's name, the version from
   `VERSION`, the GPL-3.0 licence and a credit to every open source component
   shipped, each with its licence.
 - Verified by: `Dialog.test.tsx` plus a structural test that every module
@@ -496,15 +493,13 @@ that verifies it; test names are the intended ones until the code exists.
 
 **FR-090 Project site**
 - Priority: Must
-- Requirement: Visitron shall have a GitHub Pages site at
-  `ernster.dev/Visitron/`, every page carrying the GoatCounter tag, recorded in
-  the site record.
-- Verified by: the site measurement script (Appendix A, M-4) run against the
-  live site.
+- Requirement: Visitron shall have a GitHub Pages project site, every page
+  carrying the GoatCounter tag.
+- Verified by: the tag checked on every page of the live site.
 
 ### 3.10 Non-functional requirements
 
-**NFR-PERF-001 Check duration**: With the 32 websites of the site record and a GitHub
+**NFR-PERF-001 Check duration**: With 32 websites and a GitHub
 token, a full check shall finish within 2 minutes on the reference machine's
 connection. Measured by timing a check in the log.
 
@@ -574,17 +569,16 @@ by NFR-SEC-001.
   application-icon, add-website, edit-website, delete-website, refresh,
   settings, help-guide, light-mode, dark-mode (each 1254x1254) and donate
   (1312x1199).
-- M-2 Every `SymDiary.dmg` release file shows exactly 1 download while the
-  `.exe` and `.flatpak` files show 0: the self-download.
-- M-3 symdiary.com names `github.com/oernster/SymDiary` on its home page and
-  `api.github.com/repos/oernster/SymDiary` in `site.js`; its download buttons
-  are on `download.html`.
-- M-4 All 32 seeded sites answered 200 and served the tag; 9 have no releases
-  (crankthecode, snark-api, CommandFixer, FuckWhatDay, locus, MMSP-Spec,
-  elevator, coin-analysis, snark3Dprinter-discord-bot).
-- M-5 Across every seeded repository the release files are `.exe` (384),
+- M-2 Every `.dmg` release file of the application measured shows exactly 1
+  download while its `.exe` and `.flatpak` files show 0: the self-download.
+- M-3 The site measured names `github.com/<owner>/<name>` on its home page and
+  `api.github.com/repos/<owner>/<name>` in `site.js`; its download buttons are
+  on `download.html`.
+- M-4 All 32 sites measured answered 200 and served the tag; 9 have no
+  releases.
+- M-5 Across every repository measured the release files are `.exe` (384),
   `.flatpak` (257) and `.dmg` (177), with no pre-releases. Not every release
-  has a `.dmg` (ClearBudget: 46 releases, 26 `.dmg` files).
+  has a `.dmg` (one application: 46 releases, 26 `.dmg` files).
 - M-6 GoatCounter's `/api/v0/stats/hits` accepts `start`, `end`, `daily` and
   path filters; `/api/v0/paths` lists every path. Keys are created per user
   with a "Read statistics" permission and a choice of sites.
@@ -804,9 +798,9 @@ owner's own.** Ruled by the owner on 2026-10-10.
 applies a box.** Ruled by the owner on 2026-10-10.
 
 - FR-011 is replaced: the seed file is no longer embedded, so a first run for
-  anyone starts with no websites rather than the owner's 32. An existing
-  install keeps the websites it already holds. `sites.seed.json` stays in the
-  repository as the owner's site record, read by nothing in Visitron.
+  anyone starts with no websites rather than a list built in. An existing
+  install keeps the websites it already holds. The seed file has since left
+  the repository altogether (Amendment 16).
   Verified by `app_test.go::TestStartupAddsNothingAndShutdownCloses`.
 - Enter in a text box applies it as the box's button would, only when that
   button is enabled: the GoatCounter site, the key and the token in Settings,
@@ -865,7 +859,14 @@ account, domain or address of the person who builds it, with no exception.
   `VISITRON_LIVE_REPO` names. The setup and application metadata carry the
   author's name as copyright holder (FR-072) and no address.
 - The structural test names no one: it learns the identity to refuse from the
-  checkout (the origin remote's owner plus every host in the site record) then
-  refuses any of them in a Go string or a page file. Verified by
+  checkout (the origin remote's owner) then refuses it in a Go string or a
+  page file. Verified by
   `tests/structural/owner_test.go::TestNothingShippedNamesTheBuilder`.
 
+**Amendment 16 (2026-10-10): the specification names no one.** Ruled by the
+owner on 2026-10-10. The seed file leaves the repository, so nothing records
+the owner's own sites. This document's examples, acceptance criteria and
+measurements now use neutral stand-ins (`example.com`, `someone/App`, the
+owner) rather than the author's account, domains or applications; the
+measurements keep their figures. The reference implementations that parts
+were ported from stay named, since they record a design, not a user.

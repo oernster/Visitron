@@ -1,12 +1,9 @@
 package structural
 
 import (
-	"encoding/json"
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"net/url"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
@@ -18,11 +15,7 @@ import (
 // (Amendment 15): not their account, not their domains, not as a default, an
 // example or a word of help. The test names no one either. It learns whose
 // identity to look for from the checkout itself: the owner of the origin
-// remote plus the hosts in the owner's site record when there is one.
-
-// siteRecord is the owner's record of their own sites, kept beside the source
-// and read by nothing Visitron ships (Amendment 12).
-const siteRecord = "sites.seed.json"
+// remote.
 
 // originOwner reads the owner off a GitHub origin remote, https or ssh.
 var originOwner = regexp.MustCompile(`^(?:https://github\.com/|git@github\.com:)([A-Za-z0-9-]+)/`)
@@ -40,22 +33,6 @@ func buildersIdentity(t *testing.T, root string) []string {
 			found = append(found, strings.ToLower(m[1]))
 		}
 	}
-	raw, err := os.ReadFile(filepath.Join(root, siteRecord))
-	if err == nil {
-		var record struct {
-			Sites []struct {
-				URL string `json:"url"`
-			} `json:"sites"`
-		}
-		if err := json.Unmarshal(raw, &record); err != nil {
-			t.Fatalf("reading %s: %v", siteRecord, err)
-		}
-		for _, s := range record.Sites {
-			if u, err := url.Parse(s.URL); err == nil && u.Hostname() != "" {
-				found = append(found, strings.ToLower(u.Hostname()))
-			}
-		}
-	}
 	return found
 }
 
@@ -68,7 +45,7 @@ func TestNothingShippedNamesTheBuilder(t *testing.T) {
 	root := repoRoot(t)
 	identity := buildersIdentity(t, root)
 	if len(identity) == 0 {
-		t.Skip("no GitHub origin and no site record: there is no identity to look for")
+		t.Skip("no GitHub origin: there is no identity to look for")
 	}
 	named := func(text string) string {
 		lower := strings.ToLower(text)
