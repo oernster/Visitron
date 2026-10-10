@@ -34,11 +34,6 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// seedFile is the record of every site carrying the counter (FR-011).
-//
-//go:embed sites.seed.json
-var seedFile []byte
-
 // appVersion is set from VERSION by build.ps1 through -ldflags -X, which only
 // reaches a var.
 var appVersion = "0.0.0-dev"
@@ -80,11 +75,6 @@ func main() {
 		problem = fmt.Sprintf(problemLayout, err)
 		data = store.Unavailable{Reason: err}
 	}
-	seed, err := application.ParseSeed(seedFile)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "the embedded seed: %v\n", err)
-	}
-
 	clock := systemClock{}
 	client := web.NewClient()
 	vault := secrets.Vault{}
@@ -100,7 +90,6 @@ func main() {
 		Settings:  application.NewSettings(data, vault, entry, releases, loads),
 		Updates:   application.NewUpdates(update.New(client), data, appVersion, goruntime.GOOS),
 		Store:     data,
-		Seed:      seed,
 	}
 	app := newApp(services, appVersion, problem, closeData)
 	app.focuser = windowFocus{}

@@ -130,7 +130,6 @@ func (f *fakeStartup) SetEnabled(on bool) error {
 type fakeStore struct {
 	sites   []Website
 	nextID  int64
-	seeded  bool
 	files   map[string]map[domain.Day][]domain.ReleaseFile
 	loads   []PathDay
 	prefs   *Preferences
@@ -182,12 +181,6 @@ func (s *fakeStore) DeleteWebsite(id int64) error {
 		}
 	}
 	return ErrNoSuchSite
-}
-
-func (s *fakeStore) Seeded() (bool, error) { return s.seeded, s.fail("Seeded") }
-func (s *fakeStore) MarkSeeded() error {
-	s.seeded = true
-	return nil
 }
 
 func (s *fakeStore) SaveFiles(day domain.Day, repo domain.Repo, files []domain.ReleaseFile) error {

@@ -156,13 +156,6 @@ func TestPageLoads(t *testing.T) {
 func TestMeta(t *testing.T) {
 	t.Parallel()
 	s := open(t)
-	if done, err := s.Seeded(); done || err != nil {
-		t.Errorf("seeded %v %v", done, err)
-	}
-	_ = s.MarkSeeded()
-	if done, _ := s.Seeded(); !done {
-		t.Error("seeded not kept")
-	}
 	if _, found, err := s.Preferences(); found || err != nil {
 		t.Errorf("preferences found %v %v", found, err)
 	}
@@ -244,13 +237,12 @@ func TestClosedFileRefusesEverything(t *testing.T) {
 	_ = s.Close()
 	_, e1 := s.Websites()
 	_, e2 := s.AddWebsite(w)
-	_, e3 := s.Seeded()
 	_, e4 := s.LatestFiles(sym)
 	_, e5 := s.Snapshots(sym, oct9)
 	_, e6 := s.PageLoads(oct9, oct9)
 	_, _, e7 := s.Preferences()
 	_, e8 := s.CheckRecord()
-	for i, err := range []error{e1, e2, s.UpdateWebsite(w), s.DeleteWebsite(1), e3, s.MarkSeeded(),
+	for i, err := range []error{e1, e2, s.UpdateWebsite(w), s.DeleteWebsite(1),
 		s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("a", 1)}), e4, e5,
 		s.SavePageLoads(oct9, oct9, nil), e6, e7, s.SavePreferences(application.Preferences{}), e8,
 		s.SaveCheckRecord(application.CheckRecord{}), s.migrate()} {
@@ -266,14 +258,13 @@ func TestUnavailableRefusesEverything(t *testing.T) {
 	u := Unavailable{Reason: why}
 	_, e1 := u.Websites()
 	_, e2 := u.AddWebsite(application.Website{})
-	_, e3 := u.Seeded()
 	_, e4 := u.LatestFiles(sym)
 	_, e5 := u.Snapshots(sym, oct9)
 	_, e6 := u.PageLoads(oct9, oct9)
 	_, _, e7 := u.Preferences()
 	_, e8 := u.CheckRecord()
-	for i, err := range []error{e1, e2, u.UpdateWebsite(application.Website{}), u.DeleteWebsite(1), e3,
-		u.MarkSeeded(), u.SaveFiles(oct9, sym, nil), e4, e5, u.SavePageLoads(oct9, oct9, nil), e6, e7,
+	for i, err := range []error{e1, e2, u.UpdateWebsite(application.Website{}), u.DeleteWebsite(1),
+		u.SaveFiles(oct9, sym, nil), e4, e5, u.SavePageLoads(oct9, oct9, nil), e6, e7,
 		u.SavePreferences(application.Preferences{}), e8, u.SaveCheckRecord(application.CheckRecord{})} {
 		if !errors.Is(err, why) {
 			t.Errorf("operation %d: %v", i, err)

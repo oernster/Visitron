@@ -132,24 +132,3 @@ func (s *Websites) Save(id int64, addr domain.Address, repos []domain.Repo) (int
 
 // Delete removes a website with its history (FR-010). The window asks first.
 func (s *Websites) Delete(id int64) error { return s.store.DeleteWebsite(id) }
-
-// Seed records every site in the seed file when there are no websites and
-// none were ever seeded (FR-011). It reports whether it seeded.
-func (s *Websites) Seed(seed []Website) (bool, error) {
-	done, err := s.store.Seeded()
-	if err != nil || done {
-		return false, err
-	}
-	sites, err := s.store.Websites()
-	if err != nil {
-		return false, err
-	}
-	if len(sites) == 0 {
-		for _, w := range seed {
-			if _, err := s.store.AddWebsite(w); err != nil {
-				return false, err
-			}
-		}
-	}
-	return len(sites) == 0, s.store.MarkSeeded()
-}

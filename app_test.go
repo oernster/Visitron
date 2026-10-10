@@ -293,18 +293,18 @@ func TestRefreshRunsACheckAndEndsWithAnEmptyProgress(t *testing.T) {
 	}
 }
 
-func TestStartupSeedsAndShutdownCloses(t *testing.T) {
+// A first run starts with no websites: nothing is built into the binary for
+// another owner to inherit (Amendment 12).
+func TestStartupAddsNothingAndShutdownCloses(t *testing.T) {
 	r := newRig(t, nil)
-	addr, _ := domain.Normalise("ernster.dev")
-	r.app.services.Seed = []application.Website{{Address: addr}}
 	closed := false
 	r.app.close = func() error { closed = true; return errPlanted }
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	r.app.startup(ctx)
 	waitFor(t, func() bool { return len(r.window.seen()) > 0 })
-	if o, _ := r.app.Overview(); len(o.Rows) != 1 || o.Rows[0].URL != "https://ernster.dev/" {
-		t.Fatalf("the seed was not recorded: %+v", o.Rows)
+	if o, _ := r.app.Overview(); len(o.Rows) != 0 {
+		t.Fatalf("a first run started with websites: %+v", o.Rows)
 	}
 	r.app.ready(ctx)
 	r.app.focuser = nil

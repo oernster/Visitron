@@ -120,8 +120,6 @@ type Store interface {
 	AddWebsite(w Website) (int64, error)
 	UpdateWebsite(w Website) error
 	DeleteWebsite(id int64) error
-	Seeded() (bool, error)
-	MarkSeeded() error
 
 	// SaveFiles records the release files of repo as read at a check on day,
 	// replacing that repo's snapshot for the day.

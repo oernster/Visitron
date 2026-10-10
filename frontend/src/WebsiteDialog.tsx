@@ -4,6 +4,7 @@
 
 import { useState } from 'react'
 import { api, type Proposal, type Refused } from './api'
+import { onEnter } from './keys'
 import { Modal } from './Modal'
 
 interface Props {
@@ -59,7 +60,7 @@ export function WebsiteDialog({ editing, refused, onSaved, onClose }: Props) {
         Website address
         <input type="text" value={entry} placeholder="symdiary.com"
           onChange={(e) => { setEntry(e.target.value); setProposal(null) }}
-          onKeyDown={(e) => { if (e.key === 'Enter') void find() }} />
+          onKeyDown={onEnter(() => void find(), !busy && entry.trim() !== '')} />
       </label>
       <div className="actions">
         <button type="button" disabled={busy || entry.trim() === ''} onClick={() => void find()}>
@@ -84,9 +85,9 @@ export function WebsiteDialog({ editing, refused, onSaved, onClose }: Props) {
           </ul>
           <label className="field">
             Add a repository by hand
-            <input type="text" value={typed} placeholder="oernster/SymDiary"
+            <input type="text" value={typed} placeholder="owner/name"
               onChange={(e) => setTyped(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') void addTyped() }} />
+              onKeyDown={onEnter(() => void addTyped(), typed.trim() !== '')} />
           </label>
           <div className="actions">
             <button type="button" disabled={typed.trim() === ''} onClick={() => void addTyped()}>

@@ -53,6 +53,14 @@ describe('adding a website', () => {
     expect(save()).toBeDisabled()
   })
 
+  it('does nothing on Enter in an empty address, as the disabled button would', () => {
+    const bridge = installBridge({ Propose: vi.fn(() => Promise.resolve(aProposal)) })
+    dialog()
+    fireEvent.keyDown(address(), { key: 'Enter' })
+    expect(bridge.Propose).not.toHaveBeenCalled()
+    expect(address()).toHaveAttribute('placeholder', 'symdiary.com')
+  })
+
   it('says when the site could not be read and still takes a repository by hand', async () => {
     const bridge = installBridge({
       Propose: vi.fn(() => Promise.resolve({ ...aProposal, found: [], ticked: [], problem: 'no answer' })),

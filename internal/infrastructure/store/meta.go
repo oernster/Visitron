@@ -10,10 +10,8 @@ import (
 
 // The keys of the meta table.
 const (
-	seededKey      = "seeded"
 	preferencesKey = "preferences"
 	checkRecordKey = "check-record"
-	seededValue    = "yes"
 )
 
 func (s *Store) getMeta(key string) (string, bool, error) {
@@ -47,15 +45,6 @@ func (s *Store) setJSON(key string, v any) error {
 	}
 	return s.setMeta(key, string(data))
 }
-
-// Seeded reports whether the seed file was ever applied (FR-011).
-func (s *Store) Seeded() (bool, error) {
-	_, found, err := s.getMeta(seededKey)
-	return found, err
-}
-
-// MarkSeeded records that the seed file was applied.
-func (s *Store) MarkSeeded() error { return s.setMeta(seededKey, seededValue) }
 
 // Preferences answers the saved preferences, found false when none were.
 func (s *Store) Preferences() (application.Preferences, bool, error) {

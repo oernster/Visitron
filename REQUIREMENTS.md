@@ -31,8 +31,8 @@ In scope:
 - Adding a website by address, with a crawl of the site that proposes its
   repositories; editing an address, which repeats the crawl; deleting a
   website after a confirmation.
-- First-run seeding from the record of every site that already carries the
-  page counter (`sites.seed.json`).
+- A first run that starts with no websites; the owner adds their own
+  (Amendment 12).
 - Page loads per website, read from GoatCounter.
 - Downloads per website, repository, release and platform, read from GitHub,
   with the self-download correction.
@@ -80,12 +80,13 @@ Out of scope (decided; see also 3.11 Won't this time):
 | Day | A calendar day in the time zone Windows is set to. |
 | Check interval | The time between automatic checks; 24 hours unless changed in Settings. |
 | Crawl | The fetch of a website's pages that finds the repositories it mentions. |
-| Seed file | `sites.seed.json`, the record of every site carrying the counter, embedded in the binary. |
+| Site record | `sites.seed.json`, the owner's record of every site carrying the counter. Kept in the repository; not built into Visitron (Amendment 12). |
 | Reference machine | Oliver's desktop, Windows 11. |
 
 ### 1.5 References
 
-- `sites.seed.json` in this repository: the 32 sites measured 2026-10-09.
+- `sites.seed.json` in this repository: the site record, the 32 sites measured
+  2026-10-09.
 - GoatCounter JSON API, `https://www.goatcounter.com/api.json`, read
   2026-10-09.
 - GitHub REST API, releases endpoints.
@@ -241,14 +242,11 @@ that verifies it; test names are the intended ones until the code exists.
 - Verified by: `store_test.go::TestDeleteRemovesHistory` plus the house
   confirmation check.
 
-**FR-011 First-run seeding**
+**FR-011 First run starts empty** (Amendment 12)
 - Priority: Must
-- Requirement: When Visitron starts with no websites and has never seeded, the
-  website service shall record every site in the seed file with the
-  repositories it lists, then start a check.
-- Acceptance: A fresh install shows 32 websites, ernster.dev with none chosen.
-  Deleting all of them and restarting seeds nothing.
-- Verified by: `websites_test.go::TestSeedsOnceOnly`
+- Requirement: Visitron shall carry no list of websites in its binary. A first
+  run starts with none; the owner adds their own.
+- Verified by: `app_test.go::TestStartupAddsNothingAndShutdownCloses`
 
 ### 3.2 Functional requirements: the figures
 
@@ -500,13 +498,13 @@ that verifies it; test names are the intended ones until the code exists.
 - Priority: Must
 - Requirement: Visitron shall have a GitHub Pages site at
   `ernster.dev/Visitron/`, every page carrying the GoatCounter tag, recorded in
-  the seed file.
-- Verified by: the seed measurement script (Appendix A, M-4) run against the
+  the site record.
+- Verified by: the site measurement script (Appendix A, M-4) run against the
   live site.
 
 ### 3.10 Non-functional requirements
 
-**NFR-PERF-001 Check duration**: With the 32 seeded websites and a GitHub
+**NFR-PERF-001 Check duration**: With the 32 websites of the site record and a GitHub
 token, a full check shall finish within 2 minutes on the reference machine's
 connection. Measured by timing a check in the log.
 
@@ -801,4 +799,20 @@ owner's own.** Ruled by the owner on 2026-10-10.
   `internal/infrastructure/goatcounter/client_test.go::TestTheSiteNamesTheAddress`,
   `SettingsDialog.test.tsx::keeps the GoatCounter site as its code and says whether a stored key works there` and
   `SettingsDialog.test.tsx::says where the key and the token come from`.
+
+**Amendment 12 (2026-10-10): nothing of the owner's is built in; Enter
+applies a box.** Ruled by the owner on 2026-10-10.
+
+- FR-011 is replaced: the seed file is no longer embedded, so a first run for
+  anyone starts with no websites rather than the owner's 32. An existing
+  install keeps the websites it already holds. `sites.seed.json` stays in the
+  repository as the owner's site record, read by nothing in Visitron.
+  Verified by `app_test.go::TestStartupAddsNothingAndShutdownCloses`.
+- Enter in a text box applies it as the box's button would, only when that
+  button is enabled: the GoatCounter site, the key and the token in Settings,
+  the address and a hand-typed repository in Add or Edit website. A
+  structural test refuses a text box without it. Verified by
+  `tests/structural/enter_test.go::TestEveryTextBoxAppliesOnEnter`,
+  `SettingsDialog.test.tsx::applies the site and a secret on Enter only when the Save button would` and
+  `WebsiteDialog.test.tsx::does nothing on Enter in an empty address, as the disabled button would`.
 

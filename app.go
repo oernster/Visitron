@@ -46,7 +46,6 @@ type Services struct {
 	Settings  *application.Settings
 	Updates   *application.Updates
 	Store     application.Store
-	Seed      []application.Website
 }
 
 // App is the facade the window calls. It converts between the page's shapes
@@ -83,13 +82,9 @@ func newApp(services Services, version, problem string, close func() error) *App
 	return &App{version: version, problem: problem, services: services, close: close}
 }
 
-// startup keeps the window's context, seeds a first run (FR-011) and starts
-// the scheduler.
+// startup keeps the window's context and starts the scheduler.
 func (a *App) startup(ctx context.Context) {
 	a.ctx, a.cancel = context.WithCancel(ctx)
-	if _, err := a.services.Websites.Seed(a.services.Seed); err != nil {
-		fmt.Fprintf(os.Stderr, "seeding the websites: %v\n", err)
-	}
 	go a.schedule()
 	for _, follow := range a.followers {
 		go follow()

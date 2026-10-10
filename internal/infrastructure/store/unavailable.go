@@ -25,12 +25,6 @@ func (u Unavailable) UpdateWebsite(application.Website) error { return u.Reason 
 // DeleteWebsite refuses.
 func (u Unavailable) DeleteWebsite(int64) error { return u.Reason }
 
-// Seeded refuses.
-func (u Unavailable) Seeded() (bool, error) { return false, u.Reason }
-
-// MarkSeeded refuses.
-func (u Unavailable) MarkSeeded() error { return u.Reason }
-
 // SaveFiles refuses.
 func (u Unavailable) SaveFiles(domain.Day, domain.Repo, []domain.ReleaseFile) error { return u.Reason }
 

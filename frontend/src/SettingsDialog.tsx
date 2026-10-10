@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Refused, type SecretName, type Settings } from './api'
+import { onEnter } from './keys'
 import { Modal } from './Modal'
 import { secretHelp } from './secretHelp'
 import { useAutoScroll } from './useAutoScroll'
@@ -55,6 +56,10 @@ export function SettingsDialog({ refused, onClose }: Props) {
     secretHelp.forEach(({ which }) => loadSecret(which))
   }, [reload, loadSecret])
 
+  // Save and Enter apply a box only when it holds something new; one rule
+  // for both, so the key never does what the button refuses.
+  const canSave = (which: SecretName) => typed[which] !== '' && typed[which] !== stored[which]
+  const canSaveSite = () => !!site && site !== settings?.goatCounterSite
   const saveSecret = async (which: SecretName) => {
     const problem = await api.saveSecret(which, typed[which], refused)
     if (problem === null) return
@@ -104,8 +109,9 @@ export function SettingsDialog({ refused, onClose }: Props) {
                   <div className="secret-entry">
                     <input type="text" autoComplete="off" spellCheck={false} aria-label="GoatCounter site"
                       placeholder="yourname.goatcounter.com" value={site ?? ''}
-                      onChange={(e) => setSite(e.target.value)} />
-                    <button type="button" disabled={!site || site === settings.goatCounterSite}
+                      onChange={(e) => setSite(e.target.value)}
+                      onKeyDown={onEnter(() => void saveSite(), canSaveSite())} />
+                    <button type="button" disabled={!canSaveSite()}
                       onClick={() => void saveSite()}>
                       Save site
                     </button>
@@ -115,7 +121,8 @@ export function SettingsDialog({ refused, onClose }: Props) {
               <div className="secret-entry">
                 <input type={shown[which] ? 'text' : 'password'} autoComplete="off" spellCheck={false}
                   value={typed[which]} aria-label={label}
-                  onChange={(e) => setTyped({ ...typed, [which]: e.target.value })} />
+                  onChange={(e) => setTyped({ ...typed, [which]: e.target.value })}
+                  onKeyDown={onEnter(() => void saveSecret(which), canSave(which))} />
                 <button type="button" className="reveal" aria-label={`Show ${label}`}
                   aria-pressed={shown[which]} title={shown[which] ? 'Hide' : 'Show'}
                   onClick={() => setShown({ ...shown, [which]: !shown[which] })}>
@@ -123,7 +130,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
                 </button>
               </div>
               <div className="actions">
-                <button type="button" disabled={typed[which] === '' || typed[which] === stored[which]}
+                <button type="button" disabled={!canSave(which)}
                   onClick={() => void saveSecret(which)}>
                   Save
                 </button>

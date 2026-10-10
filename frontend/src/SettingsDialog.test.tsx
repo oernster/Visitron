@@ -51,6 +51,28 @@ describe('the settings', () => {
     expect(save).toBeDisabled()
   })
 
+  it('applies the site and a secret on Enter only when the Save button would', async () => {
+    const bridge = installBridge({
+      SaveGoatCounterSite: vi.fn(() => Promise.resolve('')),
+      SaveSecret: vi.fn(() => Promise.resolve('')),
+    })
+    dialog()
+    const siteBox = await screen.findByLabelText('GoatCounter site')
+    fireEvent.keyDown(siteBox, { key: 'Enter' })
+    expect(bridge.SaveGoatCounterSite).not.toHaveBeenCalled()
+    fireEvent.change(siteBox, { target: { value: 'someone' } })
+    fireEvent.keyDown(siteBox, { key: 'Enter' })
+    await waitFor(() => expect(bridge.SaveGoatCounterSite).toHaveBeenCalledWith('someone'))
+
+    const tokenBox = screen.getByLabelText('GitHub token (optional)')
+    await waitFor(() => expect(tokenBox).toHaveValue('a-github-token'))
+    fireEvent.keyDown(tokenBox, { key: 'Enter' })
+    expect(bridge.SaveSecret).not.toHaveBeenCalled()
+    fireEvent.change(keyBox(), { target: { value: 'new-key' } })
+    fireEvent.keyDown(keyBox(), { key: 'Enter' })
+    await waitFor(() => expect(bridge.SaveSecret).toHaveBeenCalledWith('goatcounter', 'new-key'))
+  })
+
   it('says nothing when a site is refused; the refusal goes to the window', async () => {
     installBridge({ SaveGoatCounterSite: vi.fn(() => Promise.reject('not a site')) })
     const { refused } = dialog()

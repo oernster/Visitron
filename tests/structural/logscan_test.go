@@ -24,15 +24,15 @@ import (
 // The runlog package is not listed: it owns the log and writes the run's own
 // lines.
 var logWriters = map[string]int{
-	// Seeding failed; a scheduled check failed; a check panicked (value and
+	// A scheduled check failed; a check panicked (value and
 	// stack) and recording that failed; no focuser (a fixed sentence); the
 	// data could not be closed; a bound method panicked (value and stack).
-	"app.go": 7,
+	"app.go": 6,
 	// A refresh's check failed.
 	"actions.go": 1,
-	// The data could not be opened; the embedded seed was unreadable; no tray
+	// The data could not be opened; no tray
 	// icon (a fixed sentence); the window could not be run.
-	"main.go": 4,
+	"main.go": 3,
 	// Handing over the keyboard panicked; following the tray panicked (value
 	// and stack each); a refresh asked for from the tray was refused.
 	"window.go": 3,
