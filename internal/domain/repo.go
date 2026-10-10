@@ -8,7 +8,7 @@ import (
 )
 
 // ErrRepoForm refuses a repository typed by hand that is not owner/name.
-var ErrRepoForm = errors.New("a repository is written owner/name, as in oernster/SymDiary")
+var ErrRepoForm = errors.New("a repository is written owner/name")
 
 // Repo is a GitHub repository named owner/name. Its case is kept as found;
 // two repos are the same when they match ignoring case, as on GitHub.

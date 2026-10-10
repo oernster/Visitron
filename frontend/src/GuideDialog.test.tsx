@@ -15,6 +15,16 @@ describe('the guide', () => {
     }
   })
 
+  it('says how to set up GoatCounter, with the tag to copy for any account', () => {
+    render(<GuideDialog onClose={vi.fn()} onAbout={vi.fn()} />)
+    expect(screen.getByRole('heading', { name: 'Before you start: GoatCounter' })).toBeInTheDocument()
+    expect(screen.getByText(/Sign up at goatcounter\.com/)).toBeInTheDocument()
+    const tag = document.querySelector('pre.guide-code')
+    expect(tag).toHaveTextContent('window.goatcounter = {path: function (p) { return location.host + p }}')
+    expect(tag).toHaveTextContent('data-goatcounter="https://youraccount.goatcounter.com/count"')
+    expect(tag?.textContent?.indexOf('window.goatcounter')).toBeLessThan(tag?.textContent?.indexOf('count.js') ?? 0)
+  })
+
   it('says what the warning on Refresh means', () => {
     render(<GuideDialog onClose={vi.fn()} onAbout={vi.fn()} />)
     expect(screen.getByText(/Refresh carries a warning sign/)).toBeInTheDocument()

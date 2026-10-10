@@ -137,3 +137,25 @@
 .guide-rule {
   margin: 8px 0;
 }
+
+.guide-steps {
+  padding-left: 22px;
+}
+
+.guide-steps li {
+  margin: 6px 0;
+}
+
+/* Lines to copy exactly (Amendment 14). They wrap rather than scroll, so the
+   block is never a scroller of its own inside the Guide's. */
+.guide-code {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: 12px/1.5 Consolas, 'Cascadia Mono', monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}

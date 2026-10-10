@@ -108,7 +108,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
                   <span>GoatCounter account name: {settings.goatCounterSite || 'not set'}</span>
                   <div className="secret-entry">
                     <input type="text" autoComplete="off" spellCheck={false} aria-label="GoatCounter account name"
-                      placeholder="yourname" value={site ?? ''}
+                      placeholder="youraccount" value={site ?? ''}
                       onChange={(e) => setSite(e.target.value)}
                       onKeyDown={onEnter(() => void saveSite(), canSaveSite())} />
                     <button type="button" disabled={!canSaveSite()}

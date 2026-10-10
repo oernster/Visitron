@@ -820,8 +820,25 @@ applies a box.** Ruled by the owner on 2026-10-10.
 on 2026-10-10. What Amendments 11 and 12 call the GoatCounter site is asked for
 by GoatCounter's own name for it: the account name, which its sign-up form
 says is reached at `https://[account-name].goatcounter.com` (read 2026-10-10).
-Settings asks for the account name alone (placeholder `yourname`, button Save
+Settings asks for the account name alone (placeholder `youraccount`, button Save
 name); a whole address is still accepted and kept as the name. Verified by
 `SettingsDialog.test.tsx::says where the key and the token come from` and
 `SettingsDialog.test.tsx::keeps the GoatCounter account name as its code and says whether a stored key works there`.
+
+**Amendment 14 (2026-10-10): setting up GoatCounter; no author's account.**
+Ruled by the owner on 2026-10-10.
+
+- FR-071: the Guide opens with "Before you start: GoatCounter", since page
+  loads depend on it: sign up at goatcounter.com, whose account name becomes
+  `youraccount.goatcounter.com`; put the two-line tag in the head of every
+  counted page, the path setting first so GoatCounter records each page with
+  its website; check the dashboard; then enter the account name and key in
+  Settings. The tag is the one every measured site carries (Appendix A, M-4)
+  with the account left as `youraccount`. Verified by
+  `GuideDialog.test.tsx::says how to set up GoatCounter, with the tag to copy for any account`.
+- Nothing Visitron ships names the author's account: not as a GoatCounter
+  site, an example or a word of help. The one exception is the repository
+  Visitron's own releases come from, which the update check asks (FR-075).
+  Verified by
+  `tests/structural/owner_test.go::TestNothingShippedNamesTheAuthorsAccount`.
 

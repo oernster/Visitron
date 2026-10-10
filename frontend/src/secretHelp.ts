@@ -28,7 +28,7 @@ export const secretHelp: SecretHelp[] = [
     which: 'goatcounter', label: 'GoatCounter API key', set: 'goatCounterSet',
     why: 'Needed for page loads, with your GoatCounter account name: without them every Page loads figure stays at 0.',
     steps: [
-      'Your GoatCounter account name is the part before .goatcounter.com in the address you use: for yourname.goatcounter.com it is yourname. Type it into GoatCounter account name below and press Save name.',
+      'Your GoatCounter account name is the part before .goatcounter.com in the address you use: for youraccount.goatcounter.com it is youraccount. Type it into GoatCounter account name below and press Save name.',
       'Open that address in your browser and sign in.',
       'Choose your username in the top menu, then API.',
       'Create a new key with the Read statistics permission; it needs nothing else.',

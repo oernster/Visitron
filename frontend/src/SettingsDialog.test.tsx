@@ -25,7 +25,7 @@ describe('the settings', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(9)
     // Generic for every owner: no account is named, only the form one takes.
     expect(document.body).not.toHaveTextContent(/oernster/i)
-    expect(screen.getByText(/for yourname\.goatcounter\.com it is yourname/)).toBeInTheDocument()
+    expect(screen.getByText(/for youraccount\.goatcounter\.com it is youraccount/)).toBeInTheDocument()
   })
 
   it('keeps the GoatCounter account name as its code and says whether a stored key works there', async () => {

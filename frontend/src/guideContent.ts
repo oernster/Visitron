@@ -24,16 +24,46 @@ export interface GuideRule {
   text: string
 }
 
+/** GuideStep is one numbered step, with any lines to copy exactly. */
+export interface GuideStep {
+  text: string
+  code?: string[]
+}
+
 /** GuideSection is one heading of the Guide. */
 export interface GuideSection {
   heading: string
   intro?: string
+  steps?: GuideStep[]
   entries?: GuideEntry[]
   rules?: GuideRule[]
   paragraphs?: string[]
 }
 
+// The GoatCounter tag every counted page carries (Amendment 14). The first
+// line makes GoatCounter record each page with its website, which is how
+// Visitron tells one website from another; it must come before the second.
+// youraccount stands for the reader's own account name: Visitron names no
+// one's account.
+const goatCounterTag = [
+  '<script>window.goatcounter = {path: function (p) { return location.host + p }}</script>',
+  '<script data-goatcounter="https://youraccount.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>',
+]
+
 export const guideSections: GuideSection[] = [
+  {
+    heading: 'Before you start: GoatCounter',
+    intro: 'Page loads come from GoatCounter, a web statistics service, so they need your own GoatCounter account and a tag on every page you want counted. Downloads need neither: they come from GitHub.',
+    steps: [
+      { text: 'Sign up at goatcounter.com. The account name you choose there becomes your address: youraccount.goatcounter.com.' },
+      {
+        text: 'Put these two lines in the head of every page you want counted, in this order, with youraccount replaced by your account name:',
+        code: goatCounterTag,
+      },
+      { text: 'Publish the pages, open one, then open your GoatCounter dashboard: the visit shows within seconds. An ad blocker in your own browser can stop it being counted.' },
+      { text: 'In Visitron, open Settings and enter your GoatCounter account name, then an API key; the steps for each are under its field.' },
+    ],
+  },
   {
     heading: 'The buttons',
     entries: [
@@ -41,7 +71,7 @@ export const guideSections: GuideSection[] = [
       { icon: editIcon, name: 'Edit website', text: 'Change the selected website\'s address; the site is read again and your ticks are kept where the repository is found again.' },
       { icon: deleteIcon, name: 'Delete website', text: 'Remove the selected website and its download history, after you confirm.' },
       { icon: refreshIcon, name: 'Refresh', text: 'Check every website now rather than waiting for the next scheduled check. While the last check has failed, Refresh carries a warning sign; point at it to read what failed. The sign goes once a check succeeds.' },
-      { icon: settingsIcon, name: 'Settings', text: 'Your GoatCounter key, an optional GitHub token, how often to check, starting with Windows and the update check. Each field says where its key or token comes from.' },
+      { icon: settingsIcon, name: 'Settings', text: 'Your GoatCounter account name and key, an optional GitHub token, how often to check, starting with Windows and the update check. Each field says where its key or token comes from.' },
       { icon: donateIcon, name: 'Donate', text: 'Opens the donation page in your browser.' },
       { icon: lightModeIcon, name: 'Light or dark', text: 'Switches the window between light and dark; the picture is the mode you would move to.' },
       { icon: guideIcon, name: 'Help', text: 'This guide, with About at its foot. About also checks GitHub for a newer Visitron when you ask; with the update check on in Settings, Visitron asks by itself shortly after it opens and once a day.' },

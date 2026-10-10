@@ -26,6 +26,16 @@ export function GuideDialog({ onClose, onAbout }: Props) {
           <section className="guide-section" key={section.heading}>
             <h3>{section.heading}</h3>
             {section.intro && <p className="guide-intro">{section.intro}</p>}
+            {section.steps && (
+              <ol className="guide-steps">
+                {section.steps.map((step) => (
+                  <li key={step.text}>
+                    {step.text}
+                    {step.code && <pre className="guide-code">{step.code.join('\n')}</pre>}
+                  </li>
+                ))}
+              </ol>
+            )}
             {section.paragraphs?.map((text) => (
               <p key={text}>{text}</p>
             ))}
