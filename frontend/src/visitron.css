@@ -113,6 +113,53 @@ main.split {
   padding-left: 20px;
 }
 
+/* The detail side while nothing is selected (Amendment 9). It sticks to the
+   top of the scroller and is exactly as tall as the visible part of it, so the
+   mark and the words stay centred in view however long the list beside them
+   grows. The mark is faded so it reads as a background, not a button. */
+.empty-pane {
+  position: sticky;
+  top: 0;
+  height: 100cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* safe: on a short window the content would otherwise spill past both
+     ends and the top of the mark could never be reached. */
+  justify-content: safe center;
+  gap: 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* The mark shrinks with the visible height, so the words beneath it still
+   fit on a short window. */
+.empty-mark {
+  width: min(200px, 50%, 30cqh);
+  opacity: 0.25;
+}
+
+.empty-lead {
+  margin: 0;
+  font-size: 17px;
+}
+
+.empty-settings {
+  max-width: 420px;
+  font-size: 13px;
+}
+
+.empty-settings ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.empty-settings li {
+  margin-bottom: 6px;
+}
+
 /* A secret's box with its eye beside it (Amendment 8). The eye is pressed
    while the secret is showing, so it wears the selected fill then. */
 .secret-entry {

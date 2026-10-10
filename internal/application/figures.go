@@ -97,6 +97,34 @@ func (f *Figures) Detail(id int64, period domain.Period) (Detail, error) {
 	return Detail{}, ErrNoSuchSite
 }
 
+// CountedSince answers the day the downloads over period are counted from
+// when Visitron's own history starts after the period does (Amendment 9).
+// GitHub keeps only running totals, so a day's rise needs a snapshot on the
+// day before; the period is covered whole only when one is held on the day
+// before its first. ok is false when it is; also when nothing is held yet.
+func (f *Figures) CountedSince(period domain.Period) (since domain.Day, ok bool, err error) {
+	sites, err := f.store.Websites()
+	if err != nil {
+		return domain.Day{}, false, err
+	}
+	before := DaysBack(f.clock.Now(), int(period)+1)
+	for _, w := range sites {
+		for _, repo := range w.Repos {
+			snaps, err := f.store.Snapshots(repo, before)
+			if err != nil {
+				return domain.Day{}, false, err
+			}
+			if len(snaps) > 0 && (!ok || snaps[0].Day.Before(since)) {
+				since, ok = snaps[0].Day, true
+			}
+		}
+	}
+	if !ok || since == before {
+		return domain.Day{}, false, nil
+	}
+	return since, true, nil
+}
+
 // dailyLoads sums the page loads held for period by owning website (FR-020).
 func (f *Figures) dailyLoads(sites []Website, period domain.Period) (map[domain.Address][]domain.DayCount, error) {
 	now := f.clock.Now()

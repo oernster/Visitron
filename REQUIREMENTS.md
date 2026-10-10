@@ -745,3 +745,26 @@ Verified by
 `internal/application/settings_test.go::TestKeyVerified` and
 `app_test.go::TestSettingsRoundTrip`.
 
+**Amendment 9 (2026-10-10): saying what the window is waiting for.** Ruled by
+the owner on 2026-10-10 after the first run with both secrets set.
+
+- FR-041: GitHub keeps only running totals, so a period's downloads are the
+  rises between Visitron's own daily snapshots and the first one held has
+  nothing to rise from. While no snapshot is held on the day before the
+  period's first day, the period column's heading names the day counting began
+  ("Since 10 Oct") rather than the period, so a 0 is not read as a quiet
+  month; it returns to the period by itself once the history covers it.
+  Verified by
+  `internal/application/figures_test.go::TestCountedSinceNamesAHistoryShorterThanThePeriod`,
+  `internal/application/figures_test.go::TestCountedSinceIsSilentBeforeAnyCheck`,
+  `app_test.go::TestSaveCheckThenOverviewAndDetail` and
+  `WebsiteList.test.tsx::names the day counting began while the history is shorter than the period`.
+- FR-042: while no website is selected, the detail side shows Visitron's mark,
+  faded and centred in the visible space, over "Select a website to see its
+  statistics." ("Add a website to start." while there is none). Beneath it,
+  each secret not yet set is named with what it adds, in the words Settings
+  uses; the list goes once both are set. Verified by
+  `EmptyPane.test.tsx::says how to fill it and what each missing secret would add`,
+  `EmptyPane.test.tsx::says nothing of Settings once both secrets are set; asks for a website when there is none` and
+  `App.test.tsx::shows the selected website in detail and enables Edit and Delete`.
+

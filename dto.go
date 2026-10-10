@@ -30,7 +30,12 @@ type OverviewDTO struct {
 	LastFailure string          `json:"lastFailure"`
 	Failure     string          `json:"failure"`
 	NoKey       bool            `json:"noKey"`
+	NoToken     bool            `json:"noToken"`
 	Running     bool            `json:"running"`
+	// Since is the day the period's downloads are counted from while
+	// Visitron's history is shorter than the period, "" once it is not
+	// (Amendment 9).
+	Since string `json:"since"`
 }
 
 // NamedCountDTO is one labelled total.

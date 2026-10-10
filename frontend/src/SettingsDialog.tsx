@@ -6,38 +6,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Refused, type SecretName, type Settings } from './api'
 import { Modal } from './Modal'
+import { secretHelp } from './secretHelp'
 import { useAutoScroll } from './useAutoScroll'
 
 interface Props {
   refused: Refused
   onClose: () => void
 }
-
-// Each secret says where it comes from (Amendment 7). The steps were read
-// from GoatCounter's API help and GitHub's token and rate-limit pages on
-// 2026-10-10; re-read them there when either site changes its menus.
-const secrets: { which: SecretName; label: string; set: keyof Settings; why: string; steps: string[] }[] = [
-  {
-    which: 'goatcounter', label: 'GoatCounter API key', set: 'goatCounterSet',
-    why: 'Needed for page loads: without it every Page loads figure stays at 0.',
-    steps: [
-      'Open oernster.goatcounter.com in your browser and sign in.',
-      'Choose your username in the top menu, then API.',
-      'Create a new key with the Read statistics permission; it needs nothing else.',
-      'Copy the key, paste it below and press Save. Visitron tries it at once and says whether it works.',
-    ],
-  },
-  {
-    which: 'github', label: 'GitHub token (optional)', set: 'gitHubTokenSet',
-    why: 'Downloads are read without one; GitHub then allows 60 requests an hour, which a token raises to 5,000.',
-    steps: [
-      'On github.com, choose your profile picture, then Settings.',
-      'Choose Developer settings at the foot of the left-hand list, then Personal access tokens, Fine-grained tokens, Generate new token.',
-      'Name it Visitron and pick an expiry. Leave every permission unticked: a token can always read public repositories.',
-      'Press Generate token, copy it (GitHub shows it only once), paste it below and press Save.',
-    ],
-  },
-]
 
 // The eye on a secret's box: an emoji, so it needs no picture of its own.
 const eye = '\u{1F441}'
@@ -69,7 +44,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
   )
   useEffect(() => {
     reload()
-    secrets.forEach(({ which }) => loadSecret(which))
+    secretHelp.forEach(({ which }) => loadSecret(which))
   }, [reload, loadSecret])
 
   const saveSecret = async (which: SecretName) => {
@@ -93,7 +68,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
       <h2 id="settings-title">Settings</h2>
       {settings && (
         <div className="dialog-body" ref={autoScroll}>
-          {secrets.map(({ which, label, set, why, steps }) => (
+          {secretHelp.map(({ which, label, set, why, steps }) => (
             <div className="field" key={which}>
               <span>
                 {label}: {settings[set] ? 'set' : 'not set'}

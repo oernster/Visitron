@@ -34,7 +34,10 @@ export interface Overview {
   lastFailure: string
   failure: string
   noKey: boolean
+  noToken: boolean
   running: boolean
+  /** The day downloads are counted from while the history is shorter than the period; '' after (Amendment 9). */
+  since: string
 }
 
 export interface NamedCount {

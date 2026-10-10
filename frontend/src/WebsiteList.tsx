@@ -22,8 +22,11 @@ const ONE_YEAR_DAYS = 365
 const periodLabel = (days: number) => (days === ONE_YEAR_DAYS ? '1 year' : `${days} days`)
 
 // The download columns sit under one Downloads heading, so the first names
-// the period it covers rather than repeating the word (Amendment 7).
-const periodHeading = (days: number) => (days === ONE_YEAR_DAYS ? 'Last year' : `Last ${days} days`)
+// the period it covers rather than repeating the word (Amendment 7). While
+// Visitron's history is shorter than the period it names the day counting
+// began instead, so a 0 is not read as a quiet month (Amendment 9).
+const periodHeading = (days: number, since: string) =>
+  since ? `Since ${since}` : days === ONE_YEAR_DAYS ? 'Last year' : `Last ${days} days`
 
 export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }: Props) {
   const ids = overview.rows.map((r) => r.id)
@@ -59,7 +62,7 @@ export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }:
             <th colSpan={3} className="group">Downloads</th>
           </tr>
           <tr>
-            <th>{periodHeading(overview.period)}</th>
+            <th>{periodHeading(overview.period, overview.since)}</th>
             <th>All time</th>
             <th>Since last check</th>
           </tr>

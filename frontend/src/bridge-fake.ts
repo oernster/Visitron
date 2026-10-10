@@ -72,7 +72,9 @@ export const anOverview: Overview = {
   lastFailure: '',
   failure: '',
   noKey: false,
+  noToken: false,
   running: false,
+  since: '',
 }
 
 export const aDetail: Detail = {

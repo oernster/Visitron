@@ -83,6 +83,10 @@ func TestSaveCheckThenOverviewAndDetail(t *testing.T) {
 	if o.LastSuccess == "" {
 		t.Fatal("a check that succeeded is not stated")
 	}
+	if o.Since != "9 Oct" || !o.NoKey || !o.NoToken {
+		t.Fatalf("since %q, no key %v, no token %v; want counting from the one check, both missing",
+			o.Since, o.NoKey, o.NoToken)
+	}
 
 	d, err := r.app.Detail(id)
 	if err != nil {

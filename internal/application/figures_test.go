@@ -57,6 +57,35 @@ func TestPeriodEdgeHasADayToRiseFrom(t *testing.T) {
 	}
 }
 
+func TestCountedSinceNamesAHistoryShorterThanThePeriod(t *testing.T) {
+	t.Parallel()
+	f, store, clock, _, _ := figuresFixture()
+	since, ok, err := f.CountedSince(domain.Week)
+	if err != nil || !ok || since != (domain.Day{Year: 2026, Month: 10, Date: 7}) {
+		t.Errorf("week: %v %v %v; want the 7th, the first day held", since, ok, err)
+	}
+	clock.now = at(2026, 10, 10, 12)
+	if _, ok, err := f.CountedSince(domain.Period(2)); ok || err != nil {
+		t.Errorf("two days from a snapshot on the day before: ok %v err %v; want covered whole", ok, err)
+	}
+	store.failOn = "Snapshots"
+	if _, _, err := f.CountedSince(domain.Week); !errors.Is(err, errPlanted) {
+		t.Errorf("snapshot fault: %v", err)
+	}
+	store.failOn = "Websites"
+	if _, _, err := f.CountedSince(domain.Week); !errors.Is(err, errPlanted) {
+		t.Errorf("website fault: %v", err)
+	}
+}
+
+func TestCountedSinceIsSilentBeforeAnyCheck(t *testing.T) {
+	t.Parallel()
+	f := NewFigures(newStore(), &fakeClock{now: at(2026, 10, 9, 12)})
+	if _, ok, err := f.CountedSince(domain.Week); ok || err != nil {
+		t.Errorf("no history: ok %v err %v; want nothing named", ok, err)
+	}
+}
+
 func TestDetailFillsEveryDay(t *testing.T) {
 	t.Parallel()
 	f, _, _, _, wdID := figuresFixture()

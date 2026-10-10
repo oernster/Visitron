@@ -19,6 +19,10 @@ import (
 // stampLayout is how the window states a check's time (FR-044).
 const stampLayout = "Mon 2 Jan 2006, 15:04"
 
+// sinceLayout is how the Downloads heading names the day counting began
+// (Amendment 9).
+const sinceLayout = "2 Jan"
+
 // State answers what the page needs to start.
 func (a *App) State() (state StateDTO, err error) {
 	defer guard(&err)
@@ -51,7 +55,14 @@ func (a *App) Overview() (overview OverviewDTO, err error) {
 	out := OverviewDTO{
 		Rows: make([]WebsiteRowDTO, 0, len(rows)), Period: int(prefs.Period),
 		LastSuccess: stamp(rec.LastSuccess), Failure: rec.Failure,
-		NoKey: !key.GoatCounterSet, Running: a.services.Scheduler.Running(),
+		NoKey: !key.GoatCounterSet, NoToken: !key.GitHubTokenSet, Running: a.services.Scheduler.Running(),
+	}
+	since, short, err := a.services.Figures.CountedSince(prefs.Period)
+	if err != nil {
+		return OverviewDTO{}, err
+	}
+	if short {
+		out.Since = time.Date(since.Year, time.Month(since.Month), since.Date, 0, 0, 0, 0, time.Local).Format(sinceLayout)
 	}
 	if rec.LastFailure.After(rec.LastSuccess) {
 		out.LastFailure = stamp(rec.LastFailure)

@@ -24,6 +24,12 @@ describe('the website list', () => {
     expect(headings).toEqual(['Website', 'Page loads', 'Downloads', 'Last 30 days', 'All time', 'Since last check'])
   })
 
+  it('names the day counting began while the history is shorter than the period', () => {
+    list(null, { ...anOverview, since: '10 Oct' })
+    expect(screen.getByRole('columnheader', { name: 'Since 10 Oct' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Last 30 days' })).toBeNull()
+  })
+
   it('is one stop whose arrows walk the rows and wrap', () => {
     const { onSelect, table } = list(null)
     expect(table).toHaveAttribute('tabIndex', '0')

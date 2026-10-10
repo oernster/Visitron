@@ -24,10 +24,15 @@ describe('the shell', () => {
   })
 
   it('shows the selected website in detail and enables Edit and Delete', async () => {
-    const bridge = installBridge()
+    const bridge = installBridge({ Overview: vi.fn(() => Promise.resolve({ ...anOverview, noToken: true })) })
     render(<App />)
+    const empty = await screen.findByRole('region', { name: 'No website selected' })
+    expect(empty).toHaveTextContent('Select a website to see its statistics.')
+    expect(empty).toHaveTextContent('GitHub token (optional)')
+    expect(empty).not.toHaveTextContent('GoatCounter API key')
     fireEvent.click(await screen.findByText('symdiary.com'))
     expect(await screen.findByRole('heading', { name: 'symdiary.com' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'No website selected' })).toBeNull()
     expect(bridge.Detail).toHaveBeenCalledWith(1)
     expect(bandButton('Edit website')).toBeEnabled()
     expect(bandButton('Delete website')).toBeEnabled()

@@ -14,6 +14,8 @@ import { GuideDialog } from './GuideDialog'
 import { SettingsDialog } from './SettingsDialog'
 import { WebsiteDialog } from './WebsiteDialog'
 import { DetailPane } from './DetailPane'
+import { EmptyPane } from './EmptyPane'
+import { missingSecrets } from './secretHelp'
 import { WebsiteList } from './WebsiteList'
 import addIcon from './assets/icons/add-website.png'
 import editIcon from './assets/icons/edit-website.png'
@@ -171,7 +173,11 @@ export function App() {
           <WebsiteList overview={overview} periods={state.periods} selected={selected}
             onSelect={setSelected} onPeriod={(d) => void period(d)} />
         )}
-        {detail && <DetailPane detail={detail} />}
+        {detail ? (
+          <DetailPane detail={detail} />
+        ) : (
+          overview && <EmptyPane hasWebsites={overview.rows.length > 0} missing={missingSecrets(overview)} />
+        )}
       </main>
 
       {(open === 'add' || (open === 'edit' && row)) && (
