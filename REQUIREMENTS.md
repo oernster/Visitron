@@ -951,3 +951,19 @@ had grown too dense to read in one column.
   `SettingsDialog.test.tsx::saves your own downloads of each disk image within their bounds, starting at none`.
 - FR-071: the Guide's rule on disk images says the own downloads are set in
   Settings and are 0 until set.
+
+**Amendment 20 (2026-10-10): setup makes start with Windows the default.**
+Ruled by the owner on 2026-10-10, closing a gap: FR-052 made start with Windows
+on by default while nothing turned it on.
+
+- FR-052: the setup program offers "Start with Windows", ticked on a first
+  install and as it stands on any other, beside the shortcut boxes; the manage
+  screen applies it at once and a repair keeps it. It writes the same single
+  entry the Settings switch writes. An install that cannot write it says so
+  rather than passing over it; uninstalling removes it. Verified by
+  `installer/state_test.go::TestSetupOpensOnInstallWhereNothingIsThere`,
+  `installer/state_test.go::TestAnInstalledCopyOffersStartWithWindowsAsItStands`,
+  `installer/state_test.go::TestSetStartWithWindowsAppliesStraightAway`,
+  `internal/infrastructure/setup/plan_test.go::TestInstallWritesThenRegistersThenAppliesTheChoices`,
+  `internal/infrastructure/setup/plan_test.go::TestInstallSaysWhenTheSignInEntryCouldNotBeSet` and
+  `internal/infrastructure/setup/plan_test.go::TestRemoveTakesTheShortcutsBeforeTheRegistryEntry`.

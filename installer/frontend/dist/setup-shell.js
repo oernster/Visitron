@@ -135,7 +135,7 @@ function renderOptions(container, specs) {
 
 // freshChoices are what a first install applies; a reinstall puts them back. That is the whole of the difference from a repair: a repair leaves
 // every choice alone.
-const freshChoices = {startMenu: true, desktop: true}
+const freshChoices = {startMenu: true, desktop: true, startWithWindows: true}
 
 // launchOption finishes every screen that writes files. Setup's job is done
 // once Visitron is running, so the same tick that starts it closes setup.
@@ -160,7 +160,18 @@ function shortcutOptions(state) {
             key: 'desktop', label: 'Add a Desktop shortcut',
             checked: state.installed ? state.desktop : true,
         },
+        startOption(state),
     ]
+}
+
+// startOption is the sign-in entry (FR-052). Go reports it on for a first
+// install; for any other it is as it stands.
+function startOption(state) {
+    return {
+        key: 'startWithWindows', label: 'Start with Windows',
+        hint: `${appName} waits in the tray from sign-in and checks on its own.`,
+        checked: state.startWithWindows,
+    }
 }
 
 /* ------------------------------------------------------------------- work */
@@ -236,7 +247,7 @@ async function withAppClosed(proceed) {
 // install runs one write of the files, whatever the screen calls it.
 function install(read, title, doneTitle, doneMsg) {
     const launchAfter = read('launch')
-    const choices = {startMenu: read('startMenu'), desktop: read('desktop')}
+    const choices = {startMenu: read('startMenu'), desktop: read('desktop'), startWithWindows: read('startWithWindows')}
     return withAppClosed(() => run(
         () => backend().Install(choices).then(() => {
             if (launchAfter) return backend().LaunchApp().then(() => backend().Quit())

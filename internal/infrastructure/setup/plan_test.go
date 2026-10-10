@@ -30,7 +30,7 @@ func TestInstallRefusesWhileTheApplicationIsOpen(t *testing.T) {
 	machine := setuptest.Ready()
 	machine.Running = true
 
-	err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{})
+	err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{}, false)
 
 	if !errors.Is(err, setup.ErrAppRunning) {
 		t.Errorf("Install with the application open = %v, want setup.ErrAppRunning", err)
@@ -50,15 +50,30 @@ func TestInstallWritesThenRegistersThenAppliesTheChoices(t *testing.T) {
 	machine := setuptest.Ready()
 	want := setup.Shortcuts{StartMenu: true, Desktop: false}
 
-	if err := setup.Install(machine, machine.Report, []byte("payload"), "1.0.0", want); err != nil {
+	if err := setup.Install(machine, machine.Report, []byte("payload"), "1.0.0", want, true); err != nil {
 		t.Fatalf("Install: %v", err)
 	}
 
 	assertOrder(t, machine.Calls,
 		"AppRunning", "InstallDir", "ExtractZip",
-		"Executable", "CopyFile", "WriteUninstallEntry", "ApplyShortcuts")
+		"Executable", "CopyFile", "WriteUninstallEntry", "ApplyShortcuts", "SetStartWithWindows")
 	if machine.Applied != want {
 		t.Errorf("applied = %+v, want %+v", machine.Applied, want)
+	}
+	if !slices.Equal(machine.StartSet, []bool{true}) {
+		t.Errorf("sign-in entry writes = %v, want one, turning it on (FR-052)", machine.StartSet)
+	}
+}
+
+func TestInstallSaysWhenTheSignInEntryCouldNotBeSet(t *testing.T) {
+	t.Parallel()
+	machine := setuptest.Ready()
+	machine.StartErr = errors.New("access is denied")
+
+	err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{}, true)
+
+	if !errors.Is(err, machine.StartErr) || !strings.Contains(err.Error(), "starting it with Windows") {
+		t.Errorf("Install = %v, want the sign-in failure said, with its reason", err)
 	}
 }
 
@@ -67,7 +82,7 @@ func TestInstallCarriesTheInstallDirectoryFailureOut(t *testing.T) {
 	machine := setuptest.Ready()
 	machine.DirErr = errors.New("no such user profile")
 
-	if err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{}); !errors.Is(err, machine.DirErr) {
+	if err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{}, false); !errors.Is(err, machine.DirErr) {
 		t.Errorf("Install without an install directory = %v, want the reason", err)
 	}
 	if slices.Contains(machine.Calls, "ExtractZip") {
@@ -95,7 +110,7 @@ func TestInstallSaysWhichStepFailed(t *testing.T) {
 			machine := setuptest.Ready()
 			testCase.break_(machine)
 
-			err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{})
+			err := setup.Install(machine, machine.Report, nil, "1.0.0", setup.Shortcuts{}, false)
 
 			if !errors.Is(err, reason) {
 				t.Errorf("Install = %v, want the underlying reason wrapped", err)
@@ -137,8 +152,12 @@ func TestRemoveTakesTheShortcutsBeforeTheRegistryEntry(t *testing.T) {
 	// run then interrupted, the program would be gone from the list while its
 	// shortcuts still sat on the desktop, pointing at files about to vanish.
 	assertOrder(t, machine.Calls,
-		"AppRunning", "InstallDir", "RemoveShortcuts", "RemoveUninstallEntry",
+		"AppRunning", "InstallDir", "RemoveShortcuts", "SetStartWithWindows", "RemoveUninstallEntry",
 		"Leftovers", "ScheduleDirDeletion")
+	// A sign-in entry left behind would start nothing at every sign-in.
+	if !slices.Equal(machine.StartSet, []bool{false}) {
+		t.Errorf("sign-in entry writes = %v, want it removed", machine.StartSet)
+	}
 }
 
 func TestRemoveKeepsTheRecordUnlessAsked(t *testing.T) {
@@ -221,7 +240,7 @@ func TestEveryRunEndsAtOneHundredAndNeverGoesBackwards(t *testing.T) {
 		run  func(*setuptest.Machine) error
 	}{
 		{"install", func(m *setuptest.Machine) error {
-			return setup.Install(m, m.Report, nil, "1.0.0", setup.Shortcuts{})
+			return setup.Install(m, m.Report, nil, "1.0.0", setup.Shortcuts{}, false)
 		}},
 		{"remove", func(m *setuptest.Machine) error { return setup.Remove(m, m.Report, true) }},
 	} {

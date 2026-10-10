@@ -44,6 +44,23 @@ func TestSetupOpensOnInstallWhereNothingIsThere(t *testing.T) {
 	if state.AppName != setup.AppName {
 		t.Errorf("appName = %q, want %q", state.AppName, setup.AppName)
 	}
+	// FR-052: starting with Windows is on by default, so a first install offers
+	// it ticked.
+	if !state.StartWithWindows {
+		t.Error("a first install offers start with Windows unticked; FR-052 makes it the default")
+	}
+}
+
+func TestAnInstalledCopyOffersStartWithWindowsAsItStands(t *testing.T) {
+	t.Parallel()
+	app, machine := fresh(t)
+	machine.Holds = true
+	machine.Installed = "1.0.0"
+	machine.Starts = false
+
+	if app.DetectState().StartWithWindows {
+		t.Error("an owner who turned start with Windows off is offered it on again")
+	}
 }
 
 func TestSetupOpensOnManageWhereItIsAlreadyInstalled(t *testing.T) {
@@ -121,7 +138,7 @@ func TestInstallHandsTheChoicesOverUnchanged(t *testing.T) {
 	t.Parallel()
 	app, machine := fresh(t)
 
-	if err := app.Install(OptionsDTO{StartMenu: true, Desktop: false}); err != nil {
+	if err := app.Install(OptionsDTO{StartMenu: true, Desktop: false, StartWithWindows: true}); err != nil {
 		t.Fatalf("Install: %v", err)
 	}
 
@@ -129,15 +146,22 @@ func TestInstallHandsTheChoicesOverUnchanged(t *testing.T) {
 	if machine.Applied != want {
 		t.Errorf("applied = %+v, want %+v", machine.Applied, want)
 	}
+	if !slices.Equal(machine.StartSet, []bool{true}) {
+		t.Errorf("sign-in entry writes = %v, want the choice handed over", machine.StartSet)
+	}
 }
 
 func TestRepairLeavesEveryChoiceAsItStands(t *testing.T) {
 	t.Parallel()
 	app, machine := fresh(t)
 	machine.Shortcuts = setup.Shortcuts{StartMenu: false, Desktop: true}
+	machine.Starts = true
 
 	if err := app.Repair(); err != nil {
 		t.Fatalf("Repair: %v", err)
+	}
+	if !slices.Equal(machine.StartSet, []bool{true}) {
+		t.Errorf("sign-in entry writes = %v, want it kept as it stands", machine.StartSet)
 	}
 
 	// A repair is the quick fix for a damaged install, as distinct from a
@@ -229,6 +253,23 @@ func TestSetShortcutsCarriesAMissingInstallDirectoryOut(t *testing.T) {
 
 	if err := app.SetShortcuts(true, true); !errors.Is(err, machine.DirErr) {
 		t.Errorf("SetShortcuts without an install directory = %v, want the reason", err)
+	}
+}
+
+func TestSetStartWithWindowsAppliesStraightAway(t *testing.T) {
+	t.Parallel()
+	app, machine := fresh(t)
+
+	if err := app.SetStartWithWindows(false); err != nil {
+		t.Fatalf("SetStartWithWindows: %v", err)
+	}
+	if !slices.Equal(machine.StartSet, []bool{false}) {
+		t.Errorf("sign-in entry writes = %v, want it turned off at once", machine.StartSet)
+	}
+
+	machine.DirErr = errors.New("no such user profile")
+	if err := app.SetStartWithWindows(true); !errors.Is(err, machine.DirErr) {
+		t.Errorf("SetStartWithWindows without an install directory = %v, want the reason", err)
 	}
 }
 

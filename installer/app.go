@@ -69,12 +69,16 @@ type StateDTO struct {
 	RecordFile       string `json:"recordFile"`
 	StartMenu        bool   `json:"startMenu"`
 	Desktop          bool   `json:"desktop"`
+	// StartWithWindows is the sign-in entry as it stands; on a fresh install it
+	// is on, since FR-052 makes that the default.
+	StartWithWindows bool `json:"startWithWindows"`
 }
 
 // OptionsDTO carries the choices made on the install or reinstall screen.
 type OptionsDTO struct {
-	StartMenu bool `json:"startMenu"`
-	Desktop   bool `json:"desktop"`
+	StartMenu        bool `json:"startMenu"`
+	Desktop          bool `json:"desktop"`
+	StartWithWindows bool `json:"startWithWindows"`
 }
 
 // LicenceDTO is the licence screen's whole content, so the page states none of
@@ -152,8 +156,10 @@ func (a *App) DetectState() StateDTO {
 		mode = "manage"
 	}
 	relation := setup.Same
+	startWithWindows := true
 	if installed {
 		relation = setup.Compare(a.version, installedVersion)
+		startWithWindows = a.machine.StartsWithWindows()
 	}
 	return StateDTO{
 		AppName:          setup.AppName,
@@ -166,6 +172,7 @@ func (a *App) DetectState() StateDTO {
 		RecordFile:       record,
 		StartMenu:        shortcuts.StartMenu,
 		Desktop:          shortcuts.Desktop,
+		StartWithWindows: startWithWindows,
 	}
 }
 
@@ -185,7 +192,11 @@ func (a *App) Install(choices OptionsDTO) error { return a.write(choices) }
 // choices back to those of a new install.
 func (a *App) Repair() error {
 	shortcuts := a.machine.CurrentShortcuts()
-	return a.write(OptionsDTO{StartMenu: shortcuts.StartMenu, Desktop: shortcuts.Desktop})
+	return a.write(OptionsDTO{
+		StartMenu:        shortcuts.StartMenu,
+		Desktop:          shortcuts.Desktop,
+		StartWithWindows: a.machine.StartsWithWindows(),
+	})
 }
 
 // write is the single install path behind Install and Repair.
@@ -193,7 +204,7 @@ func (a *App) write(choices OptionsDTO) error {
 	return setup.Install(a.machine, a.report, a.payload, a.version, setup.Shortcuts{
 		StartMenu: choices.StartMenu,
 		Desktop:   choices.Desktop,
-	})
+	}, choices.StartWithWindows)
 }
 
 // Uninstall removes the shortcuts, the registry entry, the log and the
@@ -224,6 +235,16 @@ func (a *App) SetShortcuts(startMenu, desktop bool) error {
 		Desktop:   desktop,
 	})
 	return nil
+}
+
+// SetStartWithWindows applies the sign-in box live from the manage screen, for
+// the reason SetShortcuts does.
+func (a *App) SetStartWithWindows(on bool) error {
+	dir, err := a.machine.InstallDir()
+	if err != nil {
+		return err
+	}
+	return a.machine.SetStartWithWindows(filepath.Join(dir, setup.ExeName), on)
 }
 
 // Quit closes the setup program.

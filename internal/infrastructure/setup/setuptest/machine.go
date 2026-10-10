@@ -44,6 +44,11 @@ type Machine struct {
 	Holds     bool
 	Shortcuts setup.Shortcuts
 	Sized     uint32
+	// Starts is whether the sign-in entry is present; StartSet records each
+	// value written to it, in order; StartErr fails the write.
+	Starts   bool
+	StartSet []bool
+	StartErr error
 }
 
 // Step is one progress report, kept so the bar's own sequence is testable.
@@ -133,3 +138,11 @@ func (m *Machine) ApplyShortcuts(_, _ string, want setup.Shortcuts) {
 func (m *Machine) RemoveShortcuts() { m.did("RemoveShortcuts") }
 
 func (m *Machine) ScheduleDirDeletion(string) { m.did("ScheduleDirDeletion") }
+
+func (m *Machine) StartsWithWindows() bool { m.did("StartsWithWindows"); return m.Starts }
+
+func (m *Machine) SetStartWithWindows(_ string, on bool) error {
+	m.did("SetStartWithWindows")
+	m.StartSet = append(m.StartSet, on)
+	return m.StartErr
+}

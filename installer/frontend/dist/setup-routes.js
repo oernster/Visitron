@@ -65,6 +65,7 @@ function routeManage(state) {
             key: 'desktop', label: 'Add a Desktop shortcut',
             checked: state.desktop, onChange: () => live(),
         },
+        {...startOption(state), onChange: () => backend().SetStartWithWindows(read('startWithWindows'))},
         launchOption(),
     ])
     showScreen('manage')

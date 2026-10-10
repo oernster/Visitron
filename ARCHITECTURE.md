@@ -59,7 +59,7 @@ the wait after a failure), `figures.go`, `settings.go`, `update.go`, `about.go`.
 | `update` | Visitron's latest published release, unauthenticated. |
 | `store` | SQLite at `%LOCALAPPDATA%\Visitron\visitron.db`; `Unavailable` stands in when it cannot open. |
 | `secrets` | The key and the token in Windows Credential Manager. |
-| `startup` | The start-with-Windows value under the HKCU Run key. |
+| `startup` | The start-with-Windows value under the HKCU Run key; Settings and the setup program both write it through here. |
 | `tray` | The Win32 notification-area icon: Open, Refresh now, Quit. |
 | `runlog` | The run log; points error output at it before anything can fail. |
 | `windowfocus` | Hands the keyboard to the WebView2 child window on DOM ready. |

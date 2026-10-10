@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"visitron/internal/infrastructure/startup"
 )
 
 // UninstallExeName is the copy of setup left inside the install directory, so
@@ -26,7 +28,7 @@ const (
 	msgWriting   = "Writing the files..."
 	msgChoices   = "Applying your choices..."
 	msgShortcuts = "Removing shortcuts..."
-	msgRegistry  = "Removing the registry entry..."
+	msgRegistry  = "Removing the registry entries..."
 	msgLeftovers = "Clearing what the window kept..."
 	msgRecord    = "Deleting your websites and their history..."
 	msgFiles     = "Removing the files..."
@@ -65,6 +67,10 @@ type Machine interface {
 	RemoveUninstallEntry() error
 	ApplyShortcuts(exePath, workDir string, want Shortcuts)
 	RemoveShortcuts()
+	// StartsWithWindows reports whether the sign-in entry is present and
+	// healthy; SetStartWithWindows writes or removes it (FR-052).
+	StartsWithWindows() bool
+	SetStartWithWindows(exePath string, on bool) error
 	ScheduleDirDeletion(dir string)
 }
 
@@ -73,12 +79,12 @@ type Machine interface {
 type Report func(pct int, msg string)
 
 // Install writes the files, registers the program with Windows and applies the
-// shortcut choices as given.
+// shortcut and sign-in choices as given.
 //
 // A fresh install, an update, a way back and a reinstall are all this one act.
 // What tells them apart is the screen the user came from and the choices they
 // arrived with, never a different sequence here.
-func Install(machine Machine, report Report, payload []byte, version string, want Shortcuts) error {
+func Install(machine Machine, report Report, payload []byte, version string, want Shortcuts, startWithWindows bool) error {
 	if machine.AppRunning() {
 		return ErrAppRunning
 	}
@@ -100,6 +106,12 @@ func Install(machine Machine, report Report, payload []byte, version string, wan
 
 	report(pctChoices, msgChoices)
 	machine.ApplyShortcuts(exePath, dir, want)
+	// Unlike a shortcut, a sign-in entry that silently failed would leave the
+	// reader believing Visitron watches from sign-in when it does not, so its
+	// failure is said rather than swallowed.
+	if err := machine.SetStartWithWindows(exePath, startWithWindows); err != nil {
+		return fmt.Errorf("%s is installed; starting it with Windows could not be set: %w", AppName, err)
+	}
 
 	report(PctDone, MsgDone)
 	return nil
@@ -151,6 +163,7 @@ func Remove(machine Machine, report Report, removeRecord bool) error {
 	machine.RemoveShortcuts()
 
 	report(pctRegistry, msgRegistry)
+	_ = machine.SetStartWithWindows("", false)
 	_ = machine.RemoveUninstallEntry()
 
 	report(pctLeftovers, msgLeftovers)
@@ -200,4 +213,16 @@ func (Real) WriteUninstallEntry(info UninstallInfo) error { return WriteUninstal
 
 func (Real) ApplyShortcuts(exePath, workDir string, want Shortcuts) {
 	ApplyShortcuts(exePath, workDir, want)
+}
+
+// StartsWithWindows and SetStartWithWindows go through the one entry the
+// application's own Settings switch uses, under the same name, so setup and
+// Settings can never disagree about it (FR-052).
+func (Real) StartsWithWindows() bool {
+	on, _ := startup.Entry{Name: AppName}.Enabled()
+	return on
+}
+
+func (Real) SetStartWithWindows(exePath string, on bool) error {
+	return startup.Entry{Name: AppName, Exe: exePath}.SetEnabled(on)
 }
