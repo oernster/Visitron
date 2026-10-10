@@ -95,6 +95,7 @@ func main() {
 	services := Services{
 		Websites:  application.NewWebsites(data, web.NewFetcher(client), releases),
 		Figures:   application.NewFigures(data, clock),
+		Countries: application.NewCountries(data, loads, vault, clock),
 		Scheduler: application.NewScheduler(check, data, clock),
 		Settings:  application.NewSettings(data, vault, entry, releases, loads),
 		Updates:   application.NewUpdates(update.New(client, releaseRepo), data, appVersion, goruntime.GOOS),

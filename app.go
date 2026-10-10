@@ -42,6 +42,7 @@ type emitter interface{ Emit(name string, data any) }
 type Services struct {
 	Websites  *application.Websites
 	Figures   *application.Figures
+	Countries *application.Countries
 	Scheduler *application.Scheduler
 	Settings  *application.Settings
 	Updates   *application.Updates

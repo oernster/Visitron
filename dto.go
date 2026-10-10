@@ -52,14 +52,34 @@ type DayCountDTO struct {
 
 // DetailDTO is the selected website's figures (FR-042).
 type DetailDTO struct {
-	ID             int64           `json:"id"`
-	URL            string          `json:"url"`
-	Total          int             `json:"total"`
-	ByRepo         []NamedCountDTO `json:"byRepo"`
-	ByRelease      []NamedCountDTO `json:"byRelease"`
-	ByPlatform     []NamedCountDTO `json:"byPlatform"`
-	DailyPageLoads []DayCountDTO   `json:"dailyPageLoads"`
-	DailyDownloads []DayCountDTO   `json:"dailyDownloads"`
+	ID             int64         `json:"id"`
+	URL            string        `json:"url"`
+	Total          int           `json:"total"`
+	DailyPageLoads []DayCountDTO `json:"dailyPageLoads"`
+	DailyDownloads []DayCountDTO `json:"dailyDownloads"`
+}
+
+// CountryDTO is one country's visitors (FR-047).
+type CountryDTO struct {
+	Code  string `json:"code"`
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+// StatisticsDTO is one website's Statistics dialog (FR-045 to FR-049): its
+// downloads to date by platform, repository and release, then its visitors
+// by country over the period. Countries is empty, not absent, when there are
+// none; NoGoatCounter and CountriesProblem say why they were not read.
+type StatisticsDTO struct {
+	ID               int64           `json:"id"`
+	URL              string          `json:"url"`
+	Period           int             `json:"period"`
+	ByPlatform       []NamedCountDTO `json:"byPlatform"`
+	ByRepo           []NamedCountDTO `json:"byRepo"`
+	ByRelease        []NamedCountDTO `json:"byRelease"`
+	Countries        []CountryDTO    `json:"countries"`
+	NoGoatCounter    bool            `json:"noGoatCounter"`
+	CountriesProblem string          `json:"countriesProblem"`
 }
 
 // ProposalDTO is what the Add and Edit dialogs offer after a crawl.

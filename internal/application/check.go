@@ -130,19 +130,13 @@ func (c *Check) readRepo(ctx context.Context, day domain.Day, repo domain.Repo, 
 }
 
 func (c *Check) readPageLoads(ctx context.Context, now time.Time, out *Outcome) {
-	key, err := c.secrets.Get(GoatCounterKey)
-	if err != nil {
-		out.Failures = append(out.Failures, fmt.Sprintf("reading the GoatCounter key: %v", err))
-		return
-	}
-	prefs, err := Preferred(c.store)
-	if err != nil {
-		out.Failures = append(out.Failures, fmt.Sprintf("reading the GoatCounter account name: %v", err))
-		return
-	}
-	site := prefs.Site()
-	if key == "" || site.IsZero() {
+	site, key, err := goatCounter(c.store, c.secrets)
+	if errors.Is(err, ErrNoGoatCounter) {
 		out.NoKey = true
+		return
+	}
+	if err != nil {
+		out.Failures = append(out.Failures, err.Error())
 		return
 	}
 	first, last := DaysBack(now, int(domain.Year)), DayOf(now)

@@ -53,13 +53,28 @@ func (f fakeReleases) Exists(_ context.Context, repo domain.Repo) (bool, error) 
 
 func (fakeReleases) Verify(context.Context, string) error { return nil }
 
-type fakePageLoads struct{}
+// fakePageLoads answers the paths and countries a test sets; err fails every
+// read of them.
+type fakePageLoads struct {
+	paths     []application.SitePath
+	countries []domain.CountryCount
+	err       error
+}
 
-func (fakePageLoads) Daily(context.Context, domain.GoatCounterSite, string, domain.Day, domain.Day) ([]application.PathDay, error) {
+func (*fakePageLoads) Daily(context.Context, domain.GoatCounterSite, string, domain.Day, domain.Day) ([]application.PathDay, error) {
 	return nil, nil
 }
 
-func (fakePageLoads) Verify(context.Context, domain.GoatCounterSite, string) error { return nil }
+func (f *fakePageLoads) Paths(context.Context, domain.GoatCounterSite, string, domain.Day, domain.Day) ([]application.SitePath, error) {
+	return f.paths, f.err
+}
+
+func (f *fakePageLoads) Countries(context.Context, domain.GoatCounterSite, string, domain.Day, domain.Day,
+	[]int64) ([]domain.CountryCount, error) {
+	return f.countries, f.err
+}
+
+func (*fakePageLoads) Verify(context.Context, domain.GoatCounterSite, string) error { return nil }
 
 type fakeSecrets struct{ values map[application.Secret]string }
 
@@ -138,6 +153,7 @@ type rig struct {
 	store   *store.Store
 	window  *recorder
 	secrets *fakeSecrets
+	loads   *fakePageLoads
 }
 
 func newRig(t *testing.T, data application.Store) *rig {
@@ -158,12 +174,14 @@ func newRig(t *testing.T, data application.Store) *rig {
 		{Repo: widgetRepo, Release: "v1.0.0", Name: "Widget.dmg", Raw: 3},
 	}}}
 	vault := &fakeSecrets{values: map[application.Secret]string{}}
-	check := application.NewCheck(data, releases, fakePageLoads{}, vault, clock, discardLog{})
+	loads := &fakePageLoads{}
+	check := application.NewCheck(data, releases, loads, vault, clock, discardLog{})
 	services := Services{
 		Websites:  application.NewWebsites(data, fakeFetcher{}, releases),
 		Figures:   application.NewFigures(data, clock),
+		Countries: application.NewCountries(data, loads, vault, clock),
 		Scheduler: application.NewScheduler(check, data, clock),
-		Settings:  application.NewSettings(data, vault, &fakeStartup{}, releases, fakePageLoads{}),
+		Settings:  application.NewSettings(data, vault, &fakeStartup{}, releases, loads),
 		Updates:   application.NewUpdates(published, data, "1.1.0", "windows"),
 		Store:     data,
 	}
@@ -172,5 +190,5 @@ func newRig(t *testing.T, data application.Store) *rig {
 	app.emitter, app.opener, app.focuser, app.control = window, window, window, window
 	app.ctx, app.cancel = context.WithCancel(context.Background())
 	t.Cleanup(app.cancel)
-	return &rig{app: app, store: opened, window: window, secrets: vault}
+	return &rig{app: app, store: opened, window: window, secrets: vault, loads: loads}
 }

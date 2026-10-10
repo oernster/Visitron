@@ -41,13 +41,15 @@ UI (root package, frontend/)  ->  Application  ->  Domain  <-  Infrastructure
 repositories found in a page (`links.go`, `repo.go`), which website owns a
 GoatCounter path (`owner.go`), platforms and counted downloads
 (`downloads.go`), days (`history.go`), setting bounds (`settings.go`), the
-GoatCounter account name (`goatcounter.go`) and version comparison
-(`version.go`).
+GoatCounter account name (`goatcounter.go`), the order countries are listed
+in (`countries.go`) and version comparison (`version.go`).
 
 **Application, `internal/application`.** One service per thing the owner does,
 over the ports in `ports.go`: `websites.go` (add, edit, delete, crawl),
 `check.go` (one pass over every website), `scheduler.go` (when a check is due,
-the wait after a failure), `figures.go`, `settings.go`, `update.go`, `about.go`.
+the wait after a failure), `figures.go`, `countries.go` (one website's visitors
+by country; also the one rule for whether GoatCounter is set up), `settings.go`,
+`update.go`, `about.go`.
 
 **Infrastructure, `internal/infrastructure`.**
 
@@ -55,7 +57,7 @@ the wait after a failure), `figures.go`, `settings.go`, `update.go`, `about.go`.
 |---|---|
 | `web` | The one HTTP client, plus the crawl's page reader. |
 | `github` | Release download counts, anonymous or with the owner's token. |
-| `goatcounter` | Daily page loads from the owner's GoatCounter site. |
+| `goatcounter` | Daily page loads, page paths and visitors by country from the owner's GoatCounter site. |
 | `update` | Visitron's latest published release, unauthenticated. |
 | `store` | SQLite at `%LOCALAPPDATA%\Visitron\visitron.db`; `Unavailable` stands in when it cannot open. |
 | `secrets` | The key and the token in Windows Credential Manager. |

@@ -124,6 +124,68 @@ func TestDailyFaults(t *testing.T) {
 	}
 }
 
+func TestPathsListsEachPageWithItsIDAndNoEvents(t *testing.T) {
+	t.Parallel()
+	c := client(t, func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"more":false,"hits":[
+			{"path":"/example.org/","path_id":1,"stats":[]},
+			{"path":"click","path_id":2,"event":true,"stats":[]}]}`))
+	})
+	got, err := c.Paths(context.Background(), someone, "k", oct8, oct9)
+	want := []application.SitePath{{Path: "example.org/", ID: 1}}
+	if err != nil || !reflect.DeepEqual(got, want) {
+		t.Fatalf("Paths = %v, %v; want %v", got, err, want)
+	}
+	failing := client(t, func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusForbidden) })
+	if _, err := failing.Paths(context.Background(), someone, "k", oct8, oct9); err == nil {
+		t.Error("a refusal was read as paths")
+	}
+}
+
+func TestCountriesFilterByPathAndPageByOffset(t *testing.T) {
+	t.Parallel()
+	var queries []map[string]string
+	c := client(t, func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		queries = append(queries, map[string]string{"path": r.URL.Path, "include_paths": q.Get("include_paths"),
+			"offset": q.Get("offset"), "start": q.Get("start"), "end": q.Get("end")})
+		if q.Get("offset") == "0" {
+			_, _ = w.Write([]byte(`{"more":true,"stats":[{"id":"GB","name":"United Kingdom","count":5}]}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"more":false,"stats":[{"id":"FR","name":"France","count":2}]}`))
+	})
+	got, err := c.Countries(context.Background(), someone, "k", oct8, oct9, []int64{11, 12})
+	want := []domain.CountryCount{{Code: "GB", Name: "United Kingdom", Count: 5}, {Code: "FR", Name: "France", Count: 2}}
+	if err != nil || !reflect.DeepEqual(got, want) {
+		t.Fatalf("Countries = %v, %v; want %v", got, err, want)
+	}
+	if len(queries) != 2 || queries[1]["offset"] != "1" {
+		t.Fatalf("queries %v; want a second page from offset 1", queries)
+	}
+	first := queries[0]
+	if first["path"] != locationsPath || first["include_paths"] != "11,12" || first["start"] != "2026-10-08" || first["end"] != "2026-10-10" {
+		t.Errorf("first query %v", first)
+	}
+}
+
+func TestCountriesStopOnAnEmptyPageAndPassOnFailures(t *testing.T) {
+	t.Parallel()
+	calls := 0
+	c := client(t, func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		_, _ = w.Write([]byte(`{"more":true,"stats":[]}`))
+	})
+	got, err := c.Countries(context.Background(), someone, "k", oct8, oct9, []int64{1})
+	if err != nil || calls != 1 || got == nil || len(got) != 0 {
+		t.Errorf("calls %d, countries %v, err %v", calls, got, err)
+	}
+	failing := client(t, func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusForbidden) })
+	if _, err := failing.Countries(context.Background(), someone, "k", oct8, oct9, []int64{1}); err == nil {
+		t.Error("a refusal was read as countries")
+	}
+}
+
 func TestVerify(t *testing.T) {
 	t.Parallel()
 	c := client(t, func(w http.ResponseWriter, r *http.Request) {

@@ -37,6 +37,8 @@ var wireShapes = map[string]string{
 	"NamedCountDTO": "NamedCount",
 	"DayCountDTO":   "DayCount",
 	"DetailDTO":     "Detail",
+	"CountryDTO":    "Country",
+	"StatisticsDTO": "Statistics",
 	"ProposalDTO":   "Proposal",
 	"ProgressDTO":   "Progress",
 	"SettingsDTO":   "Settings",

@@ -991,5 +991,56 @@ left out.** Ruled by the owner on 2026-10-10.
 - FR-042: the platform, repository and release tables leave out any row whose
   counted downloads are none, such as a disk image brought to none by the
   owner's own downloads (Amendment 19). Verified by
-  `app_test.go::TestNamedLeavesOutWhatHasNoDownloads` and
-  `app_test.go::TestPlatformCountsKeepTheDomainOrderAndLeaveOutNone`.
+  `statistics_test.go::TestNamedLeavesOutWhatHasNoDownloads` and
+  `statistics_test.go::TestPlatformCountsKeepTheDomainOrderAndLeaveOutNone`.
+
+**Amendment 23 (2026-10-10): each website's statistics open in a dialog, with
+its visitors by country.** Ruled by the owner on 2026-10-10. Section 3.11 no
+longer rules out countries; it still rules out referrers and browsers.
+Downloads by country stay out of reach: GitHub records no location for a
+download. Clicks stay out, as section 3.11 says.
+
+- FR-042: the detail keeps its two charts and the downloads to date; the
+  tables by platform, repository and release move to the Statistics dialog,
+  which is their one home. Verified by
+  `DetailPane.test.tsx::names the website without its scheme and charts it, leaving the tables to Statistics`.
+- FR-045 Statistics button (Must): when the owner selects a row's Statistics
+  button, at the right of the row, the window shall open that website's
+  Statistics dialog. The buttons are off the focus ring, so the list stays one
+  stop; when the owner presses Enter on the list with a row selected, the
+  window shall open that row's dialog. Acceptance: given example.org in the
+  list, when its Statistics button is selected, then a dialog headed
+  example.org opens. Verified by
+  `WebsiteList.test.tsx::gives each row a Statistics button off the ring that selects the row and opens it`,
+  `WebsiteList.test.tsx::opens the statistics of the selected row on Enter` and
+  `WebsiteList.test.tsx::opens nothing on Enter with no row selected`.
+- FR-046 Downloads in the dialog (Must): the Statistics dialog shall show the
+  website's counted downloads to date by platform, repository and release,
+  leaving out a row of none (Amendment 22). Verified by
+  `statistics_test.go::TestStatisticsCarryTheDownloadTablesAndTheCountries` and
+  `StatisticsDialog.test.tsx::shows the downloads to date and the visitors by country, largest first`.
+- FR-047 Visitors by country (Must): when the Statistics dialog opens, Visitron
+  shall show the website's visitors by country over the chosen period, as
+  GoatCounter counts them by location, every country it holds, largest first.
+  Only the paths the website owns are counted, by FR-020's rule. Rationale:
+  GoatCounter's country counts are its own measure and need not add up to page
+  loads (measured on 2026-10-10: one path read 4 in its daily figures and 6 by
+  country), so the dialog says so beneath the table. Acceptance: given
+  GoatCounter holding 5 visitors from the United Kingdom and 2 from France on
+  example.org's pages, when its dialog opens, then the table lists United
+  Kingdom 5 then France 2. Verified by
+  `internal/application/countries_test.go::TestCountriesReadOnlyTheWebsitesOwnPathsLargestFirst`,
+  `internal/application/countries_test.go::TestCountriesAreNoneWhereTheWebsiteHadNoVisitedPath`,
+  `internal/infrastructure/goatcounter/client_test.go::TestCountriesFilterByPathAndPageByOffset` and
+  `internal/infrastructure/goatcounter/client_test.go::TestPathsListsEachPageWithItsIDAndNoEvents`.
+- FR-048 GoatCounter not set up (Must): if GoatCounter is not set up when the
+  dialog opens, then the dialog shall say that countries need its account name
+  and key in Settings and still show the downloads. Verified by
+  `statistics_test.go::TestStatisticsSayGoatCounterIsNotSetUpAndKeepTheDownloads` and
+  `StatisticsDialog.test.tsx::says GoatCounter is not set up and keeps the downloads`.
+- FR-049 Country read failed (Must): if reading the countries fails, then the
+  dialog shall name the failure in their place and still show the downloads.
+  Verified by
+  `statistics_test.go::TestStatisticsNameAFailedCountryReadAndKeepTheDownloads`,
+  `internal/application/countries_test.go::TestCountriesPassOnEveryFailure` and
+  `StatisticsDialog.test.tsx::names a failed country read and keeps the downloads`.

@@ -60,6 +60,16 @@ main.split {
   background: var(--selected);
 }
 
+/* Each row's Statistics button sits at its right, kept small so the figures
+   keep the width (FR-045). */
+.website-table td.row-action {
+  white-space: nowrap;
+}
+
+.website-table td.row-action button {
+  padding: 2px 10px;
+}
+
 .totals caption {
   text-align: left;
   font-weight: bold;

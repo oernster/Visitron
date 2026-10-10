@@ -12,6 +12,8 @@ interface Props {
   selected: number | null
   onSelect: (id: number) => void
   onPeriod: (days: number) => void
+  /** Opens a website's Statistics dialog (FR-045). */
+  onStatistics: (id: number) => void
 }
 
 // ONE_YEAR_DAYS is the period that reads as a year rather than as a count of
@@ -19,7 +21,7 @@ interface Props {
 // the one the label treats differently.
 const ONE_YEAR_DAYS = 365
 
-const periodLabel = (days: number) => (days === ONE_YEAR_DAYS ? '1 year' : `${days} days`)
+export const periodLabel = (days: number) => (days === ONE_YEAR_DAYS ? '1 year' : `${days} days`)
 
 // The download columns sit under one Downloads heading, so the first names
 // the period it covers rather than repeating the word (Amendment 7). While
@@ -28,9 +30,18 @@ const periodLabel = (days: number) => (days === ONE_YEAR_DAYS ? '1 year' : `${da
 const periodHeading = (days: number, since: string) =>
   since ? `Since ${since}` : days === ONE_YEAR_DAYS ? 'Last year' : `Last ${days} days`
 
-export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }: Props) {
+export function WebsiteList({ overview, periods, selected, onSelect, onPeriod, onStatistics }: Props) {
   const ids = overview.rows.map((r) => r.id)
   const step = (event: KeyboardEvent) => {
+    // The rows' Statistics buttons stay off the ring, so the table stays one
+    // stop; Enter on it opens the selected row's, the keyboard's way in.
+    if (event.key === 'Enter') {
+      if (selected !== null) {
+        event.preventDefault()
+        onStatistics(selected)
+      }
+      return
+    }
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
     event.preventDefault()
     if (ids.length === 0) return
@@ -60,6 +71,7 @@ export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }:
             <th rowSpan={2}>Website</th>
             <th rowSpan={2}>Page loads</th>
             <th colSpan={3} className="group">Downloads</th>
+            <th rowSpan={2} aria-label="Statistics" />
           </tr>
           <tr>
             <th>{periodHeading(overview.period, overview.since)}</th>
@@ -76,6 +88,16 @@ export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }:
               <td>{r.downloads}</td>
               <td>{r.totalDownloads}</td>
               <td>{r.sinceLastCheck > 0 ? `+${r.sinceLastCheck}` : '0'}</td>
+              <td className="row-action">
+                <button type="button" tabIndex={-1} aria-label={`Statistics for ${r.url.replace('https://', '')}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onSelect(r.id)
+                    onStatistics(r.id)
+                  }}>
+                  Statistics
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

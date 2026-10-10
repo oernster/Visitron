@@ -54,11 +54,29 @@ export interface Detail {
   id: number
   url: string
   total: number
-  byRepo: NamedCount[]
-  byRelease: NamedCount[]
-  byPlatform: NamedCount[]
   dailyPageLoads: DayCount[]
   dailyDownloads: DayCount[]
+}
+
+export interface Country {
+  code: string
+  name: string
+  count: number
+}
+
+/** One website's Statistics dialog (FR-045 to FR-049). */
+export interface Statistics {
+  id: number
+  url: string
+  period: number
+  byPlatform: NamedCount[]
+  byRepo: NamedCount[]
+  byRelease: NamedCount[]
+  /** Empty, never absent, when there are none. */
+  countries: Country[]
+  noGoatCounter: boolean
+  /** Why the countries could not be read; empty when they were. */
+  countriesProblem: string
 }
 
 export interface Proposal {
@@ -121,6 +139,7 @@ interface Bridge {
   State(): Promise<State>
   Overview(): Promise<Overview>
   Detail(id: number): Promise<Detail>
+  Statistics(id: number): Promise<Statistics>
   Propose(entry: string, editID: number): Promise<Proposal>
   ConfirmRepo(text: string): Promise<string>
   SaveWebsite(id: number, url: string, repos: string[]): Promise<number>
@@ -210,6 +229,7 @@ export const api = {
   state: (refused: Refused) => ask((b) => b.State(), refused),
   overview: (refused: Refused) => ask((b) => b.Overview(), refused),
   detail: (id: number, refused: Refused) => ask((b) => b.Detail(id), refused),
+  statistics: (id: number, refused: Refused) => ask((b) => b.Statistics(id), refused),
   propose: (entry: string, editID: number, refused: Refused) =>
     ask((b) => b.Propose(entry, editID), refused),
   confirmRepo: (text: string, refused: Refused) => ask((b) => b.ConfirmRepo(text), refused),

@@ -95,10 +95,7 @@ func TestSaveCheckThenOverviewAndDetail(t *testing.T) {
 	if d.Total != row.TotalDownloads || d.Total == 0 {
 		t.Fatalf("detail total %d, overview total %d", d.Total, row.TotalDownloads)
 	}
-	if len(d.ByPlatform) != 2 || d.ByPlatform[0].Name != string(domain.Windows) || d.ByPlatform[1].Name != string(domain.MacOS) {
-		t.Fatalf("platforms are not in the domain's order: %+v", d.ByPlatform)
-	}
-	if len(d.ByRepo) != 1 || len(d.ByRelease) != 1 || len(d.DailyDownloads) != int(domain.DefaultPeriod) {
+	if len(d.DailyDownloads) != int(domain.DefaultPeriod) {
 		t.Fatalf("detail = %+v", d)
 	}
 	if events := r.window.seen(); len(events) == 0 || events[len(events)-1] != (ProgressDTO{}) {
@@ -316,38 +313,6 @@ func TestStartupAddsNothingAndShutdownCloses(t *testing.T) {
 	r.app.shutdown(ctx)
 	if !closed {
 		t.Fatal("shutdown left the data open")
-	}
-}
-
-func TestNamedSortsLargestFirstThenByName(t *testing.T) {
-	got := named(map[string]int{"b": 2, "a": 2, "c": 5})
-	want := []NamedCountDTO{{"c", 5}, {"a", 2}, {"b", 2}}
-	for i := range want {
-		if got[i] != want[i] {
-			t.Fatalf("named = %v, want %v", got, want)
-		}
-	}
-}
-
-func TestNamedLeavesOutWhatHasNoDownloads(t *testing.T) {
-	got := named(map[string]int{"v1.0.0": 0, "v1.1.0": 3})
-	if len(got) != 1 || got[0] != (NamedCountDTO{"v1.1.0", 3}) {
-		t.Fatalf("named = %v, want only v1.1.0", got)
-	}
-}
-
-func TestPlatformCountsKeepTheDomainOrderAndLeaveOutNone(t *testing.T) {
-	got := platformCounts(map[domain.Platform]int{
-		domain.Other: 2, domain.MacOS: 0, domain.Linux: 1, domain.Windows: 4,
-	})
-	want := []NamedCountDTO{{string(domain.Windows), 4}, {string(domain.Linux), 1}, {string(domain.Other), 2}}
-	if len(got) != len(want) {
-		t.Fatalf("platformCounts = %v, want %v", got, want)
-	}
-	for i := range want {
-		if got[i] != want[i] {
-			t.Fatalf("platformCounts = %v, want %v", got, want)
-		}
 	}
 }
 

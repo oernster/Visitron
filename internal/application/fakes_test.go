@@ -89,6 +89,23 @@ type fakePageLoads struct {
 	verifyErr error
 	keyUsed   string
 	siteUsed  domain.GoatCounterSite
+	// paths and countries answer Paths and Countries; idsAsked records the
+	// ids Countries was asked about, nil while it was never asked.
+	paths        []SitePath
+	pathsErr     error
+	countries    []domain.CountryCount
+	countriesErr error
+	idsAsked     []int64
+}
+
+func (f *fakePageLoads) Paths(context.Context, domain.GoatCounterSite, string, domain.Day, domain.Day) ([]SitePath, error) {
+	return f.paths, f.pathsErr
+}
+
+func (f *fakePageLoads) Countries(_ context.Context, _ domain.GoatCounterSite, _ string, _, _ domain.Day,
+	ids []int64) ([]domain.CountryCount, error) {
+	f.idsAsked = ids
+	return append([]domain.CountryCount{}, f.countries...), f.countriesErr
 }
 
 func (f *fakePageLoads) Daily(_ context.Context, site domain.GoatCounterSite, key string, _, _ domain.Day) ([]PathDay, error) {

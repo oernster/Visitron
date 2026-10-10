@@ -7,7 +7,7 @@
 import { vi } from 'vitest'
 import { closeRequestEvent, noWindow, progressEvent, sentence } from './api'
 import type {
-  About, Detail, Overview, Progress, Proposal, SecretName, Settings, State, Update, WebsiteRow,
+  About, Detail, Overview, Progress, Proposal, SecretName, Settings, State, Statistics, Update, WebsiteRow,
 } from './api'
 
 /** noWindowShown is that refusal as the status line shows it. */
@@ -19,6 +19,7 @@ export interface FakeBridge {
   State: Fn
   Overview: Fn
   Detail: Fn
+  Statistics: Fn
   Propose: Fn
   ConfirmRepo: Fn
   SaveWebsite: Fn
@@ -83,11 +84,20 @@ export const aDetail: Detail = {
   id: 1,
   url: 'https://example.org',
   total: 80,
-  byRepo: [{ name: 'someone/Widget', count: 80 }],
-  byRelease: [{ name: 'v1.0.0', count: 80 }],
-  byPlatform: [{ name: 'Windows', count: 70 }, { name: 'macOS', count: 10 }],
   dailyPageLoads: [{ day: '2026-10-08', count: 4 }, { day: '2026-10-09', count: 6 }],
   dailyDownloads: [{ day: '2026-10-08', count: 1 }, { day: '2026-10-09', count: 2 }],
+}
+
+export const someStatistics: Statistics = {
+  id: 1,
+  url: 'https://example.org',
+  period: 30,
+  byPlatform: [{ name: 'Windows', count: 70 }, { name: 'macOS', count: 10 }],
+  byRepo: [{ name: 'someone/Widget', count: 80 }],
+  byRelease: [{ name: 'v1.0.0', count: 80 }],
+  countries: [{ code: 'GB', name: 'United Kingdom', count: 5 }, { code: 'FR', name: 'France', count: 2 }],
+  noGoatCounter: false,
+  countriesProblem: '',
 }
 
 export const aProposal: Proposal = {
@@ -134,6 +144,7 @@ export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
     State: vi.fn(() => Promise.resolve(aState)),
     Overview: vi.fn(() => Promise.resolve(anOverview)),
     Detail: vi.fn(() => Promise.resolve(aDetail)),
+    Statistics: vi.fn(() => Promise.resolve(someStatistics)),
     Propose: vi.fn(refuse),
     ConfirmRepo: vi.fn(refuse),
     SaveWebsite: vi.fn(refuse),

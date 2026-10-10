@@ -6,9 +6,10 @@ import { anOverview, periods } from './bridge-fake'
 function list(selected: number | null, overview = anOverview) {
   const onSelect = vi.fn()
   const onPeriod = vi.fn()
+  const onStatistics = vi.fn()
   render(<WebsiteList overview={overview} periods={periods} selected={selected}
-    onSelect={onSelect} onPeriod={onPeriod} />)
-  return { onSelect, onPeriod, table: screen.getByRole('table', { name: 'Websites' }) }
+    onSelect={onSelect} onPeriod={onPeriod} onStatistics={onStatistics} />)
+  return { onSelect, onPeriod, onStatistics, table: screen.getByRole('table', { name: 'Websites' }) }
 }
 
 describe('the website list', () => {
@@ -16,12 +17,13 @@ describe('the website list', () => {
     list(1)
     const rows = screen.getAllByRole('row')
     const cells = (i: number) => Array.from(rows[i].querySelectorAll('td')).map((c) => c.textContent)
-    expect(cells(2)).toEqual(['example.org', '120', '14', '80', '+3'])
+    expect(cells(2)).toEqual(['example.org', '120', '14', '80', '+3', 'Statistics'])
     expect(rows[2]).toHaveAttribute('aria-selected', 'true')
-    expect(cells(3)).toEqual(['example.com/App', '9', '0', '0', '0'])
+    expect(cells(3)).toEqual(['example.com/App', '9', '0', '0', '0', 'Statistics'])
     expect(rows[3]).toHaveAttribute('aria-selected', 'false')
-    const headings = screen.getAllByRole('columnheader').map((h) => h.textContent)
-    expect(headings).toEqual(['Website', 'Page loads', 'Downloads', 'Last 30 days', 'All time', 'Since last check'])
+    const headings = screen.getAllByRole('columnheader').map((h) => h.textContent || h.getAttribute('aria-label'))
+    expect(headings).toEqual(
+      ['Website', 'Page loads', 'Downloads', 'Statistics', 'Last 30 days', 'All time', 'Since last check'])
   })
 
   it('names the day counting began while the history is shorter than the period', () => {
@@ -53,8 +55,30 @@ describe('the website list', () => {
     const { onSelect, table } = list(2)
     fireEvent.keyDown(table, { key: 'ArrowDown' })
     expect(onSelect).toHaveBeenLastCalledWith(1)
-    fireEvent.keyDown(table, { key: 'Enter' })
+    fireEvent.keyDown(table, { key: 'a' })
     expect(onSelect).toHaveBeenCalledTimes(1)
+  })
+
+  it('opens the statistics of the selected row on Enter', () => {
+    const { onStatistics, table } = list(2)
+    fireEvent.keyDown(table, { key: 'Enter' })
+    expect(onStatistics).toHaveBeenCalledWith(2)
+  })
+
+  it('opens nothing on Enter with no row selected', () => {
+    const { onStatistics, table } = list(null)
+    fireEvent.keyDown(table, { key: 'Enter' })
+    expect(onStatistics).not.toHaveBeenCalled()
+  })
+
+  it('gives each row a Statistics button off the ring that selects the row and opens it', () => {
+    const { onSelect, onStatistics } = list(1)
+    const button = screen.getByRole('button', { name: 'Statistics for example.com/App' })
+    expect(button).toHaveAttribute('tabIndex', '-1')
+    fireEvent.click(button)
+    expect(onSelect).toHaveBeenCalledTimes(1)
+    expect(onSelect).toHaveBeenCalledWith(2)
+    expect(onStatistics).toHaveBeenCalledWith(2)
   })
 
   it('selects nothing when there are no rows', () => {

@@ -44,11 +44,23 @@ type PathDay struct {
 	Count int
 }
 
+// SitePath is one path GoatCounter holds, with the id it filters by.
+type SitePath struct {
+	Path string
+	ID   int64
+}
+
 // PageLoads reads GoatCounter.
 type PageLoads interface {
 	// Daily lists site's page loads per path per day from first to last
 	// inclusive.
 	Daily(ctx context.Context, site domain.GoatCounterSite, key string, first, last domain.Day) ([]PathDay, error)
+	// Paths lists every page path site recorded from first to last inclusive.
+	Paths(ctx context.Context, site domain.GoatCounterSite, key string, first, last domain.Day) ([]SitePath, error)
+	// Countries lists the visitors by country to the paths with ids from
+	// first to last inclusive, every country GoatCounter holds (FR-047).
+	Countries(ctx context.Context, site domain.GoatCounterSite, key string, first, last domain.Day,
+		ids []int64) ([]domain.CountryCount, error)
 	// Verify tries key once against site (FR-061).
 	Verify(ctx context.Context, site domain.GoatCounterSite, key string) error
 }

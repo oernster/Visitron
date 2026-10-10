@@ -13,6 +13,7 @@ import { CloseChoiceDialog } from './CloseChoiceDialog'
 import { UpdateDialog, useUpdateCheck } from './updates'
 import { GuideDialog } from './GuideDialog'
 import { SettingsDialog } from './SettingsDialog'
+import { StatisticsDialog } from './StatisticsDialog'
 import { WebsiteDialog } from './WebsiteDialog'
 import { DetailPane } from './DetailPane'
 import { EmptyPane } from './EmptyPane'
@@ -75,6 +76,9 @@ export function App() {
   const [open, setOpen] = useState<Open>(null)
   const [shown, setShown] = useState<Shown | null>(null)
   const [closing, setClosing] = useState(false)
+  // The website whose Statistics dialog is open (FR-045); null while none is.
+  const [statisticsOf, setStatisticsOf] = useState<number | null>(null)
+  const closeStatistics = useCallback(() => setStatisticsOf(null), [])
   const updates = useUpdateCheck()
   const [message, setMessage] = useState('')
   const refused = useCallback((text: string) => setMessage(text), [])
@@ -185,7 +189,7 @@ export function App() {
       <main className="split">
         {overview && state && (
           <WebsiteList overview={overview} periods={state.periods} selected={selected}
-            onSelect={setSelected} onPeriod={(d) => void period(d)} />
+            onSelect={setSelected} onPeriod={(d) => void period(d)} onStatistics={setStatisticsOf} />
         )}
         {detail ? (
           <DetailPane detail={detail} />
@@ -204,6 +208,7 @@ export function App() {
       )}
       {open === 'settings' && <SettingsDialog refused={refused} onClose={() => { setOpen(null); reload() }} />}
       {open === 'guide' && <GuideDialog onClose={() => setOpen(null)} />}
+      {statisticsOf !== null && <StatisticsDialog id={statisticsOf} refused={refused} onClose={closeStatistics} />}
       {shown?.kind === 'about' && <AboutDialog about={shown.about} onClose={() => setShown(null)} />}
       {shown?.kind === 'licence' && <LicenceDialog text={shown.about.licence} onClose={() => setShown(null)} />}
       {updates.found && <UpdateDialog name={name} found={updates.found} onClose={updates.dismiss} />}
