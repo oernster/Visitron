@@ -83,6 +83,18 @@ public repository, grouped by platform from the file's extension.
   limit.
 - **Costs:** a release hosted anywhere else is invisible.
 
+### Visitors by country, read when asked
+
+A website's visitors by country come from GoatCounter, counted over that
+website's own paths; they are read when its Statistics open rather than kept.
+Downloads have no country: GitHub does not record one.
+
+- **Rather than:** storing countries at every check; downloads by country,
+  which no source offers.
+- **Gains:** no second history to keep; the figures are GoatCounter's own.
+- **Costs:** countries need the network when asked; GoatCounter counts them
+  its own way, so they need not add up to page loads.
+
 ### A website is an address prefix; the longest owns a path
 
 A website is a host plus a path. A GoatCounter path belongs to the website
@@ -228,6 +240,19 @@ icon it quits. A second launch brings the running window forward.
 - **Gains:** the history keeps filling without a process the owner cannot
   find; there is only ever one writer.
 - **Costs:** one more question on closing.
+
+### Each website's statistics in a dialog of their own
+
+The main window shows the list and the selected website's daily charts; the
+tables by platform, repository and release, with the countries, open from a
+button at the right of each row (Enter on the list does the same). Releases are listed
+newest version first, read as numbers; a row of no downloads is left out.
+
+- **Rather than:** every table beside the charts; releases in text or count
+  order.
+- **Gains:** the window stays readable; the latest release is always at the
+  top; the list stays one keyboard stop.
+- **Costs:** the tables are one click further away.
 
 ## Engineering
 

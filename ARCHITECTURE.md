@@ -41,8 +41,9 @@ UI (root package, frontend/)  ->  Application  ->  Domain  <-  Infrastructure
 repositories found in a page (`links.go`, `repo.go`), which website owns a
 GoatCounter path (`owner.go`), platforms and counted downloads
 (`downloads.go`), days (`history.go`), setting bounds (`settings.go`), the
-GoatCounter account name (`goatcounter.go`), the order countries are listed
-in (`countries.go`) and version comparison (`version.go`).
+GoatCounter account name (`goatcounter.go`), the order countries and releases
+are listed in (`countries.go`, `releases.go`) and version comparison
+(`version.go`).
 
 **Application, `internal/application`.** One service per thing the owner does,
 over the ports in `ports.go`: `websites.go` (add, edit, delete, crawl),
@@ -62,7 +63,7 @@ by country; also the one rule for whether GoatCounter is set up), `settings.go`,
 | `store` | SQLite at `%LOCALAPPDATA%\Visitron\visitron.db`; `Unavailable` stands in when it cannot open. |
 | `secrets` | The key and the token in Windows Credential Manager. |
 | `startup` | The start-with-Windows value under the HKCU Run key; Settings and the setup program both write it through here. |
-| `tray` | The Win32 notification-area icon: Open, Refresh now, Quit. |
+| `tray` | The Win32 notification-area icon: Open, Refresh now, Quit; added again when the taskbar restarts. |
 | `runlog` | The run log; points error output at it before anything can fail. |
 | `windowfocus` | Hands the keyboard to the WebView2 child window on DOM ready. |
 | `setup` | The per-user install policy the setup program runs. |
@@ -70,8 +71,9 @@ by country; also the one rule for whether GoatCounter is set up), `settings.go`,
 `internal/product` holds the name and file names; `internal/licence` the
 embedded licence and its plain reading.
 
-**UI, the root package and `frontend/`.** `app.go` and `actions.go` are the
-facade: one bound method per action, converting shapes and calling one service.
+**UI, the root package and `frontend/`.** `app.go`, `actions.go` and
+`statistics.go` are the facade: one bound method per action, converting shapes
+and calling one service.
 `dto.go` holds the wire shapes; `closing.go` the close choice; `updates.go` the
 update offer; `window.go` the Wails runtime seams. The React page in
 `frontend/src` talks to the facade through `api.ts` alone.

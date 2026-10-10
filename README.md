@@ -28,7 +28,8 @@ Visitron reports counts, not people.
   account, which needs its tag on your pages and an API key in Settings.
 - It does not run on macOS or Linux.
 - It sends nothing about you anywhere. It makes four kinds of request: to
-  GoatCounter for page loads, to GitHub for release downloads, to the website
+  GoatCounter for page loads and visitors by country, to GitHub for release
+  downloads, to the website
   you add (reading its pages to find its repositories) and to GitHub once a day
   to check for a newer Visitron, which Settings can turn off.
 - It cannot see downloads from before its first check: GitHub keeps only
