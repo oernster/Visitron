@@ -52,7 +52,7 @@ describe('the shell', () => {
     })
     render(<App />)
     expect(await screen.findByText(/Not checked yet\./)).toHaveTextContent(
-      'Not checked yet. The check at 9 Oct 2026 21:00 failed: offline Page loads need a GoatCounter key in Settings.',
+      'Not checked yet. The check at 9 Oct 2026 21:00 failed: offline Page loads need your GoatCounter site and key in Settings.',
     )
   })
 

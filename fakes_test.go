@@ -50,11 +50,11 @@ func (fakeReleases) Verify(context.Context, string) error { return nil }
 
 type fakePageLoads struct{}
 
-func (fakePageLoads) Daily(context.Context, string, domain.Day, domain.Day) ([]application.PathDay, error) {
+func (fakePageLoads) Daily(context.Context, domain.GoatCounterSite, string, domain.Day, domain.Day) ([]application.PathDay, error) {
 	return nil, nil
 }
 
-func (fakePageLoads) Verify(context.Context, string) error { return nil }
+func (fakePageLoads) Verify(context.Context, domain.GoatCounterSite, string) error { return nil }
 
 type fakeSecrets struct{ values map[application.Secret]string }
 

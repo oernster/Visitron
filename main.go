@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/oernster/visitron/internal/application"
+	"github.com/oernster/visitron/internal/domain"
 	"github.com/oernster/visitron/internal/infrastructure/github"
 	"github.com/oernster/visitron/internal/infrastructure/goatcounter"
 	"github.com/oernster/visitron/internal/infrastructure/runlog"
@@ -88,7 +89,7 @@ func main() {
 	client := web.NewClient()
 	vault := secrets.Vault{}
 	releases := github.NewClient(client, vault, github.DefaultBase)
-	loads := goatcounter.NewClient(client, product.GoatCounterSite)
+	loads := goatcounter.NewClient(client, domain.GoatCounterSite.URL)
 	exe, _ := os.Executable()
 	entry := startup.Entry{Name: product.Name, Exe: filepath.Clean(exe)}
 	check := application.NewCheck(data, releases, loads, vault, clock)

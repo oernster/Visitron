@@ -22,7 +22,44 @@ describe('the settings', () => {
     dialog()
     expect(await screen.findByText('Choose your username in the top menu, then API.')).toBeInTheDocument()
     expect(screen.getByText(/Fine-grained tokens, Generate new token/)).toBeInTheDocument()
-    expect(screen.getAllByRole('listitem')).toHaveLength(8)
+    expect(screen.getAllByRole('listitem')).toHaveLength(9)
+    // Generic for every owner: no account is named, only the form one takes.
+    expect(document.body).not.toHaveTextContent(/oernster/i)
+    expect(screen.getByText(/such as yourname\.goatcounter\.com/)).toBeInTheDocument()
+  })
+
+  it('keeps the GoatCounter site as its code and says whether a stored key works there', async () => {
+    let kept = ''
+    const bridge = installBridge({
+      Settings: vi.fn(() => Promise.resolve({ ...someSettings, goatCounterSite: kept })),
+      SaveGoatCounterSite: vi.fn(() => {
+        kept = 'someone'
+        return Promise.resolve('401 Unauthorized')
+      }),
+    })
+    dialog()
+    expect(await screen.findByText('GoatCounter site: not set')).toBeInTheDocument()
+    const siteBox = screen.getByLabelText('GoatCounter site')
+    const save = screen.getByRole('button', { name: 'Save site' })
+    expect(save).toBeDisabled()
+    fireEvent.change(siteBox, { target: { value: 'https://Someone.goatcounter.com/' } })
+    fireEvent.click(save)
+    expect(await screen.findByText('Site saved; the key did not work there: 401 Unauthorized')).toBeInTheDocument()
+    expect(bridge.SaveGoatCounterSite).toHaveBeenCalledWith('https://Someone.goatcounter.com/')
+    expect(await screen.findByText('GoatCounter site: someone')).toBeInTheDocument()
+    expect(siteBox).toHaveValue('someone')
+    expect(save).toBeDisabled()
+  })
+
+  it('says nothing when a site is refused; the refusal goes to the window', async () => {
+    installBridge({ SaveGoatCounterSite: vi.fn(() => Promise.reject('not a site')) })
+    const { refused } = dialog()
+    const siteBox = await screen.findByLabelText('GoatCounter site')
+    fireEvent.change(siteBox, { target: { value: 'bad site' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save site' }))
+    await waitFor(() => expect(refused).toHaveBeenCalledWith('Not a site'))
+    expect(siteBox).toHaveValue('bad site')
+    expect(screen.queryByText(/Site saved/)).toBeNull()
   })
 
   it('holds each stored secret hidden until its eye is pressed', async () => {

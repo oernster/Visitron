@@ -157,6 +157,9 @@ func TestSettingsRoundTrip(t *testing.T) {
 			t.Fatalf("step %d: %v", i, err)
 		}
 	}
+	if problem, err := r.app.SaveGoatCounterSite("someone.goatcounter.com"); err != nil || problem != "" {
+		t.Fatalf("SaveGoatCounterSite = %q, %v", problem, err)
+	}
 	if problem, err := r.app.SaveSecret("goatcounter", "key"); err != nil || problem != "" {
 		t.Fatalf("SaveSecret = %q, %v", problem, err)
 	}
@@ -165,7 +168,8 @@ func TestSettingsRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := SettingsDTO{IntervalHours: domain.MinIntervalHours, MinInterval: domain.MinIntervalHours,
-		MaxInterval: domain.MaxIntervalHours, StartWithWindows: true, GoatCounterSet: true}
+		MaxInterval: domain.MaxIntervalHours, StartWithWindows: true, GoatCounterSet: true,
+		GoatCounterSite: "someone"}
 	if s != want {
 		t.Fatalf("settings = %+v, want %+v", s, want)
 	}

@@ -55,7 +55,7 @@ func (a *App) Overview() (overview OverviewDTO, err error) {
 	out := OverviewDTO{
 		Rows: make([]WebsiteRowDTO, 0, len(rows)), Period: int(prefs.Period),
 		LastSuccess: stamp(rec.LastSuccess), Failure: rec.Failure,
-		NoKey: !key.GoatCounterSet, NoToken: !key.GitHubTokenSet, Running: a.services.Scheduler.Running(),
+		NoKey: !key.GoatCounterSet || key.Site().IsZero(), NoToken: !key.GitHubTokenSet, Running: a.services.Scheduler.Running(),
 	}
 	since, short, err := a.services.Figures.CountedSince(prefs.Period)
 	if err != nil {
@@ -177,7 +177,16 @@ func (a *App) Settings() (settings SettingsDTO, err error) {
 		IntervalHours: v.IntervalHours, MinInterval: domain.MinIntervalHours, MaxInterval: domain.MaxIntervalHours,
 		UpdateCheck: v.UpdateCheck, StartWithWindows: v.StartWithWindows,
 		GoatCounterSet: v.GoatCounterSet, GitHubTokenSet: v.GitHubTokenSet,
+		GoatCounterSite: v.GoatCounterSite,
 	}, nil
+}
+
+// SaveGoatCounterSite keeps the owner's GoatCounter site, typed as its code
+// or its address, answering why a stored key did not work there, "" when it
+// did (Amendment 11).
+func (a *App) SaveGoatCounterSite(text string) (problem string, err error) {
+	defer guard(&err)
+	return a.services.Settings.SaveGoatCounterSite(a.ctx, text)
 }
 
 // SaveInterval keeps the check interval (FR-063).

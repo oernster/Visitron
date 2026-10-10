@@ -86,6 +86,9 @@ type SettingsDTO struct {
 	StartWithWindows bool `json:"startWithWindows"`
 	GoatCounterSet   bool `json:"goatCounterSet"`
 	GitHubTokenSet   bool `json:"gitHubTokenSet"`
+	// GoatCounterSite is the code of the owner's GoatCounter site, "" until
+	// set (Amendment 11).
+	GoatCounterSite string `json:"goatCounterSite"`
 }
 
 // CreditDTO is one open source credit in About (FR-072).

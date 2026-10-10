@@ -5,7 +5,6 @@
 
 import { useState } from 'react'
 import { Modal } from './Modal'
-import { ModalClose } from './ModalClose'
 
 interface Props {
   onMinimise: () => void
@@ -46,7 +45,6 @@ export function CloseChoiceDialog({ onMinimise, onQuit, onCancel }: Props) {
           Quit
         </button>
       </div>
-      <ModalClose onClose={onCancel} />
     </Modal>
   )
 }

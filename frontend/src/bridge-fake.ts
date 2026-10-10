@@ -31,6 +31,7 @@ export interface FakeBridge {
   SaveStartWithWindows: Fn
   SaveSecret: Fn
   Secret: Fn
+  SaveGoatCounterSite: Fn
   RemoveSecret: Fn
   About: Fn
   Donate: Fn
@@ -103,6 +104,7 @@ export const someSettings: Settings = {
   startWithWindows: false,
   goatCounterSet: false,
   gitHubTokenSet: true,
+  goatCounterSite: '',
 }
 
 /** someSecrets are the stored values behind someSettings: the key not set, the token set. */
@@ -141,6 +143,7 @@ export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
     SaveStartWithWindows: vi.fn(refuse),
     SaveSecret: vi.fn(refuse),
     Secret: vi.fn((which: SecretName) => Promise.resolve(someSecrets[which])),
+    SaveGoatCounterSite: vi.fn(refuse),
     RemoveSecret: vi.fn(refuse),
     About: vi.fn(() => Promise.resolve(anAbout)),
     Donate: vi.fn(refuse),

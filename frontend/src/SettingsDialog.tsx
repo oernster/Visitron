@@ -29,8 +29,16 @@ export function SettingsDialog({ refused, onClose }: Props) {
   // The steps under each secret make Settings taller than a short window, so
   // the body scrolls and Close stays pinned beneath it, as in the Guide.
   const autoScroll = useAutoScroll()
+  // The GoatCounter site as typed; null until the settings first arrive, so a
+  // later reload never overwrites what the owner is part way through typing.
+  const [site, setSite] = useState<string | null>(null)
   const reload = useCallback(
-    () => void api.settings(refused).then((found) => found && setSettings(found)),
+    () =>
+      void api.settings(refused).then((found) => {
+        if (!found) return
+        setSettings(found)
+        setSite((s) => s ?? found.goatCounterSite)
+      }),
     [refused],
   )
   const loadSecret = useCallback(
@@ -53,6 +61,17 @@ export function SettingsDialog({ refused, onClose }: Props) {
     setNote(problem ? `Saved; it did not work: ${problem}` : 'Saved; it works.')
     reload()
     loadSecret(which)
+  }
+  // Saving the site answers why a stored key did not work there; the box then
+  // shows the code as kept, whatever form it was typed in (Amendment 11).
+  const saveSite = async () => {
+    const problem = await api.saveGoatCounterSite(site ?? '', refused)
+    if (problem === null) return
+    setNote(problem ? `Site saved; the key did not work there: ${problem}` : 'Site saved.')
+    const found = await api.settings(refused)
+    if (!found) return
+    setSettings(found)
+    setSite(found.goatCounterSite)
   }
   const removeSecret = async (which: SecretName) => {
     if (!(await api.removeSecret(which, refused))) return
@@ -79,6 +98,20 @@ export function SettingsDialog({ refused, onClose }: Props) {
                   <li key={step}>{step}</li>
                 ))}
               </ol>
+              {which === 'goatcounter' && (
+                <>
+                  <span>GoatCounter site: {settings.goatCounterSite || 'not set'}</span>
+                  <div className="secret-entry">
+                    <input type="text" autoComplete="off" spellCheck={false} aria-label="GoatCounter site"
+                      placeholder="yourname.goatcounter.com" value={site ?? ''}
+                      onChange={(e) => setSite(e.target.value)} />
+                    <button type="button" disabled={!site || site === settings.goatCounterSite}
+                      onClick={() => void saveSite()}>
+                      Save site
+                    </button>
+                  </div>
+                </>
+              )}
               <div className="secret-entry">
                 <input type={shown[which] ? 'text' : 'password'} autoComplete="off" spellCheck={false}
                   value={typed[which]} aria-label={label}

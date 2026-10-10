@@ -32,7 +32,6 @@ var httpPackages = map[string]string{
 // the owner types it, so it never appears in the source.
 var outboundAddresses = map[string]string{
 	"https://api.github.com":                           "GitHub's API (FR-021)",
-	"https://oernster.goatcounter.com":                 "GoatCounter's API (FR-020)",
 	"https://www.paypal.com/ncp/payment/NRXS4SP24A6C8": "the donate link, opened in the browser (FR-073)",
 	// The only host an update's page or file may name; anything else in
 	// GitHub's answer is refused before it can reach the browser.

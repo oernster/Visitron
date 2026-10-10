@@ -46,10 +46,11 @@ type PathDay struct {
 
 // PageLoads reads GoatCounter.
 type PageLoads interface {
-	// Daily lists page loads per path per day from first to last inclusive.
-	Daily(ctx context.Context, key string, first, last domain.Day) ([]PathDay, error)
-	// Verify tries key once (FR-061).
-	Verify(ctx context.Context, key string) error
+	// Daily lists site's page loads per path per day from first to last
+	// inclusive.
+	Daily(ctx context.Context, site domain.GoatCounterSite, key string, first, last domain.Day) ([]PathDay, error)
+	// Verify tries key once against site (FR-061).
+	Verify(ctx context.Context, site domain.GoatCounterSite, key string) error
 }
 
 // Secret names the two secrets Visitron keeps (C-4).
@@ -90,6 +91,19 @@ type Preferences struct {
 	// SkippedUpdate is the release version the owner chose to skip; an
 	// automatic check does not offer it again (FR-075).
 	SkippedUpdate string
+	// GoatCounterSite is the code of the owner's GoatCounter site, "" until
+	// it is set in Settings (Amendment 11).
+	GoatCounterSite string
+}
+
+// Site answers the GoatCounter site the preferences name; the zero site when
+// none is set or the stored code no longer reads as one.
+func (p Preferences) Site() domain.GoatCounterSite {
+	site, err := domain.ParseGoatCounterSite(p.GoatCounterSite)
+	if err != nil {
+		return domain.GoatCounterSite{}
+	}
+	return site
 }
 
 // CheckRecord is what is known of the latest checks (FR-044).

@@ -26,6 +26,10 @@ import (
 // opposite of making it a stop.
 var tabIndexAttribute = regexp.MustCompile(`(?i)\btabindex\s*=\s*["'{]?\s*(-?\d+)`)
 
+// drawsModal matches a file that draws the Modal shell itself, as a whole tag
+// name: <ModalClose, which Modal.tsx draws inside the shell, is not one.
+var drawsModal = regexp.MustCompile(`<Modal\b`)
+
 // itemViews names the item views that are a stop of their own, by the file
 // that draws each one: the website table is ONE stop whose arrows walk its rows
 // and whose selection drives the detail (keeb invariant 4). It paints no ring;
@@ -245,7 +249,7 @@ func TestEveryScrollingDialogPinsItsActionsAndReadsItself(t *testing.T) {
 		source := readFile(t, path)
 		// Only a file that draws a dialog is judged. The shell that implements
 		// the layout declares the prop without wearing it.
-		if !strings.Contains(source, "<Modal") {
+		if !drawsModal.MatchString(source) {
 			continue
 		}
 		holdsBody := strings.Contains(source, bodyClass)

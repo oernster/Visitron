@@ -28,7 +28,7 @@ describe('the close choice', () => {
 
   it('cancels on its cross, once per click, from the mouse or the keyboard', () => {
     const { onCancel, onQuit, onMinimise } = dialog()
-    const cross = screen.getByRole('button', { name: 'Close' })
+    const cross = screen.getByRole('button', { name: 'Close this dialog' })
     fireEvent.mouseDown(cross)
     fireEvent.click(cross, { detail: 1 })
     expect(onCancel).toHaveBeenCalledTimes(1)

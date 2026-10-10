@@ -26,9 +26,10 @@ export interface SecretHelp {
 export const secretHelp: SecretHelp[] = [
   {
     which: 'goatcounter', label: 'GoatCounter API key', set: 'goatCounterSet',
-    why: 'Needed for page loads: without it every Page loads figure stays at 0.',
+    why: 'Needed for page loads, with your GoatCounter site: without them every Page loads figure stays at 0.',
     steps: [
-      'Open oernster.goatcounter.com in your browser and sign in.',
+      'Your GoatCounter site is the address you sign in at, such as yourname.goatcounter.com. Type it (the part before .goatcounter.com is enough) into GoatCounter site below and press Save site.',
+      'Open that address in your browser and sign in.',
       'Choose your username in the top menu, then API.',
       'Create a new key with the Read statistics permission; it needs nothing else.',
       'Copy the key, paste it below and press Save. Visitron tries it at once and says whether it works.',

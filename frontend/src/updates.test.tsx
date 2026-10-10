@@ -65,7 +65,8 @@ describe('the automatic check', () => {
     const dialog = await offered()
     expect(dialog).toHaveTextContent('Visitron 1.1.0 is available. You are running 1.0.0.')
     const buttons = Array.from(dialog.querySelectorAll('button')).map((b) => b.textContent)
-    expect(buttons).toEqual(['Download', 'Skip this version', 'Later'])
+    // The close cross comes last (Amendment 10), so it never takes the first stop.
+    expect(buttons).toEqual(['Download', 'Skip this version', 'Later', '×'])
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Download' }))
   })
 })

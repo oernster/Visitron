@@ -82,6 +82,8 @@ export interface Settings {
   startWithWindows: boolean
   goatCounterSet: boolean
   gitHubTokenSet: boolean
+  /** The code of the owner's GoatCounter site; '' until set (Amendment 11). */
+  goatCounterSite: string
 }
 
 export interface Credit {
@@ -127,6 +129,7 @@ interface Bridge {
   SaveStartWithWindows(on: boolean): Promise<void>
   SaveSecret(which: SecretName, value: string): Promise<string>
   Secret(which: SecretName): Promise<string>
+  SaveGoatCounterSite(text: string): Promise<string>
   RemoveSecret(which: SecretName): Promise<void>
   About(): Promise<About>
   Donate(): Promise<void>
@@ -218,6 +221,7 @@ export const api = {
   saveSecret: (which: SecretName, value: string, refused: Refused) =>
     ask((b) => b.SaveSecret(which, value), refused),
   secret: (which: SecretName, refused: Refused) => ask((b) => b.Secret(which), refused),
+  saveGoatCounterSite: (text: string, refused: Refused) => ask((b) => b.SaveGoatCounterSite(text), refused),
   removeSecret: (which: SecretName, refused: Refused) => act((b) => b.RemoveSecret(which), refused),
   about: (refused: Refused) => ask((b) => b.About(), refused),
   // The page asks for the donation page; it never names an address. Its one

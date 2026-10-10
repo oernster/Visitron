@@ -15,8 +15,6 @@ const (
 	UniqueID = "uk.codecrafter.visitron"
 	// Owner is the GitHub account Visitron's own releases live under.
 	Owner = "oernster"
-	// GoatCounterSite is the owner's one GoatCounter account (A-1).
-	GoatCounterSite = "https://oernster.goatcounter.com"
 	// DonateURL is what the donate button opens (FR-073).
 	DonateURL = "https://www.paypal.com/ncp/payment/NRXS4SP24A6C8"
 )

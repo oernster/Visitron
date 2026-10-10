@@ -80,14 +80,18 @@ type fakePageLoads struct {
 	err       error
 	verifyErr error
 	keyUsed   string
+	siteUsed  domain.GoatCounterSite
 }
 
-func (f *fakePageLoads) Daily(_ context.Context, key string, _, _ domain.Day) ([]PathDay, error) {
-	f.keyUsed = key
+func (f *fakePageLoads) Daily(_ context.Context, site domain.GoatCounterSite, key string, _, _ domain.Day) ([]PathDay, error) {
+	f.keyUsed, f.siteUsed = key, site
 	return f.loads, f.err
 }
 
-func (f *fakePageLoads) Verify(context.Context, string) error { return f.verifyErr }
+func (f *fakePageLoads) Verify(_ context.Context, site domain.GoatCounterSite, _ string) error {
+	f.siteUsed = site
+	return f.verifyErr
+}
 
 // fakeSecrets is an in-memory Credential Manager.
 type fakeSecrets struct {

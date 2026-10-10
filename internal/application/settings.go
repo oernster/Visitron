@@ -109,11 +109,43 @@ func (s *Settings) SaveSecret(ctx context.Context, name Secret, value string) (s
 	}
 	var tried error
 	if name == GoatCounterKey {
-		tried = s.pageLoads.Verify(ctx, value)
+		prefs, err := Preferred(s.store)
+		if err != nil {
+			return "", err
+		}
+		if prefs.Site().IsZero() {
+			return NoSiteToTry, nil
+		}
+		tried = s.pageLoads.Verify(ctx, prefs.Site(), value)
 	} else {
 		tried = s.releases.Verify(ctx, value)
 	}
 	if tried != nil {
+		return tried.Error(), nil
+	}
+	return "", nil
+}
+
+// NoSiteToTry is why a GoatCounter key saved before any site was set could
+// not be tried (Amendment 11).
+const NoSiteToTry = "there is no GoatCounter site to try it on yet; enter your site above"
+
+// SaveGoatCounterSite keeps the owner's GoatCounter site, read from a code or
+// an address (Amendment 11). A stored key is then tried against it once; the
+// answer is why it did not work, "" when it did or when no key is stored.
+func (s *Settings) SaveGoatCounterSite(ctx context.Context, text string) (string, error) {
+	site, err := domain.ParseGoatCounterSite(text)
+	if err != nil {
+		return "", err
+	}
+	if err := s.change(func(p *Preferences) { p.GoatCounterSite = site.Code() }); err != nil {
+		return "", err
+	}
+	key, err := s.secrets.Get(GoatCounterKey)
+	if err != nil || key == "" {
+		return "", err
+	}
+	if tried := s.pageLoads.Verify(ctx, site, key); tried != nil {
 		return tried.Error(), nil
 	}
 	return "", nil

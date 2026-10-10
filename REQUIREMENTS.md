@@ -776,3 +776,29 @@ still opens on its safe answer. Verified by
 `CloseChoiceDialog.test.tsx::cancels on its cross, once per click, from the mouse or the keyboard` and
 `CloseChoiceDialog.test.tsx::opens on Minimise to tray, so a stray Enter never quits`.
 
+**Amendment 11 (2026-10-10): every dialog has the cross; GoatCounter is each
+owner's own.** Ruled by the owner on 2026-10-10.
+
+- Amendment 10's cross is drawn by the dialog shell itself, so every dialog
+  has one and a new dialog cannot be made without it. It is named "Close this
+  dialog" to screen readers, so it is never confused with a dialog's own Close
+  button. Verified by
+  `Modal.test.tsx::gives every dialog a cross that closes it, without opening on the cross`.
+- Visitron no longer names one GoatCounter account. Settings gains a
+  GoatCounter site box above the key: the owner types their site's code, the
+  code with `.goatcounter.com` after it or the whole address; Visitron keeps
+  the code. Only goatcounter.com sites are taken, so the key still reaches
+  GoatCounter alone (NFR-PRIV-001). Page loads need both the site and the key
+  (FR-036). A key saved before the site is kept and said to be untried; a
+  stored key is tried against a site as it is saved. The help under the field
+  names no account. An install from before this amendment keeps its key; its
+  owner enters the site once. Verified by
+  `internal/domain/goatcounter_test.go::TestGoatCounterSiteReadsEveryWayItIsTyped`,
+  `internal/domain/goatcounter_test.go::TestGoatCounterSiteRefusesAnythingElse`,
+  `internal/application/settings_test.go::TestGoatCounterSiteSaved`,
+  `internal/application/settings_test.go::TestKeyVerified`,
+  `internal/application/check_test.go::TestAKeyWithNoSiteIsNotSetUp`,
+  `internal/infrastructure/goatcounter/client_test.go::TestTheSiteNamesTheAddress`,
+  `SettingsDialog.test.tsx::keeps the GoatCounter site as its code and says whether a stored key works there` and
+  `SettingsDialog.test.tsx::says where the key and the token come from`.
+

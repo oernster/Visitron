@@ -1,7 +1,8 @@
-// The shell every dialog is drawn in: a backdrop, a labelled box and Escape to
-// close. The dialogs themselves say what goes inside.
+// The shell every dialog is drawn in: a backdrop, a labelled box, the close
+// cross and Escape to close. The dialogs themselves say what goes inside.
 
 import { useEffect, useRef, type ReactNode } from 'react'
+import { ModalClose } from './ModalClose'
 
 // The controls a dialog may open on, in document order. The scrolling body is
 // not among them; nor is anything disabled, so a dialog whose leading control
@@ -57,6 +58,8 @@ export function Modal({ labelId, role, onClose, pinnedActions, children }: Props
         ref={box}
       >
         {children}
+        {/* Last, so the dialog still opens on its own first stop (Amendment 10). */}
+        <ModalClose onClose={onClose} />
       </div>
     </div>
   )

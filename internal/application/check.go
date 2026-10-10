@@ -19,7 +19,8 @@ type Outcome struct {
 	// RateLimitedUntil is GitHub's reset time when its rate limit stopped the
 	// check (FR-035); zero otherwise.
 	RateLimitedUntil time.Time
-	// NoKey is true when no GoatCounter key is set (FR-036).
+	// NoKey is true when GoatCounter is not set up: no key, no site to use it
+	// with or neither (FR-036, Amendment 11).
 	NoKey bool
 }
 
@@ -90,12 +91,18 @@ func (c *Check) readPageLoads(ctx context.Context, now time.Time, out *Outcome) 
 		out.Failures = append(out.Failures, fmt.Sprintf("reading the GoatCounter key: %v", err))
 		return
 	}
-	if key == "" {
+	prefs, err := Preferred(c.store)
+	if err != nil {
+		out.Failures = append(out.Failures, fmt.Sprintf("reading the GoatCounter site: %v", err))
+		return
+	}
+	site := prefs.Site()
+	if key == "" || site.IsZero() {
 		out.NoKey = true
 		return
 	}
 	first, last := DaysBack(now, int(domain.Year)), DayOf(now)
-	loads, err := c.pageLoads.Daily(ctx, key, first, last)
+	loads, err := c.pageLoads.Daily(ctx, site, key, first, last)
 	if err == nil {
 		err = c.store.SavePageLoads(first, last, loads)
 	}

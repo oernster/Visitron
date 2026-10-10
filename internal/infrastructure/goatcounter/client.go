@@ -1,6 +1,7 @@
-// Package goatcounter reads page loads from the owner's GoatCounter account
-// with his API key. GoatCounter reports each page's visitors per day, which
-// is the figure Visitron shows as page loads (Amendment 2).
+// Package goatcounter reads page loads from the owner's GoatCounter site with
+// their API key. GoatCounter reports each page's visitors per day, which is
+// the figure Visitron shows as page loads (Amendment 2). The site is the one
+// named in Settings (Amendment 11).
 package goatcounter
 
 import (
@@ -29,12 +30,16 @@ const (
 
 // Client reads GoatCounter.
 type Client struct {
-	web  *web.Client
-	base string
+	web     *web.Client
+	address func(domain.GoatCounterSite) string
 }
 
-// NewClient builds a GoatCounter reader for the account at base.
-func NewClient(w *web.Client, base string) *Client { return &Client{web: w, base: base} }
+// NewClient builds a GoatCounter reader. address answers where a site's API
+// sits: domain.GoatCounterSite.URL in the application, a local server in a
+// test.
+func NewClient(w *web.Client, address func(domain.GoatCounterSite) string) *Client {
+	return &Client{web: w, address: address}
+}
 
 type hitsResponse struct {
 	Hits []struct {
@@ -53,7 +58,7 @@ type hitsResponse struct {
 // page by page. Whether GoatCounter includes its end date is not stated, so
 // it is asked for one day more; anything outside the days asked for is
 // dropped.
-func (c *Client) Daily(ctx context.Context, key string, first, last domain.Day) ([]application.PathDay, error) {
+func (c *Client) Daily(ctx context.Context, site domain.GoatCounterSite, key string, first, last domain.Day) ([]application.PathDay, error) {
 	end := time.Date(last.Year, time.Month(last.Month), last.Date+1, 0, 0, 0, 0, time.UTC)
 	var out []application.PathDay
 	var seen []string
@@ -67,7 +72,7 @@ func (c *Client) Daily(ctx context.Context, key string, first, last domain.Day) 
 			q.Set("exclude_paths", strings.Join(seen, idSep))
 		}
 		var page hitsResponse
-		if err := c.get(ctx, key, hitsPath+"?"+q.Encode(), &page); err != nil {
+		if err := c.get(ctx, site, key, hitsPath+"?"+q.Encode(), &page); err != nil {
 			return nil, err
 		}
 		for _, h := range page.Hits {
@@ -92,14 +97,14 @@ func (c *Client) Daily(ctx context.Context, key string, first, last domain.Day) 
 	}
 }
 
-// Verify tries key once against the account's own details (FR-061).
-func (c *Client) Verify(ctx context.Context, key string) error {
+// Verify tries key once against the site's own details (FR-061).
+func (c *Client) Verify(ctx context.Context, site domain.GoatCounterSite, key string) error {
 	var ignored json.RawMessage
-	return c.get(ctx, key, mePath, &ignored)
+	return c.get(ctx, site, key, mePath, &ignored)
 }
 
-func (c *Client) get(ctx context.Context, key, path string, into any) error {
-	resp, err := c.web.Get(ctx, c.base+path, map[string]string{
+func (c *Client) get(ctx context.Context, site domain.GoatCounterSite, key, path string, into any) error {
+	resp, err := c.web.Get(ctx, c.address(site)+path, map[string]string{
 		"Authorization": "Bearer " + key,
 		"Content-Type":  "application/json",
 	}, bodyLimit)

@@ -62,8 +62,17 @@ func TestToggles(t *testing.T) {
 func TestKeyVerified(t *testing.T) {
 	t.Parallel()
 	s, _, sec, _, rel, loads := settingsFixture()
+	if why, err := s.SaveSecret(context.Background(), GoatCounterKey, "early"); why != NoSiteToTry || err != nil {
+		t.Errorf("key before any site: %q %v; want it kept and said untried", why, err)
+	}
+	if why, err := s.SaveGoatCounterSite(context.Background(), "someone"); why != "" || err != nil {
+		t.Errorf("site: %q %v", why, err)
+	}
 	if why, err := s.SaveSecret(context.Background(), GoatCounterKey, "good"); why != "" || err != nil {
 		t.Errorf("good key: %q %v", why, err)
+	}
+	if loads.siteUsed.Code() != "someone" {
+		t.Errorf("the key was tried on %q; want the saved site", loads.siteUsed.Code())
 	}
 	loads.verifyErr = errPlanted
 	rel.verifyErr = errPlanted
@@ -86,6 +95,43 @@ func TestKeyVerified(t *testing.T) {
 	sec.err = errPlanted
 	if _, err := s.SaveSecret(context.Background(), GitHubToken, "x"); !errors.Is(err, errPlanted) {
 		t.Errorf("Credential Manager failure: %v", err)
+	}
+}
+
+func TestGoatCounterSiteSaved(t *testing.T) {
+	t.Parallel()
+	s, store, sec, _, _, loads := settingsFixture()
+	if _, err := s.SaveGoatCounterSite(context.Background(), "not a site"); !errors.Is(err, domain.ErrGoatCounterSite) {
+		t.Errorf("bad site: %v", err)
+	}
+	if v, _ := s.View(); v.GoatCounterSite != "" {
+		t.Errorf("a refused site was kept: %q", v.GoatCounterSite)
+	}
+	if why, err := s.SaveGoatCounterSite(context.Background(), "https://Someone.goatcounter.com/"); why != "" || err != nil {
+		t.Errorf("no key stored: %q %v; want nothing to try", why, err)
+	}
+	if v, _ := s.View(); v.GoatCounterSite != "someone" || v.Site().URL() != "https://someone.goatcounter.com" {
+		t.Errorf("kept %q; want the code alone", v.GoatCounterSite)
+	}
+	sec.values = map[Secret]string{GoatCounterKey: "k"}
+	loads.verifyErr = errPlanted
+	if why, err := s.SaveGoatCounterSite(context.Background(), "other"); why == "" || err != nil || loads.siteUsed.Code() != "other" {
+		t.Errorf("stored key on a new site: %q %v %q; want it tried there and the failure said", why, err, loads.siteUsed.Code())
+	}
+	store.failOn = "SavePreferences"
+	if _, err := s.SaveGoatCounterSite(context.Background(), "third"); !errors.Is(err, errPlanted) {
+		t.Errorf("save fault: %v", err)
+	}
+	store.failOn = "Preferences"
+	if _, err := s.SaveSecret(context.Background(), GoatCounterKey, "k"); !errors.Is(err, errPlanted) {
+		t.Errorf("preferences fault while trying a key: %v", err)
+	}
+}
+
+func TestStoredSiteThatNoLongerReadsIsNone(t *testing.T) {
+	t.Parallel()
+	if site := (Preferences{GoatCounterSite: "not a site"}).Site(); !site.IsZero() {
+		t.Errorf("a stored site that fails to read answered %q", site.Code())
 	}
 }
 

@@ -20,6 +20,9 @@ func checkFixture() (*fakeStore, *fakeReleases, *fakePageLoads, *fakeSecrets, *f
 	}}
 	loads := &fakePageLoads{loads: []PathDay{{Path: "symdiary.com/", Day: domain.Day{Year: 2026, Month: 10, Date: 9}, Count: 4}}}
 	secrets := &fakeSecrets{values: map[Secret]string{GoatCounterKey: "k"}}
+	prefs := DefaultPreferences
+	prefs.GoatCounterSite = "someone"
+	store.prefs = &prefs
 	return store, rel, loads, secrets, &fakeClock{now: at(2026, 10, 9, 12)}
 }
 
@@ -39,8 +42,9 @@ func TestCheckReadsEachRepoOnceAndSaves(t *testing.T) {
 	if len(steps) != 3 || steps[2] != "" {
 		t.Errorf("progress steps %q", steps)
 	}
-	if loads.keyUsed != "k" || len(store.loads) != 1 {
-		t.Errorf("page loads not read with the key: %q %v", loads.keyUsed, store.loads)
+	if loads.keyUsed != "k" || loads.siteUsed.Code() != "someone" || len(store.loads) != 1 {
+		t.Errorf("page loads not read with the key from the site: %q %q %v",
+			loads.keyUsed, loads.siteUsed.Code(), store.loads)
 	}
 	if store.record.LastSuccess != clock.now {
 		t.Errorf("record %+v", store.record)
@@ -94,6 +98,22 @@ func TestNoKeyDownloadsStillWork(t *testing.T) {
 	}
 	if latest, _ := store.LatestFiles(symRepo); len(latest) != 1 {
 		t.Error("downloads were not read without a key")
+	}
+}
+
+func TestAKeyWithNoSiteIsNotSetUp(t *testing.T) {
+	t.Parallel()
+	store, rel, loads, secrets, clock := checkFixture()
+	store.prefs = nil
+	out, err := NewCheck(store, rel, loads, secrets, clock).Run(context.Background(), noProgress)
+	if err != nil || !out.NoKey || !out.Succeeded() || loads.keyUsed != "" {
+		t.Errorf("no site: outcome %+v err %v key used %q; want not set up, GoatCounter not asked",
+			out, err, loads.keyUsed)
+	}
+	store.failOn = "Preferences"
+	out, _ = NewCheck(store, rel, loads, secrets, clock).Run(context.Background(), noProgress)
+	if len(out.Failures) == 0 || !strings.Contains(strings.Join(out.Failures, " "), "GoatCounter site") {
+		t.Errorf("a preferences fault is not reported: %v", out.Failures)
 	}
 }
 

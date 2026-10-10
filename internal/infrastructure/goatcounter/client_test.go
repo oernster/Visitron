@@ -16,15 +16,46 @@ import (
 var _ application.PageLoads = (*Client)(nil)
 
 var (
-	oct8 = domain.Day{Year: 2026, Month: 10, Date: 8}
-	oct9 = domain.Day{Year: 2026, Month: 10, Date: 9}
+	oct8    = domain.Day{Year: 2026, Month: 10, Date: 8}
+	oct9    = domain.Day{Year: 2026, Month: 10, Date: 9}
+	someone = mustSite("someone")
 )
+
+func mustSite(code string) domain.GoatCounterSite {
+	site, err := domain.ParseGoatCounterSite(code)
+	if err != nil {
+		panic(err)
+	}
+	return site
+}
+
+// at answers every site's address as base, a local test server.
+func at(base string) func(domain.GoatCounterSite) string {
+	return func(domain.GoatCounterSite) string { return base }
+}
 
 func client(t *testing.T, h http.HandlerFunc) *Client {
 	t.Helper()
 	s := httptest.NewServer(h)
 	t.Cleanup(s.Close)
-	return NewClient(web.NewClient(), s.URL)
+	return NewClient(web.NewClient(), at(s.URL))
+}
+
+func TestTheSiteNamesTheAddress(t *testing.T) {
+	t.Parallel()
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{}`))
+	}))
+	t.Cleanup(s.Close)
+	var asked []string
+	c := NewClient(web.NewClient(), func(site domain.GoatCounterSite) string {
+		asked = append(asked, site.URL())
+		return s.URL
+	})
+	_ = c.Verify(context.Background(), mustSite("other"), "k")
+	if len(asked) != 1 || asked[0] != "https://other.goatcounter.com" {
+		t.Errorf("addresses asked for %v; want the site handed in", asked)
+	}
 }
 
 func TestDailyPagesThroughPaths(t *testing.T) {
@@ -45,7 +76,7 @@ func TestDailyPagesThroughPaths(t *testing.T) {
 		_, _ = w.Write([]byte(`{"more":false,"hits":[
 			{"path":"/ernster.dev/WhatDay/","path_id":3,"stats":[{"day":"2026-10-09","daily":3},{"day":"2026-10-09","daily":0}]}]}`))
 	})
-	got, err := c.Daily(context.Background(), "key", oct8, oct9)
+	got, err := c.Daily(context.Background(), someone, "key", oct8, oct9)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,7 +100,7 @@ func TestDailyStopsOnAnEmptyPage(t *testing.T) {
 		calls++
 		_, _ = w.Write([]byte(`{"more":true,"hits":[]}`))
 	})
-	if _, err := c.Daily(context.Background(), "k", oct8, oct9); err != nil || calls != 1 {
+	if _, err := c.Daily(context.Background(), someone, "k", oct8, oct9); err != nil || calls != 1 {
 		t.Errorf("calls %d err %v", calls, err)
 	}
 }
@@ -84,11 +115,11 @@ func TestDailyFaults(t *testing.T) {
 		},
 	}
 	for name, h := range cases {
-		if _, err := client(t, h).Daily(context.Background(), "k", oct8, oct9); err == nil {
+		if _, err := client(t, h).Daily(context.Background(), someone, "k", oct8, oct9); err == nil {
 			t.Errorf("%s: accepted", name)
 		}
 	}
-	if _, err := NewClient(web.NewClient(), "http://127.0.0.1:1").Daily(context.Background(), "k", oct8, oct9); err == nil {
+	if _, err := NewClient(web.NewClient(), at("http://127.0.0.1:1")).Daily(context.Background(), someone, "k", oct8, oct9); err == nil {
 		t.Error("an unreachable GoatCounter was read")
 	}
 }
@@ -102,10 +133,10 @@ func TestVerify(t *testing.T) {
 		}
 		_, _ = w.Write([]byte(`{"user":{}}`))
 	})
-	if err := c.Verify(context.Background(), "good"); err != nil {
+	if err := c.Verify(context.Background(), someone, "good"); err != nil {
 		t.Errorf("good key: %v", err)
 	}
-	if err := c.Verify(context.Background(), "bad"); err == nil || !strings.Contains(err.Error(), "401") {
+	if err := c.Verify(context.Background(), someone, "bad"); err == nil || !strings.Contains(err.Error(), "401") {
 		t.Errorf("bad key: %v", err)
 	}
 }
