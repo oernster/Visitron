@@ -77,6 +77,9 @@ func TestKeyVerified(t *testing.T) {
 	if !v.GoatCounterSet || !v.GitHubTokenSet {
 		t.Errorf("view %+v", v)
 	}
+	if got, err := s.Secret(GoatCounterKey); got != "bad" || err != nil {
+		t.Errorf("Secret = %q, %v; the stored key is answered as it is", got, err)
+	}
 	if err := s.RemoveSecret(GitHubToken); err != nil || sec.values[GitHubToken] != "" {
 		t.Errorf("remove: %v", err)
 	}

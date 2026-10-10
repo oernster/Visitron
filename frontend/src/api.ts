@@ -123,6 +123,7 @@ interface Bridge {
   SaveUpdateCheck(on: boolean): Promise<void>
   SaveStartWithWindows(on: boolean): Promise<void>
   SaveSecret(which: SecretName, value: string): Promise<string>
+  Secret(which: SecretName): Promise<string>
   RemoveSecret(which: SecretName): Promise<void>
   About(): Promise<About>
   Donate(): Promise<void>
@@ -213,6 +214,7 @@ export const api = {
     act((b) => b.SaveStartWithWindows(on), refused),
   saveSecret: (which: SecretName, value: string, refused: Refused) =>
     ask((b) => b.SaveSecret(which, value), refused),
+  secret: (which: SecretName, refused: Refused) => ask((b) => b.Secret(which), refused),
   removeSecret: (which: SecretName, refused: Refused) => act((b) => b.RemoveSecret(which), refused),
   about: (refused: Refused) => ask((b) => b.About(), refused),
   // The page asks for the donation page; it never names an address. Its one

@@ -420,11 +420,12 @@ that verifies it; test names are the intended ones until the code exists.
   service shall try it once and report whether it works, storing it either way.
 - Verified by: `internal/application/settings_test.go::TestKeyVerified`
 
-**FR-062 Keys never shown**
+**FR-062 Keys shown on request** (Amendment 8)
 - Priority: Must
-- Requirement: The Settings dialog shall show a stored key or token only as
-  "set", with a button to replace or remove it.
-- Verified by: `SettingsDialog.test.tsx::shows each secret only as set or not`
+- Requirement: The Settings dialog shall hold each stored key or token in its
+  box, hidden until its eye button is pressed, with buttons to replace or
+  remove it.
+- Verified by: `SettingsDialog.test.tsx::holds each stored secret hidden until its eye is pressed`
 
 **FR-063 Check interval range**
 - Priority: Must
@@ -728,4 +729,19 @@ needs.** Ruled by the owner on 2026-10-10 after the first hands-on run.
 - FR-042: a chart with nothing to draw says what it is waiting for: a
   GoatCounter key for page loads; two checks on different days for downloads.
   Verified by `Chart.test.tsx::draws nothing for no days and a flat line for days of nothing`.
+
+**Amendment 8 (2026-10-10): a saved secret can be seen.** Ruled by the owner on
+2026-10-10, for both the GoatCounter key and the GitHub token. FR-062 "Keys
+never shown" left an empty box after every save, so the owner could not tell
+what was stored. FR-062 now reads: each box holds the stored secret, read from
+Credential Manager when Settings opens, masked until its eye button is pressed
+and masked again whenever the dialog opens. Save is offered only when the box
+differs from what is stored; after a save the box keeps the key. NFR-SEC-001 is
+unchanged: the secret still never reaches a file, the log or another host. It
+now crosses into the window, through `Secret`, only when Settings asks for it.
+Verified by
+`SettingsDialog.test.tsx::holds each stored secret hidden until its eye is pressed`,
+`SettingsDialog.test.tsx::saves a secret, says whether it works and keeps it in the box`,
+`internal/application/settings_test.go::TestKeyVerified` and
+`app_test.go::TestSettingsRoundTrip`.
 

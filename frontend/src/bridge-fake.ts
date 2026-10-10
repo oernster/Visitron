@@ -6,7 +6,9 @@
 
 import { vi } from 'vitest'
 import { closeRequestEvent, noWindow, progressEvent, sentence } from './api'
-import type { About, Detail, Overview, Progress, Proposal, Settings, State, Update, WebsiteRow } from './api'
+import type {
+  About, Detail, Overview, Progress, Proposal, SecretName, Settings, State, Update, WebsiteRow,
+} from './api'
 
 /** noWindowShown is that refusal as the status line shows it. */
 export const noWindowShown = sentence(noWindow)
@@ -28,6 +30,7 @@ export interface FakeBridge {
   SaveUpdateCheck: Fn
   SaveStartWithWindows: Fn
   SaveSecret: Fn
+  Secret: Fn
   RemoveSecret: Fn
   About: Fn
   Donate: Fn
@@ -100,6 +103,9 @@ export const someSettings: Settings = {
   gitHubTokenSet: true,
 }
 
+/** someSecrets are the stored values behind someSettings: the key not set, the token set. */
+export const someSecrets: Record<SecretName, string> = { goatcounter: '', github: 'a-github-token' }
+
 export const anAbout: About = {
   name: 'Visitron',
   author: 'Oliver Ernster',
@@ -132,6 +138,7 @@ export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
     SaveUpdateCheck: vi.fn(refuse),
     SaveStartWithWindows: vi.fn(refuse),
     SaveSecret: vi.fn(refuse),
+    Secret: vi.fn((which: SecretName) => Promise.resolve(someSecrets[which])),
     RemoveSecret: vi.fn(refuse),
     About: vi.fn(() => Promise.resolve(anAbout)),
     Donate: vi.fn(refuse),

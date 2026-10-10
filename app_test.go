@@ -165,8 +165,14 @@ func TestSettingsRoundTrip(t *testing.T) {
 	if s != want {
 		t.Fatalf("settings = %+v, want %+v", s, want)
 	}
+	if key, err := r.app.Secret("goatcounter"); key != "key" || err != nil {
+		t.Fatalf("Secret = %q, %v", key, err)
+	}
 	if err := r.app.RemoveSecret("goatcounter"); err != nil || r.secrets.values[application.GoatCounterKey] != "" {
 		t.Fatalf("RemoveSecret: %v", err)
+	}
+	if key, err := r.app.Secret("goatcounter"); key != "" || err != nil {
+		t.Fatalf("Secret after removal = %q, %v; want none", key, err)
 	}
 }
 
@@ -177,6 +183,9 @@ func TestAnUnknownSecretIsRefused(t *testing.T) {
 	}
 	if err := r.app.RemoveSecret("password"); !errors.Is(err, errSecretName) {
 		t.Fatalf("RemoveSecret: %v", err)
+	}
+	if _, err := r.app.Secret("password"); !errors.Is(err, errSecretName) {
+		t.Fatalf("Secret: %v", err)
 	}
 	if err := r.app.RemoveSecret("github"); err != nil {
 		t.Fatalf("the GitHub token is not a known secret: %v", err)

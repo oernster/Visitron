@@ -1,9 +1,12 @@
 // Settings (FR-060 to FR-063). Each change is saved as it is made; the key
-// and token are shown only as set or not (FR-062) and tried once on save.
+// and token are tried once on save. Each box holds the stored secret, hidden
+// until its eye is pressed and hidden again whenever the dialog opens
+// (Amendment 8).
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { api, type Refused, type SecretName, type Settings } from './api'
 import { Modal } from './Modal'
+import { useAutoScroll } from './useAutoScroll'
 
 interface Props {
   refused: Refused
@@ -36,32 +39,60 @@ const secrets: { which: SecretName; label: string; set: keyof Settings; why: str
   },
 ]
 
+// The eye on a secret's box: an emoji, so it needs no picture of its own.
+const eye = '\u{1F441}'
+
+const none: Record<SecretName, string> = { goatcounter: '', github: '' }
+const hidden: Record<SecretName, boolean> = { goatcounter: false, github: false }
+
 export function SettingsDialog({ refused, onClose }: Props) {
   const [settings, setSettings] = useState<Settings | null>(null)
-  const [typed, setTyped] = useState<Record<SecretName, string>>({ goatcounter: '', github: '' })
+  const [stored, setStored] = useState(none)
+  const [typed, setTyped] = useState(none)
+  const [shown, setShown] = useState(hidden)
   const [note, setNote] = useState('')
-  const reload = () => void api.settings(refused).then((found) => found && setSettings(found))
-  useEffect(reload, [refused])
+  // The steps under each secret make Settings taller than a short window, so
+  // the body scrolls and Close stays pinned beneath it, as in the Guide.
+  const autoScroll = useAutoScroll()
+  const reload = useCallback(
+    () => void api.settings(refused).then((found) => found && setSettings(found)),
+    [refused],
+  )
+  const loadSecret = useCallback(
+    (which: SecretName) =>
+      void api.secret(which, refused).then((value) => {
+        if (value === null) return
+        setStored((s) => ({ ...s, [which]: value }))
+        setTyped((t) => ({ ...t, [which]: value }))
+      }),
+    [refused],
+  )
+  useEffect(() => {
+    reload()
+    secrets.forEach(({ which }) => loadSecret(which))
+  }, [reload, loadSecret])
 
   const saveSecret = async (which: SecretName) => {
     const problem = await api.saveSecret(which, typed[which], refused)
     if (problem === null) return
     setNote(problem ? `Saved; it did not work: ${problem}` : 'Saved; it works.')
-    setTyped({ ...typed, [which]: '' })
     reload()
+    loadSecret(which)
   }
   const removeSecret = async (which: SecretName) => {
-    if (await api.removeSecret(which, refused)) reload()
+    if (!(await api.removeSecret(which, refused))) return
+    reload()
+    loadSecret(which)
   }
   const interval = async (hours: number) => {
     if (await api.saveInterval(hours, refused)) reload()
   }
 
   return (
-    <Modal labelId="settings-title" role="dialog" onClose={onClose}>
+    <Modal labelId="settings-title" role="dialog" onClose={onClose} pinnedActions>
       <h2 id="settings-title">Settings</h2>
       {settings && (
-        <>
+        <div className="dialog-body" ref={autoScroll}>
           {secrets.map(({ which, label, set, why, steps }) => (
             <div className="field" key={which}>
               <span>
@@ -73,10 +104,19 @@ export function SettingsDialog({ refused, onClose }: Props) {
                   <li key={step}>{step}</li>
                 ))}
               </ol>
-              <input type="password" autoComplete="off" value={typed[which]} aria-label={label}
-                onChange={(e) => setTyped({ ...typed, [which]: e.target.value })} />
+              <div className="secret-entry">
+                <input type={shown[which] ? 'text' : 'password'} autoComplete="off" spellCheck={false}
+                  value={typed[which]} aria-label={label}
+                  onChange={(e) => setTyped({ ...typed, [which]: e.target.value })} />
+                <button type="button" className="reveal" aria-label={`Show ${label}`}
+                  aria-pressed={shown[which]} title={shown[which] ? 'Hide' : 'Show'}
+                  onClick={() => setShown({ ...shown, [which]: !shown[which] })}>
+                  {eye}
+                </button>
+              </div>
               <div className="actions">
-                <button type="button" disabled={typed[which] === ''} onClick={() => void saveSecret(which)}>
+                <button type="button" disabled={typed[which] === '' || typed[which] === stored[which]}
+                  onClick={() => void saveSecret(which)}>
                   Save
                 </button>
                 <button type="button" disabled={!settings[set]} onClick={() => void removeSecret(which)}>
@@ -102,7 +142,7 @@ export function SettingsDialog({ refused, onClose }: Props) {
               onChange={(e) => void api.saveUpdateCheck(e.target.checked, refused).then(reload)} />
             Check for a newer Visitron
           </label>
-        </>
+        </div>
       )}
       <div className="actions">
         <button type="button" onClick={onClose}>

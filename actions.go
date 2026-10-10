@@ -204,7 +204,18 @@ func (a *App) SaveSecret(which, value string) (problem string, err error) {
 	return a.services.Settings.SaveSecret(a.ctx, name, value)
 }
 
-// RemoveSecret forgets the key or token (FR-062).
+// Secret answers the stored key or token, "" when none is set, for the
+// Settings dialog to show behind its eye (Amendment 8).
+func (a *App) Secret(which string) (value string, err error) {
+	defer guard(&err)
+	name, err := secretNamed(which)
+	if err != nil {
+		return "", err
+	}
+	return a.services.Settings.Secret(name)
+}
+
+// RemoveSecret forgets the key or token (Amendment 8).
 func (a *App) RemoveSecret(which string) (err error) {
 	defer guard(&err)
 	name, err := secretNamed(which)

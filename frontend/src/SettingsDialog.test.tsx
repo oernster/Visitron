@@ -25,23 +25,37 @@ describe('the settings', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(8)
   })
 
-  it('shows each secret only as set or not', async () => {
+  it('holds each stored secret hidden until its eye is pressed', async () => {
     installBridge()
     dialog()
     expect(await screen.findByText('GoatCounter API key: not set')).toBeInTheDocument()
     expect(screen.getByText('GitHub token (optional): set')).toBeInTheDocument()
+    const tokenBox = screen.getByLabelText('GitHub token (optional)')
+    await waitFor(() => expect(tokenBox).toHaveValue('a-github-token'))
+    expect(tokenBox).toHaveAttribute('type', 'password')
     expect(keyBox()).toHaveAttribute('type', 'password')
+
+    const eye = screen.getByRole('button', { name: 'Show GitHub token (optional)' })
+    fireEvent.click(eye)
+    expect(tokenBox).toHaveAttribute('type', 'text')
+    expect(eye).toHaveAttribute('aria-pressed', 'true')
+    expect(keyBox()).toHaveAttribute('type', 'password')
+    fireEvent.click(eye)
+    expect(tokenBox).toHaveAttribute('type', 'password')
+
     expect(button(keyField(), 'Save')).toBeDisabled()
+    expect(button(tokenField(), 'Save')).toBeDisabled()
     expect(button(keyField(), 'Remove')).toBeDisabled()
     expect(button(tokenField(), 'Remove')).toBeEnabled()
   })
 
-  it('saves a secret, says whether it works and empties the box', async () => {
-    let saved = false
+  it('saves a secret, says whether it works and keeps it in the box', async () => {
+    let saved = ''
     const bridge = installBridge({
-      Settings: vi.fn(() => Promise.resolve({ ...someSettings, goatCounterSet: saved })),
-      SaveSecret: vi.fn(() => {
-        saved = true
+      Settings: vi.fn(() => Promise.resolve({ ...someSettings, goatCounterSet: saved !== '' })),
+      Secret: vi.fn((which: string) => Promise.resolve(which === 'goatcounter' ? saved : '')),
+      SaveSecret: vi.fn((_: string, value: string) => {
+        saved = value
         return Promise.resolve('')
       }),
     })
@@ -52,7 +66,8 @@ describe('the settings', () => {
     expect(await screen.findByText('Saved; it works.')).toBeInTheDocument()
     expect(await screen.findByText('GoatCounter API key: set')).toBeInTheDocument()
     expect(bridge.SaveSecret).toHaveBeenCalledWith('goatcounter', 'key')
-    expect(keyBox()).toHaveValue('')
+    await waitFor(() => expect(button(keyField(), 'Save')).toBeDisabled())
+    expect(keyBox()).toHaveValue('key')
   })
 
   it('says a saved secret did not work; nothing is said when the save is refused', async () => {

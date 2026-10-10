@@ -119,5 +119,9 @@ func (s *Settings) SaveSecret(ctx context.Context, name Secret, value string) (s
 	return "", nil
 }
 
-// RemoveSecret forgets a key or token (FR-062).
+// Secret answers a stored key or token, "" when it is not set, for the
+// Settings dialog to show behind its eye (Amendment 8).
+func (s *Settings) Secret(name Secret) (string, error) { return s.secrets.Get(name) }
+
+// RemoveSecret forgets a key or token (Amendment 8).
 func (s *Settings) RemoveSecret(name Secret) error { return s.secrets.Delete(name) }

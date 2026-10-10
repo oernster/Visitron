@@ -113,6 +113,25 @@ main.split {
   padding-left: 20px;
 }
 
+/* A secret's box with its eye beside it (Amendment 8). The eye is pressed
+   while the secret is showing, so it wears the selected fill then. */
+.secret-entry {
+  display: flex;
+  gap: 6px;
+}
+
+.secret-entry input {
+  flex: 1;
+}
+
+.secret-entry .reveal {
+  padding: 2px 10px;
+}
+
+.secret-entry .reveal[aria-pressed='true'] {
+  background: var(--selected);
+}
+
 .repo-list {
   list-style: none;
   padding: 0;
