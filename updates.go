@@ -7,7 +7,7 @@ package main
 import (
 	"errors"
 
-	"github.com/oernster/visitron/internal/application"
+	"visitron/internal/application"
 )
 
 // errNothingOffered refuses a Download or a Skip asked for before any check

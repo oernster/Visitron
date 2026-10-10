@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/oernster/visitron/internal/application"
+	"visitron/internal/application"
 )
 
 // The keys of the meta table.

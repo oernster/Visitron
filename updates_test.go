@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/infrastructure/store"
+	"visitron/internal/application"
+	"visitron/internal/infrastructure/store"
 )
 
 func TestAnOfferIsKeptForDownloadAndSkip(t *testing.T) {

@@ -18,8 +18,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/oernster/visitron/internal/infrastructure/store"
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/infrastructure/store"
+	"visitron/internal/product"
 )
 
 const (

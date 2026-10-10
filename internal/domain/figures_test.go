@@ -68,8 +68,8 @@ func TestPlatforms(t *testing.T) {
 
 func TestTotals(t *testing.T) {
 	t.Parallel()
-	sym := Repo{"oernster", "SymDiary"}
-	tr := Repo{"oernster", "TimeRibbon"}
+	sym := Repo{"someone", "SymDiary"}
+	tr := Repo{"someone", "TimeRibbon"}
 	files := []ReleaseFile{
 		{sym, "v1.3.0", "SymDiary.dmg", 3},
 		{sym, "v1.3.0", "SymDiarySetup.exe", 5},
@@ -79,8 +79,8 @@ func TestTotals(t *testing.T) {
 	got := Total(files)
 	want := Totals{
 		All:        10,
-		ByRepo:     map[string]int{"oernster/SymDiary": 9, "oernster/TimeRibbon": 1},
-		ByRelease:  map[string]int{"oernster/SymDiary/v1.3.0": 7, "oernster/SymDiary/v1.2.0": 2, "oernster/TimeRibbon/v1.3.0": 1},
+		ByRepo:     map[string]int{"someone/SymDiary": 9, "someone/TimeRibbon": 1},
+		ByRelease:  map[string]int{"someone/SymDiary/v1.3.0": 7, "someone/SymDiary/v1.2.0": 2, "someone/TimeRibbon/v1.3.0": 1},
 		ByPlatform: map[Platform]int{Windows: 6, MacOS: 2, Linux: 2},
 	}
 	if !reflect.DeepEqual(got, want) {
@@ -90,7 +90,7 @@ func TestTotals(t *testing.T) {
 
 func TestDailyRise(t *testing.T) {
 	t.Parallel()
-	sym := Repo{"oernster", "SymDiary"}
+	sym := Repo{"someone", "SymDiary"}
 	file := func(raw int) []ReleaseFile { return []ReleaseFile{{sym, "v1", "SymDiarySetup.exe", raw}} }
 	oct1, oct3, oct5 := Day{2026, 10, 1}, Day{2026, 10, 3}, Day{2026, 10, 5}
 	snaps := []Snapshot{

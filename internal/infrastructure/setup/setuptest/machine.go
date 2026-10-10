@@ -11,7 +11,7 @@ package setuptest
 import (
 	"path/filepath"
 
-	"github.com/oernster/visitron/internal/infrastructure/setup"
+	"visitron/internal/infrastructure/setup"
 )
 
 // recordName is the file the application keeps its observations in. The double

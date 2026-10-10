@@ -8,7 +8,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/oernster/visitron/internal/application"
+	"visitron/internal/application"
 )
 
 // FR-072: About credits every open source work Visitron ships. The credits are

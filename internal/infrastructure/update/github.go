@@ -17,15 +17,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/infrastructure/github"
-	"github.com/oernster/visitron/internal/infrastructure/web"
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/github"
+	"visitron/internal/infrastructure/web"
 )
 
-// LatestPath is the latest-release endpoint for Visitron's own repository,
-// below the GitHub API's base.
-const LatestPath = "/repos/" + product.Owner + "/" + product.Name + "/releases/latest"
+// latestPath is the latest-release endpoint for a repository, below the GitHub
+// API's base. The repository is the build's own, never named in the source
+// (Amendment 15).
+func latestPath(repo domain.Repo) string { return "/repos/" + repo.String() + "/releases/latest" }
 
 // releaseHost is where every address in a release's answer must point. An
 // address is handed to the browser, so one anywhere else is refused rather
@@ -61,17 +62,26 @@ type Source struct {
 	address string
 }
 
-// New builds the source the application uses.
-func New(client *web.Client) *Source { return NewAt(client, github.DefaultBase) }
+// New builds the source the application uses, reading the releases of repo:
+// "owner/name" as the build states it. An empty or malformed one leaves the
+// source with nothing to ask.
+func New(client *web.Client, repo string) *Source { return NewAt(client, github.DefaultBase, repo) }
 
 // NewAt builds a source against another API base, for a test.
-func NewAt(client *web.Client, base string) *Source {
-	return &Source{client: client, address: base + LatestPath}
+func NewAt(client *web.Client, base, repo string) *Source {
+	named, err := domain.ParseRepo(repo)
+	if err != nil {
+		return &Source{client: client}
+	}
+	return &Source{client: client, address: base + latestPath(named)}
 }
 
 // Latest reads the latest published release. Every failure is an error; the
 // check reads them all alike, as unreachable.
 func (s *Source) Latest(ctx context.Context) (application.Release, error) {
+	if s.address == "" {
+		return application.Release{}, application.ErrNoReleaseSource
+	}
 	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
 	defer cancel()
 	resp, err := s.client.Get(ctx, s.address, map[string]string{"Accept": acceptHeader}, answerCap)

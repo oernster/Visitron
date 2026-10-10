@@ -3,7 +3,7 @@ package application
 import (
 	"testing"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 func TestDaysAcrossTheClockChange(t *testing.T) {

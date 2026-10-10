@@ -1,7 +1,7 @@
 package application
 
 import (
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // SiteFigures is one row of the website list (FR-041).

@@ -17,7 +17,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/product"
 )
 
 const (

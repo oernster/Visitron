@@ -5,7 +5,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/oernster/visitron/internal/infrastructure/tray"
+	"visitron/internal/infrastructure/tray"
 )
 
 func TestCloseAsksWhenTheTrayIsUp(t *testing.T) {

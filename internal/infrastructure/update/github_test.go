@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/infrastructure/web"
+	"visitron/internal/application"
+	"visitron/internal/infrastructure/web"
 )
 
 var _ application.ReleaseSource = (*Source)(nil)
@@ -19,18 +19,18 @@ func source(t *testing.T, h http.HandlerFunc) *Source {
 	t.Helper()
 	s := httptest.NewServer(h)
 	t.Cleanup(s.Close)
-	return NewAt(web.NewClient(), s.URL)
+	return NewAt(web.NewClient(), s.URL, testRepo)
 }
 
-const release = `{"tag_name":"v1.2.0","html_url":"https://github.com/oernster/Visitron/releases/tag/v1.2.0",
-"assets":[{"name":"VisitronSetup.exe","browser_download_url":"https://github.com/oernster/Visitron/releases/download/v1.2.0/VisitronSetup.exe"},
+const release = `{"tag_name":"v1.2.0","html_url":"https://github.com/someone/Visitron/releases/tag/v1.2.0",
+"assets":[{"name":"VisitronSetup.exe","browser_download_url":"https://github.com/someone/Visitron/releases/download/v1.2.0/VisitronSetup.exe"},
 {"name":"","browser_download_url":"https://github.com/x"},
 {"name":"elsewhere.exe","browser_download_url":"https://elsewhere.example/VisitronSetup.exe"}]}`
 
 func TestLatestAsksTheRightPlaceUnauthenticated(t *testing.T) {
 	t.Parallel()
 	s := source(t, func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != LatestPath || r.Header.Get("Accept") != acceptHeader || r.Header.Get("Authorization") != "" {
+		if r.URL.Path != "/repos/someone/Visitron/releases/latest" || r.Header.Get("Accept") != acceptHeader || r.Header.Get("Authorization") != "" {
 			t.Errorf("asked %s with Accept %q, Authorization %q", r.URL.Path, r.Header.Get("Accept"), r.Header.Get("Authorization"))
 		}
 		_, _ = w.Write([]byte(release))
@@ -44,10 +44,29 @@ func TestLatestAsksTheRightPlaceUnauthenticated(t *testing.T) {
 	}
 }
 
-func TestTheEndpointIsVisitronsOwn(t *testing.T) {
+// testRepo stands for the repository a build names; no real account.
+const testRepo = "someone/Visitron"
+
+func TestTheEndpointIsTheBuildsRepository(t *testing.T) {
 	t.Parallel()
-	if got := New(web.NewClient()).address; got != "https://api.github.com/repos/oernster/Visitron/releases/latest" {
+	if got := New(web.NewClient(), testRepo).address; got != "https://api.github.com/repos/someone/Visitron/releases/latest" {
 		t.Errorf("address = %s", got)
+	}
+}
+
+func TestABuildWithNoRepositoryAsksNothing(t *testing.T) {
+	t.Parallel()
+	asked := false
+	for _, repo := range []string{"", "not a repository"} {
+		s := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { asked = true }))
+		_, err := NewAt(web.NewClient(), s.URL, repo).Latest(context.Background())
+		s.Close()
+		if !errors.Is(err, application.ErrNoReleaseSource) {
+			t.Errorf("repo %q: %v; want no release source", repo, err)
+		}
+	}
+	if asked {
+		t.Error("a build with no repository asked GitHub anyway")
 	}
 }
 
@@ -69,7 +88,7 @@ func TestEveryFailureIsAnError(t *testing.T) {
 			t.Errorf("%s: no error", name)
 		}
 	}
-	unreachable := NewAt(web.NewClient(), "http://127.0.0.1:0")
+	unreachable := NewAt(web.NewClient(), "http://127.0.0.1:0", testRepo)
 	if _, err := unreachable.Latest(context.Background()); err == nil {
 		t.Error("an unreachable host: no error")
 	}

@@ -26,7 +26,7 @@ const (
 )
 
 // modulePath prefixes every internal import.
-const modulePath = "github.com/oernster/visitron/"
+const modulePath = "visitron/"
 
 // frontendSource is the front end's own source, held to the same size rule as
 // the Go: a component gathers markup, behaviour and the words on screen in one

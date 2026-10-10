@@ -1,4 +1,4 @@
-module github.com/oernster/visitron
+module visitron
 
 go 1.26.3
 

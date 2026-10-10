@@ -42,7 +42,17 @@ if ($Fast) {
     Write-Host "Building $version..."
 }
 
-wails build -ldflags "-X main.appVersion=$version"
+# The update check reads releases from the repository this checkout came from,
+# taken off its origin remote, so no account is written into the source
+# (Amendment 15). Like the version, it reaches a var through -ldflags -X.
+$releaseRepo = & (Join-Path $root 'tools\releaserepo.ps1')
+if ($releaseRepo) {
+    Write-Host "Updates will be read from $releaseRepo."
+} else {
+    Write-Host 'No GitHub origin remote: this build has no update source and its window says so.'
+}
+
+wails build -ldflags "-X main.appVersion=$version -X main.releaseRepo=$releaseRepo"
 if ($LASTEXITCODE -ne 0) { throw "wails build failed with exit code $LASTEXITCODE" }
 
 $binary = Join-Path $root 'build\bin\Visitron.exe'

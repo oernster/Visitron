@@ -63,6 +63,8 @@ function said(outcome: UpdateOutcome, update: Update, name: string): string {
       return `No release of ${name} has been published yet.`
     case 'uncomparable':
       return `This copy was built from source as ${update.running}, so there is no released version to compare it with.`
+    case 'nosource':
+      return `This copy of ${name} was built without a repository to look for releases in, so it cannot check for updates.`
     default:
       return 'The update check could not reach GitHub. Please try again later.'
   }

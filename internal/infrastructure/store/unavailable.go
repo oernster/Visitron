@@ -1,8 +1,8 @@
 package store
 
 import (
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/application"
+	"visitron/internal/domain"
 )
 
 // Unavailable stands in for a data file that could not be opened, ported from

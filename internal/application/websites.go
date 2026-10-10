@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // CrawlPageLimit is the most pages one crawl fetches (FR-005).

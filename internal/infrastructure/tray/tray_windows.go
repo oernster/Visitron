@@ -13,7 +13,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/product"
 )
 
 // className is the hidden window the icon talks through.

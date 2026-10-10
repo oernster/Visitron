@@ -7,8 +7,8 @@ import (
 
 	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/oernster/visitron/internal/infrastructure/setup"
-	"github.com/oernster/visitron/internal/licence"
+	"visitron/internal/infrastructure/setup"
+	"visitron/internal/licence"
 )
 
 // App is the Wails facade for the setup program. Everything the page can do

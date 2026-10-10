@@ -13,7 +13,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/product"
 
 	// The pure-Go SQLite driver, registered as "sqlite".
 	_ "modernc.org/sqlite"

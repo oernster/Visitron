@@ -24,7 +24,7 @@ describe('the settings', () => {
     expect(screen.getByText(/Fine-grained tokens, Generate new token/)).toBeInTheDocument()
     expect(screen.getAllByRole('listitem')).toHaveLength(9)
     // Generic for every owner: no account is named, only the form one takes.
-    expect(document.body).not.toHaveTextContent(/oernster/i)
+    expect(document.body).not.toHaveTextContent(/someone/i)
     expect(screen.getByText(/for youraccount\.goatcounter\.com it is youraccount/)).toBeInTheDocument()
   })
 

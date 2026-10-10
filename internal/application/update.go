@@ -8,7 +8,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // UpdateOutcome says what one update check found. It is named rather than left
@@ -24,6 +24,9 @@ const (
 	UpdateNone UpdateOutcome = "none"
 	// UpdateUnreachable means the release could not be read.
 	UpdateUnreachable UpdateOutcome = "unreachable"
+	// UpdateNoSource means this build names no repository to read releases
+	// from, as a build outside a git checkout does not (Amendment 15).
+	UpdateNoSource UpdateOutcome = "nosource"
 	// UpdateUncomparable means the running version is not dotted whole
 	// numbers, as a build from source is not.
 	UpdateUncomparable UpdateOutcome = "uncomparable"
@@ -99,6 +102,10 @@ func (u *Updates) check(ctx context.Context, skipped string) UpdateStatus {
 	release, err := u.source.Latest(ctx)
 	if errors.Is(err, ErrNoRelease) {
 		status.Outcome = UpdateNone
+		return status
+	}
+	if errors.Is(err, ErrNoReleaseSource) {
+		status.Outcome = UpdateNoSource
 		return status
 	}
 	if err != nil {

@@ -13,8 +13,6 @@ const (
 	LogFileName = "Log.txt"
 	// UniqueID keeps Visitron to one running copy (FR-053).
 	UniqueID = "uk.codecrafter.visitron"
-	// Owner is the GitHub account Visitron's own releases live under.
-	Owner = "oernster"
 	// DonateURL is what the donate button opens (FR-073).
 	DonateURL = "https://www.paypal.com/ncp/payment/NRXS4SP24A6C8"
 )

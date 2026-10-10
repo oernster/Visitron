@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/infrastructure/store"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/store"
 )
 
 // The facade's fakes, ported from internal/application/fakes_test.go. The
@@ -81,7 +81,7 @@ func (f *fakePublished) Latest(context.Context) (application.Release, error) { r
 // published is the release every rig sees: newer than the rig's 1.1.0.
 var published = &fakePublished{release: application.Release{
 	Tag:    "v1.2.0",
-	Page:   "https://github.com/oernster/Visitron/releases/tag/v1.2.0",
+	Page:   "https://github.com/someone/Visitron/releases/tag/v1.2.0",
 	Assets: []application.Asset{{Name: "VisitronSetup.exe", Address: "https://github.com/setup.exe"}},
 }}
 
@@ -125,7 +125,7 @@ func (r *recorder) seen() []ProgressDTO {
 }
 
 // symdiaryRepo is the one repository the fakes know.
-var symdiaryRepo = domain.Repo{Owner: "oernster", Name: "SymDiary"}
+var symdiaryRepo = domain.Repo{Owner: "someone", Name: "SymDiary"}
 
 // rig is a facade over the real store with every port faked.
 type rig struct {

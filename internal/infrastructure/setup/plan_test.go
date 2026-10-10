@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/visitron/internal/infrastructure/setup"
-	"github.com/oernster/visitron/internal/infrastructure/setup/setuptest"
+	"visitron/internal/infrastructure/setup"
+	"visitron/internal/infrastructure/setup/setuptest"
 )
 
 // assertOrder states that the named calls happened, in this order, allowing

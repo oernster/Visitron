@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/application"
+	"visitron/internal/domain"
 )
 
 // Websites answers every website with its chosen repos, in the order added.

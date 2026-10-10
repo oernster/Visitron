@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/application"
+	"visitron/internal/domain"
 )
 
 // dayLayout reads the stored form of a day, which domain.Day.String writes.

@@ -101,7 +101,8 @@ export interface About {
 }
 
 /** UpdateOutcome is what one update check found (FR-075, Amendment 5). */
-export type UpdateOutcome = 'available' | 'current' | 'skipped' | 'none' | 'unreachable' | 'uncomparable' | 'off'
+export type UpdateOutcome =
+  'available' | 'current' | 'skipped' | 'none' | 'unreachable' | 'uncomparable' | 'nosource' | 'off'
 
 /** Update is one check's answer. No address crosses; Download acts on Go's kept offer. */
 export interface Update {

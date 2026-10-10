@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/oernster/visitron/internal/licence"
+	"visitron/internal/licence"
 )
 
 // rootLicence is the licence as the repository publishes it, which is the file

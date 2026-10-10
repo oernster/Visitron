@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 var errPlanted = errors.New("planted failure")

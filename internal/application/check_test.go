@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 func checkFixture() (*fakeStore, *fakeReleases, *fakePageLoads, *fakeSecrets, *fakeClock) {
@@ -14,9 +14,9 @@ func checkFixture() (*fakeStore, *fakeReleases, *fakePageLoads, *fakeSecrets, *f
 	sym, _ := domain.Normalise("symdiary.com")
 	hub, _ := domain.Normalise("ernster.dev")
 	_, _ = store.AddWebsite(Website{Address: sym, Repos: []domain.Repo{symRepo}})
-	_, _ = store.AddWebsite(Website{Address: hub, Repos: []domain.Repo{{Owner: "OERNSTER", Name: "symdiary"}}})
+	_, _ = store.AddWebsite(Website{Address: hub, Repos: []domain.Repo{{Owner: "SOMEONE", Name: "symdiary"}}})
 	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{
-		"oernster/SymDiary": {{Repo: symRepo, Release: "v1", Name: "SymDiary.dmg", Raw: 3}},
+		"someone/SymDiary": {{Repo: symRepo, Release: "v1", Name: "SymDiary.dmg", Raw: 3}},
 	}}
 	loads := &fakePageLoads{loads: []PathDay{{Path: "symdiary.com/", Day: domain.Day{Year: 2026, Month: 10, Date: 9}, Count: 4}}}
 	secrets := &fakeSecrets{values: map[Secret]string{GoatCounterKey: "k"}}
@@ -57,7 +57,7 @@ func TestFailureKeepsFigures(t *testing.T) {
 	check := NewCheck(store, rel, loads, secrets, clock)
 	_, _ = check.Run(context.Background(), noProgress)
 	clock.now = at(2026, 10, 10, 12)
-	rel.failFor = "oernster/SymDiary"
+	rel.failFor = "someone/SymDiary"
 	loads.err = errPlanted
 	out, err := check.Run(context.Background(), noProgress)
 	if err != nil || out.Succeeded() || len(out.Failures) != 2 {
@@ -74,11 +74,11 @@ func TestFailureKeepsFigures(t *testing.T) {
 func TestRateLimitWaitsForReset(t *testing.T) {
 	t.Parallel()
 	store, rel, loads, secrets, clock := checkFixture()
-	other := domain.Repo{Owner: "oernster", Name: "Other"}
+	other := domain.Repo{Owner: "someone", Name: "Other"}
 	o, _ := domain.Normalise("other.example.com")
 	_, _ = store.AddWebsite(Website{Address: o, Repos: []domain.Repo{other}})
 	store.sites[0], store.sites[2] = store.sites[2], store.sites[0]
-	rel.limitFor = "oernster/Other"
+	rel.limitFor = "someone/Other"
 	rel.reset = at(2026, 10, 9, 13)
 	out, _ := NewCheck(store, rel, loads, secrets, clock).Run(context.Background(), noProgress)
 	if out.RateLimitedUntil != rel.reset || len(rel.asked) != 1 {

@@ -3,7 +3,6 @@
   "name": "visitron-setup",
   "outputfilename": "VisitronSetup",
   "author": {
-    "name": "Oliver Ernster",
-    "email": "oernster@codecrafter.uk"
+    "name": "Oliver Ernster"
   }
 }

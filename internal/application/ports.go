@@ -8,7 +8,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // Clock tells the time in the zone Windows is set to.
@@ -157,6 +157,10 @@ type Release struct {
 // ErrNoRelease is a source saying there is no published release at all,
 // which is an answer rather than a failure to reach it (Amendment 6).
 var ErrNoRelease = errors.New("no release has been published")
+
+// ErrNoReleaseSource is a source with no repository to ask: the build named
+// none (Amendment 15). It is an answer, not a failure, so nothing is fetched.
+var ErrNoReleaseSource = errors.New("this build names no repository to read releases from")
 
 // ReleaseSource answers Visitron's latest published release. Only a release
 // that is published, neither a draft nor a pre-release, is ever answered, so a

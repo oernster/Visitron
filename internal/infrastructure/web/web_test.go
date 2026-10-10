@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
+	"visitron/internal/application"
 )
 
 var _ application.Fetcher = (*Fetcher)(nil)

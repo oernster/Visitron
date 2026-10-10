@@ -15,11 +15,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/oernster/visitron/internal/product"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	windowsoptions "github.com/wailsapp/wails/v2/pkg/options/windows"
+	"visitron/internal/product"
 )
 
 //go:embed all:frontend/dist

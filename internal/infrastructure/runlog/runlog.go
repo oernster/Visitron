@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/product"
 )
 
 const (

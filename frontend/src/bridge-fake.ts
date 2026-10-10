@@ -49,7 +49,7 @@ export const aState: State = { name: 'Visitron', version: '1.0.0', problem: '', 
 export const symdiary: WebsiteRow = {
   id: 1,
   url: 'https://symdiary.com',
-  repos: ['oernster/SymDiary'],
+  repos: ['someone/SymDiary'],
   pageLoads: 120,
   downloads: 14,
   totalDownloads: 80,
@@ -82,7 +82,7 @@ export const aDetail: Detail = {
   id: 1,
   url: 'https://symdiary.com',
   total: 80,
-  byRepo: [{ name: 'oernster/SymDiary', count: 80 }],
+  byRepo: [{ name: 'someone/SymDiary', count: 80 }],
   byRelease: [{ name: 'v1.0.0', count: 80 }],
   byPlatform: [{ name: 'Windows', count: 70 }, { name: 'macOS', count: 10 }],
   dailyPageLoads: [{ day: '2026-10-08', count: 4 }, { day: '2026-10-09', count: 6 }],
@@ -91,8 +91,8 @@ export const aDetail: Detail = {
 
 export const aProposal: Proposal = {
   url: 'https://symdiary.com',
-  found: ['oernster/SymDiary', 'oernster/SymDiary-site'],
-  ticked: ['oernster/SymDiary'],
+  found: ['someone/SymDiary', 'someone/SymDiary-site'],
+  ticked: ['someone/SymDiary'],
   problem: '',
 }
 

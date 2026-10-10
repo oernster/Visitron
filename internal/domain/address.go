@@ -15,7 +15,7 @@ var (
 	ErrEmptyAddress = errors.New("enter a website address")
 	ErrScheme       = errors.New("a website address starts with http:// or https://")
 	ErrNoHost       = errors.New("the address names no website")
-	ErrHostNotDNS   = errors.New("the website name needs a dot, as in symdiary.com")
+	ErrHostNotDNS   = errors.New("the website name needs a dot, as in example.com")
 )
 
 const (
@@ -76,7 +76,7 @@ func directory(path string) string {
 }
 
 // Key is the address as GoatCounter records a page under it: host plus path,
-// with no scheme, such as "ernster.dev/WhatDay/".
+// with no scheme, such as "example.com/app/".
 func (a Address) Key() string { return a.Host + a.Path }
 
 // URL is the address the crawler fetches and the window shows.
@@ -91,7 +91,7 @@ func (a Address) LastSegment() string {
 	return trimmed[strings.LastIndex(trimmed, pathSep)+1:]
 }
 
-// FirstLabel is the first label of the host: "symdiary" for symdiary.com.
+// FirstLabel is the first label of the host: "example" for example.com.
 func (a Address) FirstLabel() string {
 	return strings.SplitN(a.Host, labelSep, 2)[0]
 }

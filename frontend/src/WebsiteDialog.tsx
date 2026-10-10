@@ -58,7 +58,7 @@ export function WebsiteDialog({ editing, refused, onSaved, onClose }: Props) {
       <h2 id="website-title">{title}</h2>
       <label className="field">
         Website address
-        <input type="text" value={entry} placeholder="symdiary.com"
+        <input type="text" value={entry} placeholder="example.com"
           onChange={(e) => { setEntry(e.target.value); setProposal(null) }}
           onKeyDown={onEnter(() => void find(), !busy && entry.trim() !== '')} />
       </label>

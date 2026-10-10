@@ -67,7 +67,7 @@ export const guideSections: GuideSection[] = [
   {
     heading: 'The buttons',
     entries: [
-      { icon: addIcon, name: 'Add website', text: 'Type an address such as symdiary.com, then Find repositories. Visitron reads the site, lists the GitHub repositories it names and ticks the likely ones; tick the ones whose downloads belong to it.' },
+      { icon: addIcon, name: 'Add website', text: 'Type an address such as example.com, then Find repositories. Visitron reads the site, lists the GitHub repositories it names and ticks the likely ones; tick the ones whose downloads belong to it.' },
       { icon: editIcon, name: 'Edit website', text: 'Change the selected website\'s address; the site is read again and your ticks are kept where the repository is found again.' },
       { icon: deleteIcon, name: 'Delete website', text: 'Remove the selected website and its download history, after you confirm.' },
       { icon: refreshIcon, name: 'Refresh', text: 'Check every website now rather than waiting for the next scheduled check. While the last check has failed, Refresh carries a warning sign; point at it to read what failed. The sign goes once a check succeeds.' },
@@ -82,7 +82,7 @@ export const guideSections: GuideSection[] = [
     rules: [
       { title: 'One download of every macOS disk image is yours.', text: 'You download each release\'s .dmg once to confirm notarisation, so Visitron takes one away from every .dmg file and never goes below nothing.' },
       { title: 'Page loads are visitors per page per day.', text: 'GoatCounter reports how many people read each page each day; one person reading a page twice in a day counts once.' },
-      { title: 'A website owns the pages under its own address.', text: 'ernster.dev/WhatDay/ counts its own pages; ernster.dev counts the rest, so nothing is counted twice.' },
+      { title: 'A website owns the pages under its own address.', text: 'example.com/app/ counts its own pages; example.com counts the rest, so nothing is counted twice.' },
       { title: 'Download history starts at the first check.', text: 'GitHub keeps only a running total, so days before Visitron first checked cannot be filled in.' },
       { title: 'A failed check keeps the figures you had.', text: 'Visitron says what failed and when, tries again half an hour later and checks at once when you press Refresh.' },
     ],

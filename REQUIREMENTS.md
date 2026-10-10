@@ -840,5 +840,32 @@ Ruled by the owner on 2026-10-10.
   site, an example or a word of help. The one exception is the repository
   Visitron's own releases come from, which the update check asks (FR-075).
   Verified by
-  `tests/structural/owner_test.go::TestNothingShippedNamesTheAuthorsAccount`.
+  `tests/structural/owner_test.go::TestNothingShippedNamesTheBuilder`
+  (Amendment 15 widened it and renamed it).
+
+**Amendment 15 (2026-10-10): no one's identity is written anywhere.** Ruled by
+the owner on 2026-10-10: Visitron is released to everyone, so it carries no
+account, domain or address of the person who builds it, with no exception.
+
+- FR-075: the update check reads releases from the repository the build came
+  from. `tools/releaserepo.ps1` takes owner/name off the checkout's origin
+  remote and `build.ps1` hands it to the application through `-ldflags -X`,
+  as it does the version. Nothing in the source names it; a fork checks its
+  own releases. A build with no GitHub origin has no update source: a check
+  asked for says "This copy of Visitron was built without a repository to look
+  for releases in, so it cannot check for updates." and nothing is fetched.
+  Verified by
+  `internal/infrastructure/update/github_test.go::TestTheEndpointIsTheBuildsRepository`,
+  `internal/infrastructure/update/github_test.go::TestABuildWithNoRepositoryAsksNothing`,
+  `internal/application/update_test.go::TestABuildWithNoReleaseSourceSaysSo` and
+  `updates.test.tsx::tells every outcome it can find`.
+- The Go module is `visitron`, not a path naming an account. Examples are
+  neutral (`example.com`, `example.com/app/`, `owner/name`, `youraccount`);
+  test fixtures use `someone`; the live GitHub test reads whichever repository
+  `VISITRON_LIVE_REPO` names. The setup and application metadata carry the
+  author's name as copyright holder (FR-072) and no address.
+- The structural test names no one: it learns the identity to refuse from the
+  checkout (the origin remote's owner plus every host in the site record) then
+  refuses any of them in a Go string or a page file. Verified by
+  `tests/structural/owner_test.go::TestNothingShippedNamesTheBuilder`.
 

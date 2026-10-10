@@ -9,7 +9,7 @@ describe('the detail pane', () => {
     expect(screen.getByRole('heading', { name: 'symdiary.com' })).toBeInTheDocument()
     expect(screen.getByText('Downloads to date: 80')).toBeInTheDocument()
     expect(screen.getByRole('table', { name: 'By platform' })).toHaveTextContent('Windows70macOS10')
-    expect(screen.getByRole('table', { name: 'By repository' })).toHaveTextContent('oernster/SymDiary80')
+    expect(screen.getByRole('table', { name: 'By repository' })).toHaveTextContent('someone/SymDiary80')
     expect(screen.getByRole('table', { name: 'By release' })).toHaveTextContent('v1.0.080')
     expect(screen.getByText('Page loads per day: 10')).toBeInTheDocument()
     expect(screen.getByText('Downloads per day: 3')).toBeInTheDocument()

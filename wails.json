@@ -7,7 +7,6 @@
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Oliver Ernster",
-    "email": "oernster@codecrafter.uk"
+    "name": "Oliver Ernster"
   }
 }

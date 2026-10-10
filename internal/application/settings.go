@@ -3,7 +3,7 @@ package application
 import (
 	"context"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // DefaultPreferences are the settings until the owner changes one.

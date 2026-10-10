@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/application"
+	"visitron/internal/product"
 )
 
 // errInternal is what the page is told when a bound method panics. The stack

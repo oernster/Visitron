@@ -3,7 +3,7 @@ package application
 import (
 	"time"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // DayOf is the calendar day of t in t's own zone, which the clock sets to the

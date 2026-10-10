@@ -28,17 +28,17 @@ describe('adding a website', () => {
 
     fireEvent.change(address(), { target: { value: 'symdiary.com' } })
     fireEvent.click(find())
-    const kept = await screen.findByRole('checkbox', { name: 'oernster/SymDiary' })
+    const kept = await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
     expect(bridge.Propose).toHaveBeenCalledWith('symdiary.com', 0)
     expect(kept).toBeChecked()
-    const site = screen.getByRole('checkbox', { name: 'oernster/SymDiary-site' })
+    const site = screen.getByRole('checkbox', { name: 'someone/SymDiary-site' })
     expect(site).not.toBeChecked()
 
     fireEvent.click(site)
     fireEvent.click(kept)
     fireEvent.click(save())
     await waitFor(() => expect(onSaved).toHaveBeenCalled())
-    expect(bridge.SaveWebsite).toHaveBeenCalledWith(0, 'https://symdiary.com', ['oernster/SymDiary-site'])
+    expect(bridge.SaveWebsite).toHaveBeenCalledWith(0, 'https://symdiary.com', ['someone/SymDiary-site'])
   })
 
   it('finds on Enter and forgets the proposal when the address changes', async () => {
@@ -46,7 +46,7 @@ describe('adding a website', () => {
     dialog()
     fireEvent.change(address(), { target: { value: 'symdiary.com' } })
     fireEvent.keyDown(address(), { key: 'Enter' })
-    await screen.findByRole('checkbox', { name: 'oernster/SymDiary' })
+    await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
     fireEvent.keyDown(address(), { key: 'a' })
     fireEvent.change(address(), { target: { value: 'symdiary.co' } })
     expect(screen.queryByRole('checkbox')).toBeNull()
@@ -58,13 +58,13 @@ describe('adding a website', () => {
     dialog()
     fireEvent.keyDown(address(), { key: 'Enter' })
     expect(bridge.Propose).not.toHaveBeenCalled()
-    expect(address()).toHaveAttribute('placeholder', 'symdiary.com')
+    expect(address()).toHaveAttribute('placeholder', 'example.com')
   })
 
   it('says when the site could not be read and still takes a repository by hand', async () => {
     const bridge = installBridge({
       Propose: vi.fn(() => Promise.resolve({ ...aProposal, found: [], ticked: [], problem: 'no answer' })),
-      ConfirmRepo: vi.fn(() => Promise.resolve('oernster/SymDiary')),
+      ConfirmRepo: vi.fn(() => Promise.resolve('someone/SymDiary')),
     })
     dialog()
     fireEvent.change(address(), { target: { value: 'symdiary.com' } })
@@ -75,12 +75,12 @@ describe('adding a website', () => {
     const typed = screen.getByRole('textbox', { name: 'Add a repository by hand' })
     fireEvent.change(typed, { target: { value: 'SymDiary' } })
     fireEvent.keyDown(typed, { key: 'Enter' })
-    expect(await screen.findByRole('checkbox', { name: 'oernster/SymDiary' })).toBeChecked()
+    expect(await screen.findByRole('checkbox', { name: 'someone/SymDiary' })).toBeChecked()
     expect(bridge.ConfirmRepo).toHaveBeenCalledWith('SymDiary')
     expect(typed).toHaveValue('')
 
     // The same repository again neither lists nor ticks it twice.
-    fireEvent.change(typed, { target: { value: 'oernster/SymDiary' } })
+    fireEvent.change(typed, { target: { value: 'someone/SymDiary' } })
     fireEvent.click(screen.getByRole('button', { name: 'Add repository' }))
     await waitFor(() => expect(typed).toHaveValue(''))
     expect(screen.getAllByRole('checkbox')).toHaveLength(1)
@@ -115,7 +115,7 @@ describe('adding a website', () => {
     const { refused, onSaved, onClose } = dialog()
     fireEvent.change(address(), { target: { value: 'symdiary.com' } })
     fireEvent.click(find())
-    await screen.findByRole('checkbox', { name: 'oernster/SymDiary' })
+    await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
     fireEvent.click(save())
     await waitFor(() => expect(refused).toHaveBeenCalledWith('The store is closed'))
     expect(onSaved).not.toHaveBeenCalled()
@@ -134,10 +134,10 @@ describe('editing a website', () => {
     expect(screen.getByRole('heading', { name: 'Edit website' })).toBeInTheDocument()
     expect(address()).toHaveValue('https://symdiary.com')
     fireEvent.click(find())
-    await screen.findByRole('checkbox', { name: 'oernster/SymDiary' })
+    await screen.findByRole('checkbox', { name: 'someone/SymDiary' })
     expect(bridge.Propose).toHaveBeenCalledWith('https://symdiary.com', 1)
     fireEvent.click(save())
     await waitFor(() => expect(onSaved).toHaveBeenCalled())
-    expect(bridge.SaveWebsite).toHaveBeenCalledWith(1, 'https://symdiary.com', ['oernster/SymDiary'])
+    expect(bridge.SaveWebsite).toHaveBeenCalledWith(1, 'https://symdiary.com', ['someone/SymDiary'])
   })
 })

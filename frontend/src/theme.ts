@@ -14,7 +14,7 @@ export type Theme = 'dark' | 'light'
 export const defaultTheme: Theme = 'dark'
 
 /** Where the choice is kept, in the window's own storage. */
-export const themeKey = 'symdiary.theme'
+export const themeKey = 'visitron.theme'
 
 /**
  * The theme a stored value means. Anything that is not one of the two is the

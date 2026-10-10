@@ -10,7 +10,7 @@ func TestSiteLinksStayOnSite(t *testing.T) {
 	site, _ := Normalise("symdiary.com")
 	body := `<link href="site.css?v=1"><script src='site.js?v=52470ecff2'></script>
 	<a href="download.html#get">Get</a> <a href="download.html">Again</a>
-	<a href="https://github.com/oernster/SymDiary">Source</a>
+	<a href="https://github.com/someone/SymDiary">Source</a>
 	<a HREF="https://SYMDIARY.com/why.html">Why</a> <a href="mailto:x@y.z">Mail</a>
 	<a href="//other.com/x.html">Other</a> <a href="#top">Top</a>`
 	want := []string{

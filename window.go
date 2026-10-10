@@ -6,11 +6,11 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/oernster/visitron/internal/infrastructure/tray"
-	"github.com/oernster/visitron/internal/infrastructure/windowfocus"
-	"github.com/oernster/visitron/internal/product"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"visitron/internal/infrastructure/tray"
+	"visitron/internal/infrastructure/windowfocus"
+	"visitron/internal/product"
 )
 
 // settleBeforeFocus lets the window finish showing before the keyboard is

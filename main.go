@@ -14,21 +14,21 @@ import (
 	"slices"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/infrastructure/github"
-	"github.com/oernster/visitron/internal/infrastructure/goatcounter"
-	"github.com/oernster/visitron/internal/infrastructure/runlog"
-	"github.com/oernster/visitron/internal/infrastructure/secrets"
-	"github.com/oernster/visitron/internal/infrastructure/startup"
-	"github.com/oernster/visitron/internal/infrastructure/store"
-	"github.com/oernster/visitron/internal/infrastructure/tray"
-	"github.com/oernster/visitron/internal/infrastructure/update"
-	"github.com/oernster/visitron/internal/infrastructure/web"
-	"github.com/oernster/visitron/internal/product"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/github"
+	"visitron/internal/infrastructure/goatcounter"
+	"visitron/internal/infrastructure/runlog"
+	"visitron/internal/infrastructure/secrets"
+	"visitron/internal/infrastructure/startup"
+	"visitron/internal/infrastructure/store"
+	"visitron/internal/infrastructure/tray"
+	"visitron/internal/infrastructure/update"
+	"visitron/internal/infrastructure/web"
+	"visitron/internal/product"
 )
 
 //go:embed all:frontend/dist
@@ -37,6 +37,12 @@ var assets embed.FS
 // appVersion is set from VERSION by build.ps1 through -ldflags -X, which only
 // reaches a var.
 var appVersion = "0.0.0-dev"
+
+// releaseRepo is the repository the update check reads releases from, as
+// owner/name. build.ps1 sets it from the checkout's own origin remote through
+// -ldflags -X, so no account is named in the source; a build without one has
+// no update source and says so (Amendment 15).
+var releaseRepo = ""
 
 // Window geometry: wide enough for the list beside the detail.
 const (
@@ -88,7 +94,7 @@ func main() {
 		Figures:   application.NewFigures(data, clock),
 		Scheduler: application.NewScheduler(check, data, clock),
 		Settings:  application.NewSettings(data, vault, entry, releases, loads),
-		Updates:   application.NewUpdates(update.New(client), data, appVersion, goruntime.GOOS),
+		Updates:   application.NewUpdates(update.New(client, releaseRepo), data, appVersion, goruntime.GOOS),
 		Store:     data,
 	}
 	app := newApp(services, appVersion, problem, closeData)

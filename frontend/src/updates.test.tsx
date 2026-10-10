@@ -121,6 +121,7 @@ describe('the check asked for', () => {
       [current, 'You are running the latest version.'],
       [{ ...current, outcome: 'none' }, 'No release of Visitron has been published yet.'],
       [{ ...current, outcome: 'uncomparable', running: '0.0.0-dev' }, 'built from source as 0.0.0-dev'],
+      [{ ...current, outcome: 'nosource' }, 'built without a repository to look for releases in'],
       [{ ...current, outcome: 'unreachable' }, 'could not reach GitHub'],
       ['refused', 'could not reach GitHub'],
     ]

@@ -9,8 +9,8 @@ import (
 
 	"github.com/zalando/go-keyring"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/application"
+	"visitron/internal/product"
 )
 
 // Vault reads and writes the two secrets under the product's service name.

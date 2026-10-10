@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 func settingsFixture() (*Settings, *fakeStore, *fakeSecrets, *fakeStartup, *fakeReleases, *fakePageLoads) {

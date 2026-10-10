@@ -7,10 +7,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/licence"
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/licence"
+	"visitron/internal/product"
 )
 
 // The bound methods, one per user-visible action. Each converts the page's

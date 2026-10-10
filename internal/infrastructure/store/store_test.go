@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/application"
+	"visitron/internal/domain"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 var (
-	sym   = domain.Repo{Owner: "oernster", Name: "SymDiary"}
+	sym   = domain.Repo{Owner: "someone", Name: "SymDiary"}
 	oct8  = domain.Day{Year: 2026, Month: 10, Date: 8}
 	oct9  = domain.Day{Year: 2026, Month: 10, Date: 9}
 	oct10 = domain.Day{Year: 2026, Month: 10, Date: 10}
@@ -50,7 +50,7 @@ func file(name string, raw int) domain.ReleaseFile {
 func TestWebsitesRoundTrip(t *testing.T) {
 	t.Parallel()
 	s := open(t)
-	other := domain.Repo{Owner: "oernster", Name: "Other"}
+	other := domain.Repo{Owner: "someone", Name: "Other"}
 	id, err := s.AddWebsite(application.Website{Address: addr(t, "symdiary.com"), Repos: []domain.Repo{sym, other}})
 	if err != nil {
 		t.Fatal(err)
@@ -80,7 +80,7 @@ func TestWebsitesRoundTrip(t *testing.T) {
 func TestDeleteRemovesHistory(t *testing.T) {
 	t.Parallel()
 	s := open(t)
-	shared := domain.Repo{Owner: "OERNSTER", Name: "symdiary"}
+	shared := domain.Repo{Owner: "SOMEONE", Name: "symdiary"}
 	a, _ := s.AddWebsite(application.Website{Address: addr(t, "a.example.com"), Repos: []domain.Repo{sym}})
 	b, _ := s.AddWebsite(application.Website{Address: addr(t, "b.example.com"), Repos: []domain.Repo{shared}})
 	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 3)})
@@ -105,7 +105,7 @@ func TestFilesBySnapshot(t *testing.T) {
 	_ = s.SaveFiles(oct8, sym, []domain.ReleaseFile{file("SymDiary.dmg", 2), file("SymDiarySetup.exe", 5)})
 	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 9)})
 	_ = s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("SymDiary.dmg", 3), file("SymDiarySetup.exe", 7)})
-	latest, err := s.LatestFiles(domain.Repo{Owner: "OERNSTER", Name: "SYMDIARY"})
+	latest, err := s.LatestFiles(domain.Repo{Owner: "SOMEONE", Name: "SYMDIARY"})
 	if err != nil || len(latest) != 2 || latest[0].Raw != 3 || latest[0].Repo != sym {
 		t.Fatalf("latest %+v err %v; a later save on a day replaces it", latest, err)
 	}
@@ -224,7 +224,7 @@ func TestStoredDayMustParse(t *testing.T) {
 	if _, err := s.PageLoads(oct8, oct10); err == nil {
 		t.Error("a damaged day was read")
 	}
-	_, _ = s.db.Exec(`INSERT INTO release_files VALUES ('bad', 'oernster/symdiary', 'oernster', 'SymDiary', 'v1', 'f', 1)`)
+	_, _ = s.db.Exec(`INSERT INTO release_files VALUES ('bad', 'someone/symdiary', 'someone', 'SymDiary', 'v1', 'f', 1)`)
 	if _, err := s.LatestFiles(sym); err == nil {
 		t.Error("a damaged day was read from release files")
 	}

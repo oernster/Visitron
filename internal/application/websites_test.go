@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
-var symRepo = domain.Repo{Owner: "oernster", Name: "SymDiary"}
+var symRepo = domain.Repo{Owner: "someone", Name: "SymDiary"}
 
 // symdiarySite is symdiary.com as measured (Appendix A, M-3): the repo named
 // on the home page and through the API in site.js, the buttons on a second
@@ -18,9 +18,9 @@ var symRepo = domain.Repo{Owner: "oernster", Name: "SymDiary"}
 func symdiarySite() *fakeFetcher {
 	return &fakeFetcher{pages: map[string]string{
 		"https://symdiary.com/": `<script src="site.js?v=1"></script>
-			<a href="download.html">Get</a> <a href="https://github.com/oernster/SymDiary">Code</a>`,
-		"https://symdiary.com/site.js":       `fetch('https://api.github.com/repos/oernster/SymDiary/releases/latest')`,
-		"https://symdiary.com/download.html": `<a href="https://github.com/oernster/SymDiary/releases/latest/download/SymDiary.dmg">dmg</a>`,
+			<a href="download.html">Get</a> <a href="https://github.com/someone/SymDiary">Code</a>`,
+		"https://symdiary.com/site.js":       `fetch('https://api.github.com/repos/someone/SymDiary/releases/latest')`,
+		"https://symdiary.com/download.html": `<a href="https://github.com/someone/SymDiary/releases/latest/download/SymDiary.dmg">dmg</a>`,
 	}}
 }
 
@@ -75,10 +75,10 @@ func TestEditRecrawlsKeepingTicks(t *testing.T) {
 	t.Parallel()
 	store := newStore()
 	addr, _ := domain.Normalise("old.example.com")
-	extra := domain.Repo{Owner: "oernster", Name: "Extra"}
+	extra := domain.Repo{Owner: "someone", Name: "Extra"}
 	id, _ := store.AddWebsite(Website{Address: addr, Repos: []domain.Repo{extra}})
 	fetch := &fakeFetcher{pages: map[string]string{
-		"https://hub.example.com/": `github.com/oernster/Extra github.com/oernster/Other github.com/oernster/Third`,
+		"https://hub.example.com/": `github.com/someone/Extra github.com/someone/Other github.com/someone/Third`,
 	}}
 	p, err := NewWebsites(store, fetch, &fakeReleases{}).Propose(context.Background(), "hub.example.com", id)
 	if err != nil {
@@ -106,7 +106,7 @@ func TestUnreachableSiteCanBeSaved(t *testing.T) {
 func TestBrokenInnerLinkIsSkipped(t *testing.T) {
 	t.Parallel()
 	fetch := &fakeFetcher{pages: map[string]string{
-		"https://a.example.com/": `<a href="missing.html">x</a> github.com/oernster/A`,
+		"https://a.example.com/": `<a href="missing.html">x</a> github.com/someone/A`,
 	}}
 	p, _ := NewWebsites(newStore(), fetch, &fakeReleases{}).Propose(context.Background(), "a.example.com", 0)
 	if p.Problem != "" || len(p.Found) != 1 {
@@ -130,19 +130,19 @@ func TestCrawlStopsAtPageLimit(t *testing.T) {
 
 func TestManualRepository(t *testing.T) {
 	t.Parallel()
-	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{"oernster/SymDiary": nil}}
+	rel := &fakeReleases{files: map[string][]domain.ReleaseFile{"someone/SymDiary": nil}}
 	svc := NewWebsites(newStore(), &fakeFetcher{}, rel)
-	if r, err := svc.Confirm(context.Background(), "oernster/SymDiary"); err != nil || r != symRepo {
+	if r, err := svc.Confirm(context.Background(), "someone/SymDiary"); err != nil || r != symRepo {
 		t.Errorf("Confirm = %v, %v", r, err)
 	}
-	if _, err := svc.Confirm(context.Background(), "oernster/Nope"); !errors.Is(err, ErrRepoNotFound) {
+	if _, err := svc.Confirm(context.Background(), "someone/Nope"); !errors.Is(err, ErrRepoNotFound) {
 		t.Errorf("missing repo = %v", err)
 	}
 	if _, err := svc.Confirm(context.Background(), "nope"); !errors.Is(err, domain.ErrRepoForm) {
 		t.Errorf("bad form = %v", err)
 	}
 	rel.existsErr = errPlanted
-	if _, err := svc.Confirm(context.Background(), "oernster/SymDiary"); !errors.Is(err, errPlanted) {
+	if _, err := svc.Confirm(context.Background(), "someone/SymDiary"); !errors.Is(err, errPlanted) {
 		t.Errorf("GitHub failure = %v", err)
 	}
 }

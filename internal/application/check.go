@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 // Progress is told, before each website, how far a check has got (FR-033).

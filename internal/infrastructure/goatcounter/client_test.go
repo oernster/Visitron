@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/infrastructure/web"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/web"
 )
 
 var _ application.PageLoads = (*Client)(nil)

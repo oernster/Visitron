@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/infrastructure/store"
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/store"
+	"visitron/internal/product"
 )
 
 func TestStateNamesTheProductAndEveryPeriod(t *testing.T) {

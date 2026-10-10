@@ -13,7 +13,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/oernster/visitron/internal/product"
+	"visitron/internal/product"
 )
 
 // ErrAppRunning says Visitron is open, so an install or an uninstall that would

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/oernster/visitron/internal/domain"
+	"visitron/internal/domain"
 )
 
 func figuresFixture() (*Figures, *fakeStore, *fakeClock, int64, int64) {
@@ -13,7 +13,7 @@ func figuresFixture() (*Figures, *fakeStore, *fakeClock, int64, int64) {
 	hub, _ := domain.Normalise("ernster.dev")
 	wd, _ := domain.Normalise("ernster.dev/WhatDay/")
 	hubID, _ := store.AddWebsite(Website{Address: hub})
-	wdRepo := domain.Repo{Owner: "oernster", Name: "WhatDay"}
+	wdRepo := domain.Repo{Owner: "someone", Name: "WhatDay"}
 	wdID, _ := store.AddWebsite(Website{Address: wd, Repos: []domain.Repo{wdRepo}})
 	day := func(d int) domain.Day { return domain.Day{Year: 2026, Month: 10, Date: d} }
 	file := func(raw int) []domain.ReleaseFile {

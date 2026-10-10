@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/visitron/internal/infrastructure/setup"
-	"github.com/oernster/visitron/internal/infrastructure/setup/setuptest"
-	"github.com/oernster/visitron/internal/licence"
+	"visitron/internal/infrastructure/setup"
+	"visitron/internal/infrastructure/setup/setuptest"
+	"visitron/internal/licence"
 )
 
 // thisVersion is the version the setup program under test carries. The machine

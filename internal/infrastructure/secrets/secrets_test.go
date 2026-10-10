@@ -6,7 +6,7 @@ import (
 
 	"github.com/zalando/go-keyring"
 
-	"github.com/oernster/visitron/internal/application"
+	"visitron/internal/application"
 )
 
 var _ application.Secrets = Vault{}

@@ -10,14 +10,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/infrastructure/web"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/web"
 )
 
 var _ application.Releases = (*Client)(nil)
 
-var sym = domain.Repo{Owner: "oernster", Name: "SymDiary"}
+var sym = domain.Repo{Owner: "someone", Name: "SymDiary"}
 
 // secrets answers a fixed token.
 type secrets struct {
@@ -43,7 +43,7 @@ func TestFilesFollowsPages(t *testing.T) {
 	c = client(t, secrets{token: "tok"}, func(w http.ResponseWriter, r *http.Request) {
 		auth = append(auth, r.Header.Get("Authorization"))
 		if r.URL.Query().Get("page") == "" {
-			w.Header().Set("Link", fmt.Sprintf(`<%s/repos/oernster/SymDiary/releases?page=2>; rel="next", <x>; rel="last"`, c.base))
+			w.Header().Set("Link", fmt.Sprintf(`<%s/repos/someone/SymDiary/releases?page=2>; rel="next", <x>; rel="last"`, c.base))
 			_, _ = w.Write([]byte(`[{"tag_name":"v2","assets":[{"name":"SymDiary.dmg","download_count":3}]}]`))
 			return
 		}
@@ -176,9 +176,9 @@ func TestExists(t *testing.T) {
 	t.Parallel()
 	c := client(t, secrets{}, func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/repos/oernster/SymDiary":
+		case "/repos/someone/SymDiary":
 			_, _ = w.Write([]byte(`{}`))
-		case "/repos/oernster/Broken":
+		case "/repos/someone/Broken":
 			w.WriteHeader(http.StatusInternalServerError)
 		default:
 			http.NotFound(w, r)
@@ -187,10 +187,10 @@ func TestExists(t *testing.T) {
 	if ok, err := c.Exists(context.Background(), sym); !ok || err != nil {
 		t.Errorf("existing: %v %v", ok, err)
 	}
-	if ok, err := c.Exists(context.Background(), domain.Repo{Owner: "oernster", Name: "Nope"}); ok || err != nil {
+	if ok, err := c.Exists(context.Background(), domain.Repo{Owner: "someone", Name: "Nope"}); ok || err != nil {
 		t.Errorf("missing: %v %v", ok, err)
 	}
-	if _, err := c.Exists(context.Background(), domain.Repo{Owner: "oernster", Name: "Broken"}); err == nil {
+	if _, err := c.Exists(context.Background(), domain.Repo{Owner: "someone", Name: "Broken"}); err == nil {
 		t.Error("a server error read as an answer")
 	}
 }

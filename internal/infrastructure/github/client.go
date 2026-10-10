@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/oernster/visitron/internal/application"
-	"github.com/oernster/visitron/internal/domain"
-	"github.com/oernster/visitron/internal/infrastructure/web"
+	"visitron/internal/application"
+	"visitron/internal/domain"
+	"visitron/internal/infrastructure/web"
 )
 
 // DefaultBase is the GitHub REST API.

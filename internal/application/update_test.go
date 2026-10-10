@@ -20,7 +20,7 @@ func (f *fakeSource) Latest(context.Context) (Release, error) {
 
 var published = Release{
 	Tag:  "v1.2.0",
-	Page: "https://github.com/oernster/Visitron/releases/tag/v1.2.0",
+	Page: "https://github.com/someone/Visitron/releases/tag/v1.2.0",
 	Assets: []Asset{
 		{Name: "Visitron.dmg", Address: "https://github.com/dmg"},
 		{Name: "VisitronSetup.EXE", Address: "https://github.com/exe"},
@@ -89,6 +89,15 @@ func TestNoPublishedReleaseIsItsOwnAnswer(t *testing.T) {
 	source.err = ErrNoRelease
 	if got := u.CheckManually(context.Background()); got.Outcome != UpdateNone || got.Address != "" {
 		t.Errorf("status %+v", got)
+	}
+}
+
+func TestABuildWithNoReleaseSourceSaysSo(t *testing.T) {
+	t.Parallel()
+	u, source, _ := updatesFixture("1.1.0", "windows")
+	source.err = ErrNoReleaseSource
+	if got := u.CheckManually(context.Background()); got.Outcome != UpdateNoSource || got.Address != "" {
+		t.Errorf("status %+v; want no source named, nothing offered", got)
 	}
 }
 

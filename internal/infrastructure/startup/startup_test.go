@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/sys/windows/registry"
 
-	"github.com/oernster/visitron/internal/application"
+	"visitron/internal/application"
 )
 
 var _ application.Startup = Entry{}

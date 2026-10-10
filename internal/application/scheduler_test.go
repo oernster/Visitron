@@ -73,7 +73,7 @@ func TestOverdueOnResume(t *testing.T) {
 func TestRateLimitResumesAtReset(t *testing.T) {
 	t.Parallel()
 	s, _, rel, clock := schedulerFixture()
-	rel.limitFor = "oernster/SymDiary"
+	rel.limitFor = "someone/SymDiary"
 	rel.reset = clock.now.Add(time.Hour)
 	_, _ = s.Refresh(context.Background(), noProgress)
 	if due, _ := s.Due(); due {
