@@ -21,6 +21,10 @@ const ONE_YEAR_DAYS = 365
 
 const periodLabel = (days: number) => (days === ONE_YEAR_DAYS ? '1 year' : `${days} days`)
 
+// The download columns sit under one Downloads heading, so the first names
+// the period it covers rather than repeating the word (Amendment 7).
+const periodHeading = (days: number) => (days === ONE_YEAR_DAYS ? 'Last year' : `Last ${days} days`)
+
 export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }: Props) {
   const ids = overview.rows.map((r) => r.id)
   const step = (event: KeyboardEvent) => {
@@ -50,9 +54,12 @@ export function WebsiteList({ overview, periods, selected, onSelect, onPeriod }:
         aria-label="Websites">
         <thead>
           <tr>
-            <th>Website</th>
-            <th>Page loads</th>
-            <th>Downloads</th>
+            <th rowSpan={2}>Website</th>
+            <th rowSpan={2}>Page loads</th>
+            <th colSpan={3} className="group">Downloads</th>
+          </tr>
+          <tr>
+            <th>{periodHeading(overview.period)}</th>
             <th>All time</th>
             <th>Since last check</th>
           </tr>

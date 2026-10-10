@@ -86,6 +86,11 @@ try {
 # keyboard hand-over are almost wholly Win32 calls against a real desktop, so
 # their figures are the portable halves alone; they are listed so that the
 # little that can be tested stays tested.
+# The setup program and its install policy are ported from SymDiary. The setup
+# package reaches everything but the Windows calls that write the registry and
+# shortcuts, which need a real profile; the setup program's facade reaches all
+# but the Wails runtime underneath it. Every setup test runs inside a scratch
+# profile (internal/infrastructure/setup/main_test.go), never the real one.
 $measured = [ordered]@{
     '.'                                       = 72
     './internal/infrastructure/github'        = 100
@@ -98,6 +103,8 @@ $measured = [ordered]@{
     './internal/infrastructure/runlog'        = 81
     './internal/infrastructure/windowfocus'   = 27
     './internal/infrastructure/tray'          = 5
+    './installer'                             = 69
+    './internal/infrastructure/setup'         = 63
 }
 
 Write-Host 'Measuring the rest of the tree...'
@@ -118,7 +125,8 @@ foreach ($package in $measured.Keys) {
 }
 
 # Not gated at all, deliberately: internal/product holds constants,
-# internal/licence is one embedded file that tests/structural compares byte for
+# internal/infrastructure/setup/setuptest is the double the setup suites are
+# written against, internal/licence is one embedded file that tests/structural compares byte for
 # byte with LICENSE; tests/structural is itself the guard. A floor over any
 # of them asserts nothing.
 
@@ -134,5 +142,15 @@ if ($LASTEXITCODE -ne 0) { throw "the front-end build failed with exit code $LAS
 Write-Host 'Running the front-end suite...'
 npm --prefix frontend test
 if ($LASTEXITCODE -ne 0) { throw "the front-end suite failed with exit code $LASTEXITCODE" }
+
+# The setup program's page has no build step, so nothing compiles it and a
+# typo there reaches a user as a window that draws no screen at all. node parses
+# each file without running it; tests/structural/setuppage_test.go checks the
+# ids and state fields the scripts read against the markup and the facade.
+Write-Host 'Parsing the setup page...'
+foreach ($script in Get-ChildItem -Path 'installer/frontend/dist' -Filter '*.js') {
+    node --check $script.FullName
+    if ($LASTEXITCODE -ne 0) { throw "$($script.Name) does not parse, exit code $LASTEXITCODE" }
+}
 
 Write-Host 'All green.'

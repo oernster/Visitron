@@ -12,9 +12,11 @@ const gap = 1
 interface Props {
   title: string
   days: DayCount[]
+  /** What the chart is waiting for, said in place of bars while it has none. */
+  empty: string
 }
 
-export function Chart({ title, days }: Props) {
+export function Chart({ title, days, empty }: Props) {
   const most = Math.max(1, ...days.map((d) => d.count))
   const bar = days.length > 0 ? width / days.length : width
   const total = days.reduce((sum, d) => sum + d.count, 0)
@@ -23,6 +25,7 @@ export function Chart({ title, days }: Props) {
       <figcaption>
         {title}: {total}
       </figcaption>
+      {total === 0 && <p className="chart-empty">{empty}</p>}
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${title}, ${total} in all`}>
         {days.map((d, i) => {
           const h = (d.count / most) * height

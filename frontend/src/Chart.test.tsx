@@ -5,7 +5,7 @@ import { Chart } from './Chart'
 describe('the chart', () => {
   it('draws one bar per day, the tallest reaching the top', () => {
     const { container } = render(
-      <Chart title="Page loads per day" days={[{ day: '2026-10-08', count: 2 }, { day: '2026-10-09', count: 4 }]} />,
+      <Chart title="Page loads per day" days={[{ day: '2026-10-08', count: 2 }, { day: '2026-10-09', count: 4 }]} empty="nothing yet" />,
     )
     expect(screen.getByRole('img', { name: 'Page loads per day, 6 in all' })).toBeInTheDocument()
     expect(screen.getByText('Page loads per day: 6')).toBeInTheDocument()
@@ -17,11 +17,12 @@ describe('the chart', () => {
   })
 
   it('draws nothing for no days and a flat line for days of nothing', () => {
-    const { container, rerender } = render(<Chart title="Downloads per day" days={[]} />)
+    const { container, rerender } = render(<Chart title="Downloads per day" days={[]} empty="nothing yet" />)
+    expect(screen.getByText('nothing yet')).toBeInTheDocument()
     expect(container.querySelectorAll('rect')).toHaveLength(0)
     expect(screen.getByText('Downloads per day: 0')).toBeInTheDocument()
 
-    rerender(<Chart title="Downloads per day" days={[{ day: '2026-10-09', count: 0 }]} />)
+    rerender(<Chart title="Downloads per day" days={[{ day: '2026-10-09', count: 0 }]} empty="nothing yet" />)
     expect(container.querySelector('rect')?.getAttribute('height')).toBe('0')
   })
 })

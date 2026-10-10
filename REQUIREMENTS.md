@@ -707,3 +707,25 @@ published yet." and an automatic one says nothing. Verified by
 `internal/infrastructure/update/github_test.go::TestNoPublishedReleaseIsNamed` and
 `internal/application/update_test.go::TestNoPublishedReleaseIsItsOwnAnswer`.
 
+**Amendment 7 (2026-10-10): the setup program; saying what the window
+needs.** Ruled by the owner on 2026-10-10 after the first hands-on run.
+
+- FR-080: the setup program is ported from SymDiary's. The data it keeps on an
+  uninstall unless asked is the folder the store uses, %LOCALAPPDATA%\Visitron,
+  which also holds the run log: setup asks the store for it, so the two cannot
+  name different folders. The log therefore goes only with the data, never as
+  a leftover. Verified by
+  `internal/infrastructure/setup/leftovers_test.go::TestTheRecordIsNeverClearedWithTheLeftovers`.
+  Every setup test runs inside a scratch profile, since one that redirected
+  APPDATA alone reached the real data folder on 2026-10-10.
+- FR-060: Settings shows, under each field, what the key or token is for and
+  numbered steps to get it, read from GoatCounter's API help and GitHub's token
+  and rate-limit pages on 2026-10-10. Verified by
+  `SettingsDialog.test.tsx::says where the key and the token come from`.
+- FR-041: the three download columns sit under one Downloads heading, the first
+  naming the period it covers. Verified by
+  `WebsiteList.test.tsx::shows each website without its scheme and its counts`.
+- FR-042: a chart with nothing to draw says what it is waiting for: a
+  GoatCounter key for page loads; two checks on different days for downloads.
+  Verified by `Chart.test.tsx::draws nothing for no days and a flat line for days of nothing`.
+

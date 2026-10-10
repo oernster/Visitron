@@ -1,0 +1,132 @@
+/*
+  The licence screen's own surface: a plain reading of what the licence means,
+  then the published text in a pane that reads itself down.
+
+  It is a stylesheet of its own because it is one screen's concern and setup.css
+  is close enough to the size limit that adding this to it would push it into
+  the band the rule reserves. The tokens are setup.css's; nothing here names a
+  colour of its own.
+*/
+
+/*
+  The licence screen fills the body exactly and never scrolls as a whole.
+
+  Every other screen is short enough to be centred in the body, which scrolls
+  if it has to. This one is not; a body that scrolls pushes the heading and
+  the first statement up under the header's rule, sliced through the middle of
+  a line. So the screen becomes the column: the words above keep their own
+  height and the pane takes whatever is left, which means the licence is the
+  one thing that scrolls whatever the window does.
+
+  The id beats `.screen.active` on specificity, which is what lets one screen
+  lay itself out differently without a rule for all the others.
+*/
+#screen-licence.active {
+    display: flex;
+    flex-direction: column;
+    /* Basis zero: the screen takes exactly the body's height rather than
+       growing from its own content, where a fraction of a pixel rounds up into
+       a scrollbar down the whole window. */
+    flex: 1 1 0%;
+    min-height: 0;
+    /* The screen fills the body, so without this its heading begins exactly on
+       the header's rule, with no air between the two. Every other screen is
+       centred in the body and floats clear of it by accident rather than by a
+       rule, which is why nothing else needs this. */
+    padding-top: 16px;
+}
+
+/*
+  The plain reading and the licence are stacked, one after the other, with
+  the whole width going to the licence.
+
+  Side by side was tried and both halves suffered. The licence's own lines run
+  to 78 characters and a half-width pane cannot hold them, so every line wrapped
+  a second time and the text came out ragged; the statements wrapped to two
+  lines apiece as well, which made the left column tall enough to be cut off at
+  the foot of a real window. Full width fixes both: the licence sits as it was
+  written and each statement is one line.
+*/
+
+.reading-lead {
+    margin: 18px 0 8px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.plainly {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.plainly li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 7px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* The gap belongs between the statements, not after the last one, where it
+   pushed the column a hair past the height it was given. Measured: the list
+   ended 1.06px below the screen, which is enough to round up into a scrollbar
+   down the whole window. */
+.plainly li:last-child {
+    margin-bottom: 0;
+}
+
+/* A mark rather than a bullet glyph, so the indent is the same whatever the
+   platform's list rendering does with it. */
+.plainly li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0.62em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/*
+  The pane holding the licence text.
+
+  It is a TEXT VIEW: a pane holding words, not a control. So it draws no ring
+  in any state, Tab included, which is the one thing a reader arriving here by
+  keyboard must not see. Chromium makes an overflowing scroll container a
+  keyboard stop by itself, so the pane is still reachable and still scrolls on
+  the arrows; suppressing the outline takes the ring away without taking the
+  reachability with it. This matches the application's own dialog-body exactly.
+
+  It takes whatever height the words above leave it rather than a stated one,
+  so the screen fits the fixed window at any content length and the pane is
+  the only thing that scrolls. A stated height was tried and is what put the
+  heading off the top of the screen.
+*/
+.reading {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--raised);
+    color: var(--muted);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+
+.reading:focus,
+.reading:focus-visible {
+    outline: none;
+}
+
+/* Hover belongs to controls. The pointer rests inside a reading pane for as
+   long as the screen is open, so a ring here would report where the mouse is
+   rather than mark anything. */
+.reading:hover {
+    border-color: var(--border);
+}

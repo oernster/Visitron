@@ -14,6 +14,10 @@ func TestLongestPrefixOwns(t *testing.T) {
 	sites := []Address{hub, whatday, sym}
 	cases := map[string]Address{
 		"ernster.dev/index.html":         hub,
+		"ernster.dev/":                   hub,
+		"ernster.dev":                    hub,
+		"ernster.dev/applications.html":  hub,
+		"ernster.dev/?ref=x":             hub,
 		"ernster.dev/WhatDay/index.html": whatday,
 		"ernster.dev/WhatDay/":           whatday,
 		"ERNSTER.DEV/WhatDay/":           whatday,

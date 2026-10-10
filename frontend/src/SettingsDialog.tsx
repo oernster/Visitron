@@ -10,9 +10,30 @@ interface Props {
   onClose: () => void
 }
 
-const secrets: { which: SecretName; label: string; set: keyof Settings }[] = [
-  { which: 'goatcounter', label: 'GoatCounter API key', set: 'goatCounterSet' },
-  { which: 'github', label: 'GitHub token (optional)', set: 'gitHubTokenSet' },
+// Each secret says where it comes from (Amendment 7). The steps were read
+// from GoatCounter's API help and GitHub's token and rate-limit pages on
+// 2026-10-10; re-read them there when either site changes its menus.
+const secrets: { which: SecretName; label: string; set: keyof Settings; why: string; steps: string[] }[] = [
+  {
+    which: 'goatcounter', label: 'GoatCounter API key', set: 'goatCounterSet',
+    why: 'Needed for page loads: without it every Page loads figure stays at 0.',
+    steps: [
+      'Open oernster.goatcounter.com in your browser and sign in.',
+      'Choose your username in the top menu, then API.',
+      'Create a new key with the Read statistics permission; it needs nothing else.',
+      'Copy the key, paste it below and press Save. Visitron tries it at once and says whether it works.',
+    ],
+  },
+  {
+    which: 'github', label: 'GitHub token (optional)', set: 'gitHubTokenSet',
+    why: 'Downloads are read without one; GitHub then allows 60 requests an hour, which a token raises to 5,000.',
+    steps: [
+      'On github.com, choose your profile picture, then Settings.',
+      'Choose Developer settings at the foot of the left-hand list, then Personal access tokens, Fine-grained tokens, Generate new token.',
+      'Name it Visitron and pick an expiry. Leave every permission unticked: a token can always read public repositories.',
+      'Press Generate token, copy it (GitHub shows it only once), paste it below and press Save.',
+    ],
+  },
 ]
 
 export function SettingsDialog({ refused, onClose }: Props) {
@@ -41,11 +62,17 @@ export function SettingsDialog({ refused, onClose }: Props) {
       <h2 id="settings-title">Settings</h2>
       {settings && (
         <>
-          {secrets.map(({ which, label, set }) => (
+          {secrets.map(({ which, label, set, why, steps }) => (
             <div className="field" key={which}>
               <span>
                 {label}: {settings[set] ? 'set' : 'not set'}
               </span>
+              <p className="secret-help">{why}</p>
+              <ol className="secret-steps">
+                {steps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
               <input type="password" autoComplete="off" value={typed[which]} aria-label={label}
                 onChange={(e) => setTyped({ ...typed, [which]: e.target.value })} />
               <div className="actions">

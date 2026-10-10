@@ -83,8 +83,34 @@ main.split {
   border: 1px solid var(--border);
 }
 
+/* Downloads spans the three download columns above them (Amendment 7). */
+.website-table th.group {
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+/* What an empty chart is waiting for, drawn where the bars would be. */
+.chart-empty {
+  margin: 0;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .chart rect {
   fill: var(--accent);
+}
+
+/* Where a key or token comes from, under its field in Settings (Amendment 7). */
+.secret-help,
+.secret-steps {
+  margin: 2px 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.secret-steps {
+  padding-left: 20px;
 }
 
 .repo-list {

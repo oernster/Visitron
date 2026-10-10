@@ -55,9 +55,15 @@ var scrollDeclaration = regexp.MustCompile(`(?m)overflow(-y)?\s*:\s*(auto|scroll
 
 // setupPage is the setup program's hand-written front end. It is generated
 // output as far as the other walks are concerned (it lives under dist), so it
-// is named here rather than found. It is empty until the setup program is
-// built; each of its files is listed here as it arrives.
-var setupPage = []string{}
+// is named here rather than found.
+var setupPage = []string{
+	filepath.Join("installer", "frontend", "dist", "setup.css"),
+	filepath.Join("installer", "frontend", "dist", "setup-reading.css"),
+	filepath.Join("installer", "frontend", "dist", "index.html"),
+	filepath.Join("installer", "frontend", "dist", "setup-routes.js"),
+	filepath.Join("installer", "frontend", "dist", "setup-scroll.js"),
+	filepath.Join("installer", "frontend", "dist", "setup-shell.js"),
+}
 
 // ringSurfaces returns every file the focus rules govern: the application's
 // front end plus the setup program's page.

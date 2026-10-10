@@ -1,0 +1,345 @@
+/*
+ * The same palette Visitron carries, so setup and the thing it installs look
+ * like one product. Light and dark hold their own tokens rather than sharing
+ * them: a shade that reads on near-black is weak on paper.
+ *
+ * The ring model is the house one: no ring at rest, green while an enabled
+ * control is hovered or focused, a danger ring while one is disabled. The
+ * accent is never a ring, because it carries identity rather than state.
+ *
+ * Setup opens DARK and wears light only when asked, through the toggle in its
+ * header, exactly as the application does (FR-081). It does not read the
+ * Windows app mode: two programs of one product should not disagree about what
+ * they open in, while the button is one press away.
+ */
+:root {
+    --surface: #14171c;
+    --panel: #1e2229;
+    --raised: #252b33;
+    --border: #3a414c;
+    --text: #e6e9ed;
+    --muted: #a3adb9;
+    --accent: #6aa6ff;
+    --secondary: #a9c8ff;
+    --secondary-soft: #24334a;
+    --ring: #34d399;
+    --danger: #ff8a80;
+    --danger-soft: #3a1b18;
+    --glow: rgba(106, 166, 255, 0.12);
+}
+
+:root[data-theme='light'] {
+    --surface: #f4f6f8;
+    --panel: #ffffff;
+    --raised: #e7ebef;
+    --border: #c9d0d8;
+    --text: #1b1f24;
+    --muted: #535c68;
+    --accent: #1a5fc8;
+    --secondary: #1a5fc8;
+    --secondary-soft: #dce8fb;
+    --ring: #047857;
+    --danger: #a8231a;
+    --danger-soft: #fbe3e1;
+    --glow: rgba(26, 95, 200, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; }
+
+body {
+    background:
+        radial-gradient(760px 420px at 50% -8%, var(--glow) 0%, transparent 70%),
+        var(--surface);
+    color: var(--text);
+    font: 18px/1.55 'Segoe UI', system-ui, sans-serif;
+    user-select: none;
+    overflow: hidden;
+}
+
+/* One focus indicator only: the ring. */
+:focus { outline: none; }
+
+.shell {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 26px 18px;
+}
+
+/* ------------------------------------------------------------ header */
+
+.head {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    flex: 0 0 auto;
+}
+
+/* The mark is drawn at a size that can be read across the room, which is the
+   strongest signal that the right installer is open. The header carries no
+   version: the body says what is installed and what setup holds, because the
+   relationship between those two numbers is the thing to read. */
+.mark {
+    width: 126px;
+    height: 126px;
+    flex: 0 0 auto;
+}
+
+.head .who { flex: 1 1 auto; min-width: 0; }
+
+.head .title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+.head .sub { font-size: 18px; color: var(--muted); }
+
+/* The header's controls: the licence as a word, the theme as a picture. Each
+   needs a ring rule of its own, because a class rule setting a border beats the
+   generic one by specificity and would otherwise leave it with no ring at all. */
+.head .controls {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.head .controls[hidden] { display: none; }
+
+.head .licence {
+    border: 2px solid transparent;
+    background: var(--raised);
+    color: var(--text);
+    border-radius: 9px;
+    padding: 9px 18px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.head .toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: 2px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Drawn at the height of the words beside it plus its own breathing room, so
+   the two controls read as a pair rather than as a button and a stray dot. */
+.head .toggle img {
+    display: block;
+    height: 60px;
+    width: 60px;
+}
+
+.head .licence:enabled:hover,
+.head .licence:enabled:focus-visible,
+.head .toggle:enabled:hover,
+.head .toggle:enabled:focus-visible {
+    border-color: var(--ring);
+    outline: none;
+}
+
+.credits-lead { margin-top: 16px; }
+
+/* -------------------------------------------------------------- body */
+
+.body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.screen { display: none; }
+
+.screen.active { display: block; }
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 7px;
+    letter-spacing: -0.2px;
+}
+
+p.lead {
+    color: var(--muted);
+    margin: 0 0 16px;
+}
+
+.infobox {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 13px 16px;
+    font-size: 16px;
+    color: var(--muted);
+    word-break: break-all;
+}
+
+.infobox .path { color: var(--text); }
+
+/* ----------------------------------------------------------- options */
+
+.options { margin-top: 6px; }
+
+.option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 11px;
+    padding: 5px 7px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.option:hover,
+.option:focus-within { border-color: var(--ring); }
+
+.option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.check {
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    transition: background 0.14s ease, border-color 0.14s ease;
+}
+
+.option input:checked + .check {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.check::after {
+    content: "";
+    width: 6px;
+    height: 11px;
+    border: solid var(--surface);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.14s ease;
+}
+
+.option input:checked + .check::after { transform: rotate(45deg) scale(1); }
+
+.option .label { display: block; }
+
+.option .hint {
+    display: block;
+    font-size: 15px;
+    color: var(--muted);
+}
+
+/* ---------------------------------------------------------- versions */
+
+.flow {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 22px;
+    margin: 4px 0 16px;
+}
+
+.flow .from { color: var(--muted); }
+
+.flow .arrow { color: var(--accent); }
+
+.flow .to { font-weight: 700; }
+
+/* ---------------------------------------------------------- progress */
+
+.track {
+    height: 9px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 16px 0 9px;
+}
+
+.fill {
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.25s ease;
+}
+
+.status { color: var(--muted); font-size: 16px; }
+
+.verdict {
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.verdict.ok { color: var(--ring); }
+
+.verdict.bad { color: var(--danger); }
+
+.centred { text-align: center; }
+
+/* ------------------------------------------------------------ footer */
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+    flex: 0 0 auto;
+}
+
+.btn {
+    border: 2px solid transparent;
+    background: var(--raised);
+    color: var(--text);
+    border-radius: 9px;
+    padding: 11px 22px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn:enabled:hover,
+.btn:enabled:focus { border-color: var(--ring); }
+
+.btn:disabled {
+    border-color: var(--danger);
+    color: var(--muted);
+    cursor: default;
+}
+
+.btn.primary {
+    background: var(--secondary-soft);
+    color: var(--secondary);
+}
+
+.btn.danger {
+    background: var(--danger-soft);
+    color: var(--danger);
+}

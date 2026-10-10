@@ -240,11 +240,41 @@ func TestCompositionRootIsWhitelisted(t *testing.T) {
 	}
 }
 
-// sourceFiles is every file the size rule governs. The setup program's page
-// joins it when the setup program is built.
+// setupPageDir is the setup program's front end. It has no build step, so the
+// files there are the source rather than the output of one.
+var setupPageDir = filepath.Join("installer", "frontend", "dist")
+
+// setupPageExtensions are the files there the size rule governs. The mark
+// beside them is artwork.
+var setupPageExtensions = map[string]bool{".html": true, ".css": true, ".js": true}
+
+// setupPageFiles answers the setup program's own source files, held to the
+// size rule for the same reason the application's page is.
+func setupPageFiles(t *testing.T) []string {
+	t.Helper()
+	dir := filepath.Join(repoRoot(t), setupPageDir)
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatalf("reading %s: %v", filepath.ToSlash(setupPageDir), err)
+	}
+	var found []string
+	for _, entry := range entries {
+		if entry.IsDir() || !setupPageExtensions[strings.ToLower(filepath.Ext(entry.Name()))] {
+			continue
+		}
+		found = append(found, filepath.Join(dir, entry.Name()))
+	}
+	if len(found) == 0 {
+		t.Fatalf("no source found in %s, the walk is wrong", filepath.ToSlash(setupPageDir))
+	}
+	return found
+}
+
+// sourceFiles is every file the size rule governs.
 func sourceFiles(t *testing.T) []string {
 	t.Helper()
-	return append(goFiles(t), frontendFiles(t)...)
+	files := append(goFiles(t), frontendFiles(t)...)
+	return append(files, setupPageFiles(t)...)
 }
 
 func TestNoFileExceedsLineLimit(t *testing.T) {

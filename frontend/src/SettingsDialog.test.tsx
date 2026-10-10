@@ -17,6 +17,14 @@ const button = (field: HTMLElement, name: string) =>
   Array.from(field.querySelectorAll('button')).find((b) => b.textContent === name) as HTMLButtonElement
 
 describe('the settings', () => {
+  it('says where the key and the token come from', async () => {
+    installBridge()
+    dialog()
+    expect(await screen.findByText('Choose your username in the top menu, then API.')).toBeInTheDocument()
+    expect(screen.getByText(/Fine-grained tokens, Generate new token/)).toBeInTheDocument()
+    expect(screen.getAllByRole('listitem')).toHaveLength(8)
+  })
+
   it('shows each secret only as set or not', async () => {
     installBridge()
     dialog()

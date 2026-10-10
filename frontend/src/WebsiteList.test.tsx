@@ -16,10 +16,12 @@ describe('the website list', () => {
     list(1)
     const rows = screen.getAllByRole('row')
     const cells = (i: number) => Array.from(rows[i].querySelectorAll('td')).map((c) => c.textContent)
-    expect(cells(1)).toEqual(['symdiary.com', '120', '14', '80', '+3'])
-    expect(rows[1]).toHaveAttribute('aria-selected', 'true')
-    expect(cells(2)).toEqual(['ernster.dev/WhatDay', '9', '0', '0', '0'])
-    expect(rows[2]).toHaveAttribute('aria-selected', 'false')
+    expect(cells(2)).toEqual(['symdiary.com', '120', '14', '80', '+3'])
+    expect(rows[2]).toHaveAttribute('aria-selected', 'true')
+    expect(cells(3)).toEqual(['ernster.dev/WhatDay', '9', '0', '0', '0'])
+    expect(rows[3]).toHaveAttribute('aria-selected', 'false')
+    const headings = screen.getAllByRole('columnheader').map((h) => h.textContent)
+    expect(headings).toEqual(['Website', 'Page loads', 'Downloads', 'Last 30 days', 'All time', 'Since last check'])
   })
 
   it('is one stop whose arrows walk the rows and wrap', () => {
