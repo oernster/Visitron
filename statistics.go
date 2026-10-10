@@ -24,7 +24,7 @@ func (a *App) Statistics(id int64) (stats StatisticsDTO, err error) {
 	stats = StatisticsDTO{
 		ID: id, URL: d.Website.Address.URL(), Period: int(prefs.Period),
 		ByPlatform: platformCounts(d.Totals.ByPlatform),
-		ByRepo:     named(d.Totals.ByRepo), ByRelease: named(d.Totals.ByRelease),
+		ByRepo:     named(d.Totals.ByRepo), ByRelease: releases(d.Totals.ByRelease),
 		Countries: []CountryDTO{},
 	}
 	countries, err := a.services.Countries.Of(a.ctx, id, prefs.Period)
@@ -54,20 +54,34 @@ func platformCounts(counts map[domain.Platform]int) []NamedCountDTO {
 	return out
 }
 
-// named sorts totals largest first, then by name, for a stable table; a
-// total of none is left out, for the same reason as platformCounts.
+// named sorts totals largest first, then by name, for a stable table.
 func named(counts map[string]int) []NamedCountDTO {
-	out := make([]NamedCountDTO, 0, len(counts))
-	for name, n := range counts {
-		if n > 0 {
-			out = append(out, NamedCountDTO{Name: name, Count: n})
-		}
-	}
+	out := someDownloads(counts)
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].Count != out[j].Count {
 			return out[i].Count > out[j].Count
 		}
 		return out[i].Name < out[j].Name
 	})
+	return out
+}
+
+// releases lists release totals by repository, newest version first
+// (Amendment 24).
+func releases(counts map[string]int) []NamedCountDTO {
+	out := someDownloads(counts)
+	sort.Slice(out, func(i, j int) bool { return domain.ReleaseBefore(out[i].Name, out[j].Name) })
+	return out
+}
+
+// someDownloads lists the totals that are not none, for the same reason as
+// platformCounts.
+func someDownloads(counts map[string]int) []NamedCountDTO {
+	out := make([]NamedCountDTO, 0, len(counts))
+	for name, n := range counts {
+		if n > 0 {
+			out = append(out, NamedCountDTO{Name: name, Count: n})
+		}
+	}
 	return out
 }

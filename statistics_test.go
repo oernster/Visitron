@@ -94,6 +94,16 @@ func TestNamedLeavesOutWhatHasNoDownloads(t *testing.T) {
 	}
 }
 
+func TestReleasesListTheNewestVersionFirstAndLeaveOutNone(t *testing.T) {
+	got := releases(map[string]int{
+		"someone/Widget/v1.1.1": 9, "someone/Widget/v1.10.1": 1, "someone/Widget/v1.2.0": 4, "someone/Widget/v0.9.0": 0,
+	})
+	want := []NamedCountDTO{{"someone/Widget/v1.10.1", 1}, {"someone/Widget/v1.2.0", 4}, {"someone/Widget/v1.1.1", 9}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("releases = %v, want %v", got, want)
+	}
+}
+
 func TestPlatformCountsKeepTheDomainOrderAndLeaveOutNone(t *testing.T) {
 	got := platformCounts(map[domain.Platform]int{
 		domain.Other: 2, domain.MacOS: 0, domain.Linux: 1, domain.Windows: 4,

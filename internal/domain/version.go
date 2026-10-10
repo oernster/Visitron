@@ -34,12 +34,22 @@ func Newer(latest, running string) (newer, comparable bool) {
 	if !ok {
 		return false, true
 	}
-	for i := range max(len(offered), len(have)) {
-		if l, r := partAt(offered, i), partAt(have, i); l != r {
-			return l > r, true
+	return compareParts(offered, have) > 0, true
+}
+
+// compareParts answers 1 when version a is later than b, -1 when earlier and 0
+// when they name the same version. The update check and the order releases
+// are listed in both read versions this way, so they cannot disagree.
+func compareParts(a, b []uint64) int {
+	for i := range max(len(a), len(b)) {
+		if l, r := partAt(a, i), partAt(b, i); l != r {
+			if l > r {
+				return 1
+			}
+			return -1
 		}
 	}
-	return false, true
+	return 0
 }
 
 // versionParts reads a version as dotted whole numbers; ok is false for

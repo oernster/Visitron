@@ -1044,3 +1044,15 @@ download. Clicks stay out, as section 3.11 says.
   `statistics_test.go::TestStatisticsNameAFailedCountryReadAndKeepTheDownloads`,
   `internal/application/countries_test.go::TestCountriesPassOnEveryFailure` and
   `StatisticsDialog.test.tsx::names a failed country read and keeps the downloads`.
+
+**Amendment 24 (2026-10-10): releases are listed newest first.** Ruled by the
+owner on 2026-10-10, after the release table read as alphabetical.
+
+- FR-046: the release table lists repositories in name order; within each,
+  the newest version comes first, its numbers compared as numbers, so 1.10.1
+  is listed above 1.9 and 1.9 above 1.1.1. A tag that is not a version follows
+  every one that is; tags naming the same version are settled by their text.
+  The update check (FR-075) compares versions by the same rule. Verified by
+  `internal/domain/releases_test.go::TestReleasesListTheNewestVersionFirstByNumberNotByText`,
+  `internal/domain/releases_test.go::TestReleasesThatAreNotVersionsFollowInNameOrder` and
+  `statistics_test.go::TestReleasesListTheNewestVersionFirstAndLeaveOutNone`.
