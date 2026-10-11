@@ -74,7 +74,7 @@ export function StatisticsDialog({ id, refused, onClose }: Props) {
 
   const downloads = stats ? [...stats.byPlatform, ...stats.byRepo, ...stats.byRelease] : []
   return (
-    <Modal labelId="statistics-title" role="dialog" onClose={onClose} pinnedActions wide>
+    <Modal labelId="statistics-title" role="dialog" onClose={onClose} pinnedActions>
       <div className="dialog-body" ref={autoScroll}>
         <h2 id="statistics-title">{stats ? stats.url.replace('https://', '') : 'Statistics'}</h2>
         {!stats && <p>{reading}</p>}

@@ -136,13 +136,19 @@ main.split > :last-child {
   padding: 4px 0;
 }
 
-/* Each table keeps its own height: stretched to the longest beside it, a short
-   table spreads the extra over its rows. */
+/* Each table is as wide as what it holds, so a short platform name or version
+   takes a narrow column; a table that does not fit beside the others wraps
+   below them. Each also keeps its own height: stretched to the longest beside
+   it, a short table spreads the extra over its rows. */
 .totals-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: flex-start;
+}
+
+.totals-row .totals {
+  width: auto;
 }
 
 .chart {
