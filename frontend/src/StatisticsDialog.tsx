@@ -10,20 +10,30 @@ import { Modal } from './Modal'
 import { useAutoScroll } from './useAutoScroll'
 import { periodLabel } from './WebsiteList'
 
-function Totals({ title, rows }: { title: string; rows: NamedCount[] }) {
+interface TotalsProps {
+  title: string
+  rows: NamedCount[]
+  /** The self-reading cycle, given to the one table whose rows can run long. */
+  autoScroll?: (node: HTMLElement | null) => void
+}
+
+// A table whose rows scroll under its caption, which stays in place.
+function Totals({ title, rows, autoScroll }: TotalsProps) {
   if (rows.length === 0) return null
   return (
-    <table className="totals">
-      <caption>{title}</caption>
-      <tbody>
-        {rows.map((r) => (
-          <tr key={r.name}>
-            <td>{r.name}</td>
-            <td>{r.count}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="totals-scroll" ref={autoScroll}>
+      <table className="totals">
+        <caption>{title}</caption>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.name}>
+              <td>{r.name}</td>
+              <td>{r.count}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
@@ -40,17 +50,19 @@ function Countries({ stats }: { stats: Statistics }) {
   if (stats.countries.length === 0) return <p>{noCountries}</p>
   return (
     <>
-      <table className="totals countries">
-        <caption>By country</caption>
-        <tbody>
-          {stats.countries.map((c) => (
-            <tr key={c.code}>
-              <td>{c.name}</td>
-              <td>{c.count}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="totals-scroll countries-scroll">
+        <table className="totals countries">
+          <caption>By country</caption>
+          <tbody>
+            {stats.countries.map((c) => (
+              <tr key={c.code}>
+                <td>{c.name}</td>
+                <td>{c.count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <p className="secret-help">{howCounted}</p>
     </>
   )
@@ -75,7 +87,9 @@ export function StatisticsDialog({ id, refused, onClose }: Props) {
   const downloads = stats ? [...stats.byPlatform, ...stats.byRepo, ...stats.byRelease] : []
   return (
     <Modal labelId="statistics-title" role="dialog" onClose={onClose} pinnedActions>
-      <div className="dialog-body" ref={autoScroll}>
+      {/* The headings stay put; the tables' rows scroll inside each table. The
+          release list is the one that can run long, so it reads itself. */}
+      <div className="dialog-body statistics-body">
         <h2 id="statistics-title">{stats ? stats.url.replace('https://', '') : 'Statistics'}</h2>
         {!stats && <p>{reading}</p>}
         {stats && (
@@ -85,7 +99,7 @@ export function StatisticsDialog({ id, refused, onClose }: Props) {
             <div className="totals-row">
               <Totals title="By platform" rows={stats.byPlatform} />
               <Totals title="By repository" rows={stats.byRepo} />
-              <Totals title="By release" rows={stats.byRelease} />
+              <Totals title="By release" rows={stats.byRelease} autoScroll={autoScroll} />
             </div>
             <h3>Visitors by country, {periodLabel(stats.period)}</h3>
             <Countries stats={stats} />

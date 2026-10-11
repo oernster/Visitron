@@ -136,19 +136,64 @@ main.split > :last-child {
   padding: 4px 0;
 }
 
-/* Each table is as wide as what it holds, so a short platform name or version
-   takes a narrow column; a table that does not fit beside the others wraps
-   below them. Each also keeps its own height: stretched to the longest beside
-   it, a short table spreads the extra over its rows. */
+/* The downloads tables side by side, each column as wide as what it holds, so
+   a short platform name or version takes a narrow one; a name too long for
+   the dialog wraps rather than widening it. One row whose height the dialog
+   decides: each table's scroller fills it, so a long list scrolls inside its
+   own table. The table itself keeps its own height; stretched, a short table
+   would spread the extra over its rows. */
 .totals-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 24px;
-  align-items: flex-start;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto;
+  grid-template-rows: minmax(0, 1fr);
+  justify-content: start;
+  column-gap: 24px;
 }
 
 .totals-row .totals {
   width: auto;
+}
+
+/* The Statistics dialog keeps its headings in place: its body is a column in
+   which the title and the section headings keep their size while the tables
+   give way, so their rows scroll under their captions instead. The body still
+   scrolls as a last resort on a window too short for the headings alone. */
+.statistics-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.statistics-body > * {
+  flex: none;
+}
+
+.statistics-body > .totals-row,
+.statistics-body > .countries-scroll {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+/* The gutter is kept for the scrollbar whether or not one shows, so a column
+   sized to its table never has the scrollbar take room from the figures. */
+.totals-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.totals-scroll caption {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+
+/* A table scroller is a pane, not a control: while it overflows the engine
+   makes it a keyboard stop; it paints nothing while it is one
+   (noborderfocus). */
+.totals-scroll:focus,
+.totals-scroll:focus-visible {
+  outline: none;
 }
 
 .chart {

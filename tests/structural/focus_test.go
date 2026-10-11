@@ -30,6 +30,10 @@ var tabIndexAttribute = regexp.MustCompile(`(?i)\btabindex\s*=\s*["'{]?\s*(-?\d+
 // name: <ModalClose, which Modal.tsx draws inside the shell, is not one.
 var drawsModal = regexp.MustCompile(`<Modal\b`)
 
+// holdsDialogBody matches a scrolling dialog body, alone or with a class of its
+// own after it that lays the body out (the Statistics dialog's column).
+var holdsDialogBody = regexp.MustCompile(`className="dialog-body[ "]`)
+
 // itemViews names the item views that are a stop of their own, by the file
 // that draws each one: the website table is ONE stop whose arrows walk its rows
 // and whose selection drives the detail (keeb invariant 4). It paints no ring;
@@ -237,9 +241,8 @@ func drawnTargets(rules [][2]string, states ...string) map[string]bool {
 // first check by name.
 func TestEveryScrollingDialogPinsItsActionsAndReadsItself(t *testing.T) {
 	const (
-		bodyClass = `className="dialog-body"`
-		pinned    = "pinnedActions"
-		cycle     = "ref={autoScroll}"
+		pinned = "pinnedActions"
+		cycle  = "ref={autoScroll}"
 	)
 	scrolling := 0
 	for _, path := range frontendFiles(t) {
@@ -252,7 +255,7 @@ func TestEveryScrollingDialogPinsItsActionsAndReadsItself(t *testing.T) {
 		if !drawsModal.MatchString(source) {
 			continue
 		}
-		holdsBody := strings.Contains(source, bodyClass)
+		holdsBody := holdsDialogBody.MatchString(source)
 		if holdsBody {
 			scrolling++
 		}
