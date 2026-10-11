@@ -84,11 +84,12 @@ main.split > :last-child {
 }
 
 /* The two heading rows stay at the top of the scroller as the rows pass under
-   them, so they wear the page's own background. */
+   them, so they wear the page's own background. No z-index: the rows are not
+   positioned, so the headings already paint over them, while one would lift
+   the headings over the dialogs' backdrop as well. */
 .website-table thead {
   position: sticky;
   top: 0;
-  z-index: 1;
   background: var(--bg);
 }
 
@@ -135,10 +136,13 @@ main.split > :last-child {
   padding: 4px 0;
 }
 
+/* Each table keeps its own height: stretched to the longest beside it, a short
+   table spreads the extra over its rows. */
 .totals-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
+  align-items: start;
 }
 
 .chart {
