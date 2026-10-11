@@ -1056,3 +1056,33 @@ owner on 2026-10-10, after the release table read as alphabetical.
   `internal/domain/releases_test.go::TestReleasesListTheNewestVersionFirstByNumberNotByText`,
   `internal/domain/releases_test.go::TestReleasesThatAreNotVersionsFollowInNameOrder` and
   `statistics_test.go::TestReleasesListTheNewestVersionFirstAndLeaveOutNone`.
+
+**Amendment 25 (2026-10-11): headings that stay put; releases named by their
+version.** Ruled by the owner on 2026-10-11.
+
+- FR-041, FR-042: a vertical rule divides the list from the detail; each side
+  scrolls on its own. The list's rows scroll beneath the Period chooser
+  and the table's two heading rows, which stay in view; the detail stays where
+  it is, scrolling on its own only when it is taller than its side. The window
+  opens 840 pixels high rather than 800, so the detail's two charts with their notes
+  fit without a scrollbar at the default size. Layout is not measured by the
+  page tests, which run without one; this was measured in a browser against
+  the shipped stylesheets.
+- FR-046: the release table names each release by its version. Where a
+  website's releases come from more than one repository, the repository's name
+  goes before the version, since two repositories can share a tag; the owner
+  goes before the name only where two of them share a name. The Guide says so
+  (FR-071). Verified by
+  `internal/domain/releases_test.go::TestReleaseLabelsFromOneRepositoryAreTheTagAlone`,
+  `internal/domain/releases_test.go::TestReleaseLabelsFromSeveralRepositoriesCarryTheirNames`,
+  `internal/domain/releases_test.go::TestReleaseLabelsNameTheOwnerWhereTwoRepositoriesShareAName` and
+  `statistics_test.go::TestReleasesListTheNewestVersionFirstAndLeaveOutNone`.
+- FR-045 to FR-047: the Statistics dialog takes the ordinary dialog width, each
+  table as wide as what it holds. Its title, section headings and table
+  captions stay in place while each table's rows scroll inside it; the release
+  list, the one that grows without bound, carries the house self-reading cycle
+  in place of the whole dialog. The body still scrolls as a last resort on a
+  window too short for the headings alone, so it still pins its actions.
+  Verified by
+  `tests/structural/focus_test.go::TestEveryScrollingDialogPinsItsActionsAndReadsItself`;
+  the layout was measured as above.

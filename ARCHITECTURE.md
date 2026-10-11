@@ -42,15 +42,16 @@ repositories found in a page (`links.go`, `repo.go`), which website owns a
 GoatCounter path (`owner.go`), platforms and counted downloads
 (`downloads.go`), days (`history.go`), setting bounds (`settings.go`), the
 GoatCounter account name (`goatcounter.go`), the order countries and releases
-are listed in (`countries.go`, `releases.go`) and version comparison
-(`version.go`).
+are listed in and how a release is named (`countries.go`, `releases.go`) and
+version comparison (`version.go`).
 
 **Application, `internal/application`.** One service per thing the owner does,
 over the ports in `ports.go`: `websites.go` (add, edit, delete, crawl),
 `check.go` (one pass over every website), `scheduler.go` (when a check is due,
 the wait after a failure), `figures.go`, `countries.go` (one website's visitors
 by country; also the one rule for whether GoatCounter is set up), `settings.go`,
-`update.go`, `about.go`.
+`update.go`, `about.go`, with `days.go` turning an instant into the calendar
+day it falls on.
 
 **Infrastructure, `internal/infrastructure`.**
 

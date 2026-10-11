@@ -74,7 +74,7 @@ Not gated: `internal/product` (constants), `internal/licence` (compared with
 
 | Suite | What it settles |
 |---|---|
-| `internal/domain` | Address reduction, repository discovery, path ownership, counted downloads, days, setting bounds, version comparison, the order of countries and releases. |
+| `internal/domain` | Address reduction, repository discovery, path ownership, counted downloads, days, setting bounds, version comparison, the order of countries and releases, how a release is named. |
 | `internal/application` | Every use case over hand-written fakes: the crawl, a check, the scheduler's retry and fault recording, figures over the history, visitors by country, settings, the update check. |
 | Infrastructure | Each adapter against something real: a local HTTP server for the web, GitHub, GoatCounter and update clients; SQLite in a temporary folder; an in-memory keyring; a Run value of the test's own. |
 | root package | The facade end to end over a real store: conversions, the statistics, refusals, the close choice, the update offer, a panic becoming an error. |
