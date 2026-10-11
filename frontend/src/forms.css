@@ -1,0 +1,108 @@
+/* What the dialogs' forms hold: the Settings groups, a secret's box with its
+   help and the website dialog's list of repositories. Every colour is a token
+   from theme.css. */
+
+/* Where a key or token comes from, under its field in Settings (Amendment 7). */
+.secret-help,
+.secret-steps {
+  margin: 2px 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.secret-steps {
+  padding-left: 20px;
+}
+
+/* The heading over a secret's steps, quieter than the group's legend. */
+.secret-steps-title {
+  margin: 10px 0 2px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/*
+  Settings in groups (Amendment 19), ported from TimeRibbon's fieldsets: two
+  columns where the dialog is wide enough, one where it is not. Columns rather
+  than grid rows, because the groups differ in height: rows left a hole under
+  the shorter group of each pair, while columns stack each group straight under
+  the one before. Reading order (so the ring too) runs down the left column
+  and then down the right. Each group leaves its controls room for their rings
+  inside its border.
+*/
+.settings-groups {
+  columns: 2 380px;
+  column-gap: 16px;
+}
+
+.settings-group {
+  break-inside: avoid;
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 8px 14px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.settings-group legend {
+  padding: 0 4px;
+  font-weight: 600;
+}
+
+/*
+  A switch on a line of its own, its box beside its words. The margins collapse
+  into one gap between two switches, the same gap a field keeps from the next,
+  which is well clear of both rings.
+*/
+.settings-group .check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+/* A number of a few digits needs a short box, not the column's whole width. */
+.settings-group input[type='number'] {
+  max-width: 8em;
+}
+
+.settings-group .field:last-of-type {
+  margin-bottom: 6px;
+}
+
+/* A secret's box with its eye beside it (Amendment 8). The eye is pressed
+   while the secret is showing, so it wears the selected fill then. */
+.secret-entry {
+  display: flex;
+  gap: 6px;
+  /* Two rows stacked: each ring stands out by --ring-reach, so this much on
+     each side keeps one row's ring off the other row's box. */
+  margin: var(--ring-reach) 0;
+}
+
+.secret-entry input {
+  flex: 1;
+}
+
+.secret-entry .reveal {
+  padding: 2px 10px;
+}
+
+.secret-entry .reveal[aria-pressed='true'] {
+  background: var(--selected);
+}
+
+.repo-list {
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* A list that scrolls is keyboard focusable with no tabindex, so the engine
+   would ring the whole of it on Tab; it stays a stop, painting nothing
+   (noborderfocus). The ticks inside carry the rings. */
+.repo-list:focus,
+.repo-list:focus-visible {
+  outline: none;
+}

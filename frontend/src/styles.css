@@ -114,8 +114,9 @@ textarea:enabled:focus-visible {
 
 /*
   The shell is exactly the window's height, so the document never scrolls: the
-  band, the problem line and the status line are fixed furniture and main below
-  them is the one scroller. A shell allowed to grow past the window made the
+  band, the problem line and the status line are fixed furniture and only main
+  below them scrolls (on the main window, its two panels scroll instead; see
+  visitron.css). A shell allowed to grow past the window made the
   body the scroller, which carried the band away with the content.
 */
 .shell {
@@ -223,10 +224,9 @@ textarea:enabled:focus-visible {
 }
 
 /*
-  main is also a size container, so a child can be as tall as the visible part
-  of it (100cqh, measured inside the padding) whatever the list beside it
-  holds: the empty detail pane uses that to centre itself in the space the
-  reader can see.
+  main is also a size container, so a child can be as tall as it (100cqh,
+  measured inside the padding) whatever the list beside it holds: the empty
+  detail pane uses that to centre itself in the space the reader can see.
 */
 main {
   flex: 1;
