@@ -44,10 +44,14 @@ var appVersion = "0.0.0-dev"
 // no update source and says so (Amendment 15).
 var releaseRepo = ""
 
-// Window geometry: wide enough for the list beside the detail.
+// Window geometry: wide enough for the list beside the detail. It is also tall
+// enough for the whole detail (both charts with their empty-chart notes)
+// without its own scrollbar: an 800 window fell about 20 pixels short once the
+// frame and the band were taken off. The panel still scrolls in a window made
+// shorter than this.
 const (
 	windowWidth     = 1200
-	windowHeight    = 800
+	windowHeight    = 840
 	windowMinWidth  = 860
 	windowMinHeight = 600
 )
