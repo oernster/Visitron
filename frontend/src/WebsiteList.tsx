@@ -64,44 +64,48 @@ export function WebsiteList({ overview, periods, selected, onSelect, onPeriod, o
           ))}
         </select>
       </label>
-      <table className="website-table" tabIndex={0} onKeyDown={step}
-        aria-label="Websites">
-        <thead>
-          <tr>
-            <th rowSpan={2}>Website</th>
-            <th rowSpan={2}>Page loads</th>
-            <th colSpan={3} className="group">Downloads</th>
-            <th rowSpan={2} aria-label="Statistics" />
-          </tr>
-          <tr>
-            <th>{periodHeading(overview.period, overview.since)}</th>
-            <th>All time</th>
-            <th>Since last check</th>
-          </tr>
-        </thead>
-        <tbody>
-          {overview.rows.map((r) => (
-            <tr key={r.id} className={r.id === selected ? 'selected' : ''}
-              aria-selected={r.id === selected} onClick={() => onSelect(r.id)}>
-              <td title={r.repos.join(', ')}>{r.url.replace('https://', '')}</td>
-              <td>{r.pageLoads}</td>
-              <td>{r.downloads}</td>
-              <td>{r.totalDownloads}</td>
-              <td>{r.sinceLastCheck > 0 ? `+${r.sinceLastCheck}` : '0'}</td>
-              <td className="row-action">
-                <button type="button" tabIndex={-1} aria-label={`Statistics for ${r.url.replace('https://', '')}`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onSelect(r.id)
-                    onStatistics(r.id)
-                  }}>
-                  Statistics
-                </button>
-              </td>
+      {/* The rows scroll here, under the Period chooser and the table's own
+          headings, which both stay in view. */}
+      <div className="website-rows">
+        <table className="website-table" tabIndex={0} onKeyDown={step}
+          aria-label="Websites">
+          <thead>
+            <tr>
+              <th rowSpan={2}>Website</th>
+              <th rowSpan={2}>Page loads</th>
+              <th colSpan={3} className="group">Downloads</th>
+              <th rowSpan={2} aria-label="Statistics" />
             </tr>
-          ))}
-        </tbody>
-      </table>
+            <tr>
+              <th>{periodHeading(overview.period, overview.since)}</th>
+              <th>All time</th>
+              <th>Since last check</th>
+            </tr>
+          </thead>
+          <tbody>
+            {overview.rows.map((r) => (
+              <tr key={r.id} className={r.id === selected ? 'selected' : ''}
+                aria-selected={r.id === selected} onClick={() => onSelect(r.id)}>
+                <td title={r.repos.join(', ')}>{r.url.replace('https://', '')}</td>
+                <td>{r.pageLoads}</td>
+                <td>{r.downloads}</td>
+                <td>{r.totalDownloads}</td>
+                <td>{r.sinceLastCheck > 0 ? `+${r.sinceLastCheck}` : '0'}</td>
+                <td className="row-action">
+                  <button type="button" tabIndex={-1} aria-label={`Statistics for ${r.url.replace('https://', '')}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onSelect(r.id)
+                      onStatistics(r.id)
+                    }}>
+                    Statistics
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   )
 }
