@@ -67,10 +67,17 @@ func named(counts map[string]int) []NamedCountDTO {
 }
 
 // releases lists release totals by repository, newest version first
-// (Amendment 24).
+// (Amendment 24), each named by its version rather than its whole key.
 func releases(counts map[string]int) []NamedCountDTO {
 	out := someDownloads(counts)
 	sort.Slice(out, func(i, j int) bool { return domain.ReleaseBefore(out[i].Name, out[j].Name) })
+	keys := make([]string, len(out))
+	for i, r := range out {
+		keys[i] = r.Name
+	}
+	for i, label := range domain.ReleaseLabels(keys) {
+		out[i].Name = label
+	}
 	return out
 }
 

@@ -98,7 +98,7 @@ func TestReleasesListTheNewestVersionFirstAndLeaveOutNone(t *testing.T) {
 	got := releases(map[string]int{
 		"someone/Widget/v1.1.1": 9, "someone/Widget/v1.10.1": 1, "someone/Widget/v1.2.0": 4, "someone/Widget/v0.9.0": 0,
 	})
-	want := []NamedCountDTO{{"someone/Widget/v1.10.1", 1}, {"someone/Widget/v1.2.0", 4}, {"someone/Widget/v1.1.1", 9}}
+	want := []NamedCountDTO{{"v1.10.1", 1}, {"v1.2.0", 4}, {"v1.1.1", 9}}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("releases = %v, want %v", got, want)
 	}

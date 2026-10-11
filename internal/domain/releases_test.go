@@ -42,6 +42,31 @@ func TestReleasesThatAreNotVersionsFollowInNameOrder(t *testing.T) {
 	}
 }
 
+func TestReleaseLabelsFromOneRepositoryAreTheTagAlone(t *testing.T) {
+	t.Parallel()
+	got := ReleaseLabels([]string{"someone/Widget/v1.2.0", "Someone/widget/v1.1.0"})
+	if want := []string{"v1.2.0", "v1.1.0"}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("labels = %v, want %v", got, want)
+	}
+}
+
+func TestReleaseLabelsFromSeveralRepositoriesCarryTheirNames(t *testing.T) {
+	t.Parallel()
+	got := ReleaseLabels([]string{"someone/Widget/v1.3.0", "someone/Gadget/v1.3.0", "a/b"})
+	if want := []string{"Widget v1.3.0", "Gadget v1.3.0", "a/b"}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("labels = %v, want %v", got, want)
+	}
+}
+
+func TestReleaseLabelsNameTheOwnerWhereTwoRepositoriesShareAName(t *testing.T) {
+	t.Parallel()
+	got := ReleaseLabels([]string{"someone/Widget/v1.0.0", "other/Widget/v1.0.0", "someone/Gadget/v2.0.0"})
+	want := []string{"someone/Widget v1.0.0", "other/Widget v1.0.0", "Gadget v2.0.0"}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("labels = %v, want %v", got, want)
+	}
+}
+
 func TestAReleaseKeyWithoutATagSortsAsARepository(t *testing.T) {
 	t.Parallel()
 	if !ReleaseBefore("a/b", "a/c/v1") {
