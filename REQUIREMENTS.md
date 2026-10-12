@@ -1165,3 +1165,10 @@ did for macOS.
   Flatpak had been released, so there is no history in the old place to move.
   Verified by
   `internal/infrastructure/store/store_test.go::TestEachPlatformKeepsTheHistoryInItsOwnFolder`.
+
+**Amendment 30 (2026-10-12): the three builds checked on their platforms.**
+Reported by the owner on 2026-10-12, closing Amendment 27's last point: the
+1.3.0 release was built from one commit as the setup program, the DMG and the
+Flatpak, then each was installed and run on its own platform and found
+working. Checked by hand, since only a real Mac and a real Linux desktop can
+show it.
