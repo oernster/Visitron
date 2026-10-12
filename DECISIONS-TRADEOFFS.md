@@ -248,16 +248,20 @@ tables by platform, repository and release, with the countries, open from a
 button at the right of each row (Enter on the list does the same). Releases are
 listed newest version first, read as numbers; each is named by its version
 alone unless a website's releases span several repositories. A row of no
-downloads is left out. The dialog is only as wide as its tables, whose rows scroll
-beneath headings that stay put; only the release list reads itself.
+downloads is left out. The downloads and the countries stand side by side,
+each with the dialog's full height; the dialog is as wide as the two need and
+no wider. Each table's rows scroll beneath headings that stay put; only the
+release list reads itself.
 
 - **Rather than:** every table beside the charts; releases in text or count
   order; each release named by its whole repository path; the whole dialog
-  scrolling as one page.
+  scrolling as one page; the countries below the downloads, sharing one
+  height.
 - **Gains:** the window stays readable; the latest release is always at the
-  top; the list stays one keyboard stop; a table never loses its heading.
-- **Costs:** the tables are one click further away; a long country list is
-  scrolled by hand.
+  top; the list stays one keyboard stop; a table never loses its heading; a
+  long release list never squeezes the countries.
+- **Costs:** the tables are one click further away; the dialog is wider than
+  the others; a long country list is scrolled by hand.
 
 ### Two panels that scroll apart, in a window tall enough for the detail
 

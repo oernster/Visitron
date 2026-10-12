@@ -44,9 +44,9 @@ Visitron reports counts, not people.
 - Shows page loads and downloads over 7, 30, 90 or 365 days, plus downloads to
   date.
 - Opens each website's statistics from the button at the right of its row:
-  downloads to date by repository, release and platform, then visitors by
-  country over the period, as GoatCounter counts them. Downloads have no
-  country; GitHub does not record one.
+  downloads to date by repository, release and platform, with visitors by
+  country over the period beside them, as GoatCounter counts them. Downloads
+  have no country; GitHub does not record one.
 - Checks from the tray every 24 hours by default; Refresh checks at once.
 - Can leave out your own downloads of each macOS disk image, if you download
   them yourself to check notarisation; none are left out until you say so.

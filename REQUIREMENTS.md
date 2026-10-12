@@ -1086,3 +1086,23 @@ version.** Ruled by the owner on 2026-10-11.
   Verified by
   `tests/structural/focus_test.go::TestEveryScrollingDialogPinsItsActionsAndReadsItself`;
   the layout was measured as above.
+
+**Amendment 26 (2026-10-12): the countries stand beside the downloads.** Ruled
+by the owner on 2026-10-12, after a long release list left the countries a
+sliver of height beneath it.
+
+- FR-045 to FR-047: the Statistics dialog sets the downloads and the visitors
+  by country side by side, each section with the dialog's full height, so the
+  release list can no longer take the countries' room. The dialog is as wide as
+  the two sections need, up to the most of the window Settings may take; this
+  replaces Amendment 25's ordinary dialog width. The note on how GoatCounter
+  counts takes the width of the countries' table and wraps beneath it rather
+  than widening the dialog. Each table's rows still scroll under its caption;
+  the release list still reads itself. The Guide says the countries stand
+  beside the downloads (FR-071). Verified by
+  `StatisticsDialog.test.tsx::shows the downloads to date and the visitors by country, largest first`
+  and
+  `tests/structural/focus_test.go::TestEveryScrollingDialogPinsItsActionsAndReadsItself`;
+  the layout was measured in a browser against the shipped stylesheets, with a
+  forty-release list and a thirty-eight-country list each scrolling in its own
+  column.
