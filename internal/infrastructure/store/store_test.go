@@ -218,28 +218,53 @@ func TestDefaultPath(t *testing.T) {
 	}
 }
 
-// Every platform's rule runs on every platform: macOS keeps the history in
-// Application Support, which the system never clears; the rest keep it in the
-// user cache folder, which is LOCALAPPDATA on Windows.
+// Every platform's rule runs on every platform: Windows keeps the history in
+// LOCALAPPDATA (the user cache folder there), macOS in Application Support and
+// Linux in the XDG data folder, none of which the system clears.
 func TestEachPlatformKeepsTheHistoryInItsOwnFolder(t *testing.T) {
 	t.Parallel()
-	const support, cache = "/support", "/cache"
-	config := func() (string, error) { return support, nil }
-	cached := func() (string, error) { return cache, nil }
-	for goos, base := range map[string]string{"darwin": support, "windows": cache, "linux": cache} {
-		got, err := pathFor(goos, cached, config)
-		want := filepath.Join(base, "Visitron", "visitron.db")
-		if err != nil || got != want {
-			t.Errorf("%s: %q %v, want %q", goos, got, err, want)
+	const cache, support, home, xdg = "/cache", "/support", "/home/someone", "/xdg/data"
+	answer := func(dir string) func() (string, error) {
+		return func() (string, error) { return dir, nil }
+	}
+	env := func(value string) func(string) string {
+		return func(name string) string {
+			if name == "XDG_DATA_HOME" {
+				return value
+			}
+			return ""
+		}
+	}
+	at := func(base ...string) string {
+		return filepath.Join(append(base, "Visitron", "visitron.db")...)
+	}
+	cases := []struct {
+		name, goos, xdgDataHome, want string
+	}{
+		{"Windows", "windows", xdg, at(cache)},
+		{"macOS", "darwin", xdg, at(support)},
+		{"Linux with XDG_DATA_HOME", "linux", xdg, at(xdg)},
+		{"Linux without it", "linux", "", at(home, ".local", "share")},
+		{"Linux with a relative one", "linux", "relative", at(home, ".local", "share")},
+	}
+	for _, c := range cases {
+		got, err := pathFor(c.goos, folders{
+			cache: answer(cache), config: answer(support), home: answer(home), getenv: env(c.xdgDataHome),
+		})
+		if err != nil || got != c.want {
+			t.Errorf("%s: %q %v, want %q", c.name, got, err, c.want)
 		}
 	}
 	errPlanted := errors.New("planted")
 	failed := func() (string, error) { return "", errPlanted }
-	if _, err := pathFor("darwin", cached, failed); !errors.Is(err, errPlanted) {
-		t.Errorf("macOS without a home: %v", err)
-	}
-	if _, err := pathFor("linux", failed, config); !errors.Is(err, errPlanted) {
-		t.Errorf("Linux without a home: %v", err)
+	for goos, f := range map[string]folders{
+		"windows": {cache: failed},
+		"darwin":  {config: failed},
+		"linux":   {home: failed, getenv: env("")},
+	} {
+		if _, err := pathFor(goos, f); !errors.Is(err, errPlanted) {
+			t.Errorf("%s without its folder: %v", goos, err)
+		}
 	}
 }
 

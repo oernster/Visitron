@@ -1153,3 +1153,15 @@ Ruled by the owner on 2026-10-12, amending Amendment 27's C-3.
   unchanged. No macOS build had been released, so there is no history in the
   old place to move. Verified by
   `internal/infrastructure/store/store_test.go::TestEachPlatformKeepsTheHistoryInItsOwnFolder`.
+
+**Amendment 29 (2026-10-12): the Linux history lives in the XDG data folder.**
+Ruled by the owner on 2026-10-12, amending Amendment 27's C-3 as Amendment 28
+did for macOS.
+
+- C-3: on Linux the store is `Visitron/visitron.db` under `$XDG_DATA_HOME` when
+  that is an absolute path, else under `~/.local/share`, not under `~/.cache`,
+  which cache cleaners empty. Inside the Flatpak `XDG_DATA_HOME` is the
+  sandbox's own data folder, `~/.var/app/uk.codecrafter.Visitron/data`. No
+  Flatpak had been released, so there is no history in the old place to move.
+  Verified by
+  `internal/infrastructure/store/store_test.go::TestEachPlatformKeepsTheHistoryInItsOwnFolder`.

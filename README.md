@@ -82,7 +82,7 @@ Linux, install the bundle with `flatpak install --user visitron.flatpak`.
 |---|---|---|
 | Windows | `%LOCALAPPDATA%\Visitron` | `%LOCALAPPDATA%\Visitron` |
 | macOS | `~/Library/Application Support/Visitron` | `~/Library/Logs/Visitron` |
-| Linux (Flatpak) | `~/.var/app/uk.codecrafter.Visitron/cache/Visitron` | `~/.var/app/uk.codecrafter.Visitron/.local/state/Visitron` |
+| Linux (Flatpak) | `~/.var/app/uk.codecrafter.Visitron/data/Visitron` | `~/.var/app/uk.codecrafter.Visitron/.local/state/Visitron` |
 
 ## Testing
 

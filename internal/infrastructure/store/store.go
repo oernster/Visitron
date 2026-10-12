@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 
@@ -42,34 +43,71 @@ type Store struct {
 	db *sql.DB
 }
 
-// macOS is the platform whose history lives apart from the cache folder.
-const macOS = "darwin"
+// The platforms named by name, so the rule in pathFor reads as the rule.
+const (
+	windowsOS = "windows"
+	macOS     = "darwin"
+)
+
+// xdgDataHome names the XDG data folder; xdgDataFolder is its default below
+// the home directory.
+const xdgDataHome = "XDG_DATA_HOME"
+
+var xdgDataFolder = []string{".local", "share"}
+
+// folders are the lookups pathFor chooses between, each a parameter so every
+// platform's rule runs on every platform.
+type folders struct {
+	cache, config, home func() (string, error)
+	getenv              func(string) string
+}
 
 // DefaultPath is where the data lives: Visitron/visitron.db under the folder
 // pathFor names for this platform.
 func DefaultPath() (string, error) {
-	return pathFor(runtime.GOOS, os.UserCacheDir, os.UserConfigDir)
+	return pathFor(runtime.GOOS, folders{
+		cache: os.UserCacheDir, config: os.UserConfigDir, home: os.UserHomeDir, getenv: os.Getenv,
+	})
 }
 
-// pathFor works the data's path out from the platform and its two folder
-// lookups, each a parameter so every platform's rule runs on every platform.
+// pathFor works the data's path out from the platform and its folder lookups.
 //
-// Windows and Linux keep the history in the user cache folder: LOCALAPPDATA on
-// Windows, where it has always been; ~/.cache on Linux, which the Flatpak
-// points into its own folder. macOS keeps it in ~/Library/Application Support,
-// which os.UserConfigDir answers there: its cache folder, ~/Library/Caches, is
-// one the system may empty when the disk runs short, which would take the
-// history with it.
-func pathFor(goos string, cache, config func() (string, error)) (string, error) {
-	folder := cache
-	if goos == macOS {
-		folder = config
+// Each platform keeps the history where it keeps a program's own data, never
+// in a folder the system or a cleaner may empty. Windows: LOCALAPPDATA, which
+// os.UserCacheDir answers there and where it has always been. macOS:
+// ~/Library/Application Support, which os.UserConfigDir answers there, rather
+// than ~/Library/Caches. Everywhere else the XDG rule: XDG_DATA_HOME when it
+// is an absolute path, else ~/.local/share, rather than ~/.cache. Inside the
+// Flatpak XDG_DATA_HOME already points at the sandbox's own data folder.
+func pathFor(goos string, f folders) (string, error) {
+	var base string
+	var err error
+	switch goos {
+	case windowsOS:
+		base, err = f.cache()
+	case macOS:
+		base, err = f.config()
+	default:
+		base, err = xdgData(f)
 	}
-	base, err := folder()
 	if err != nil {
 		return "", fmt.Errorf("finding the folder for Visitron's data: %w", err)
 	}
 	return filepath.Join(base, product.Name, product.RecordFileName), nil
+}
+
+// xdgData answers the XDG data folder. The specification says a relative
+// XDG_DATA_HOME is invalid and ignored; it is a Unix path whatever the host,
+// so it is judged with path rather than filepath.
+func xdgData(f folders) (string, error) {
+	if dir := f.getenv(xdgDataHome); path.IsAbs(dir) {
+		return dir, nil
+	}
+	home, err := f.home()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(append([]string{home}, xdgDataFolder...)...), nil
 }
 
 // Open opens the file at path, creating it and its folder when absent and
