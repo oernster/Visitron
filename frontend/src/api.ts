@@ -98,6 +98,8 @@ export interface Settings {
   maxInterval: number
   updateCheck: boolean
   startWithWindows: boolean
+  /** False where the platform has no sign-in start (macOS and Linux): no switch is shown. */
+  startWithWindowsOffered: boolean
   goatCounterSet: boolean
   gitHubTokenSet: boolean
   /** The code of the owner's GoatCounter site; '' until set (Amendment 11). */

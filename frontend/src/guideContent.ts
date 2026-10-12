@@ -71,7 +71,7 @@ export const guideSections: GuideSection[] = [
       { icon: editIcon, name: 'Edit website', text: 'Change the selected website\'s address; the site is read again and your ticks are kept where the repository is found again.' },
       { icon: deleteIcon, name: 'Delete website', text: 'Remove the selected website and its download history, after you confirm.' },
       { icon: refreshIcon, name: 'Refresh', text: 'Check every website now rather than waiting for the next scheduled check. While the last check has failed, Refresh carries a warning sign; point at it to read what failed. The sign goes once a check succeeds.' },
-      { icon: settingsIcon, name: 'Settings', text: 'Your GoatCounter account name and key, an optional GitHub token, how often to check, starting with Windows and the update check. Each field says where its key or token comes from.' },
+      { icon: settingsIcon, name: 'Settings', text: 'Your GoatCounter account name and key, an optional GitHub token, how often to check, starting with Windows (on Windows alone) and the update check. Each field says where its key or token comes from.' },
       { icon: donateIcon, name: 'Donate', text: 'Opens the donation page in your browser.' },
       { icon: lightModeIcon, name: 'Light or dark', text: 'Switches the window between light and dark; the picture is the mode you would move to.' },
       { icon: guideIcon, name: 'Help', text: 'A menu holding this guide, About, the licence and Check for updates, which asks GitHub for a newer Visitron there and then. With the update check on in Settings, Visitron also asks by itself shortly after it opens and once a day. Down, Enter or Space opens the menu; Up and Down move through it; Escape closes it.' },

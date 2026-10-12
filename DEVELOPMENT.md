@@ -1,6 +1,7 @@
 # Visitron: development
 
-Every command is PowerShell, run from the repository root.
+Every command is PowerShell, run from the repository root, apart from the macOS
+and Linux builds, which are bash on those machines.
 
 ## Tools
 
@@ -14,7 +15,9 @@ Every command is PowerShell, run from the repository root.
 | Python with Pillow | Regenerating the icons only | `python -m pip install pillow` |
 
 staticcheck is not installed: `test.ps1` runs it through `go run`. The code
-imports no C, so no C compiler is needed.
+imports no C, so no C compiler is needed on Windows. The macOS build needs the
+Xcode command line tools (Wails compiles against WebKit through cgo); the Linux
+build happens inside the Flatpak SDK, which carries its own.
 
 ## Building
 
@@ -46,6 +49,56 @@ In order, it:
 `-SkipInstaller` stops after step 4. `-Fast` skips the gate for a working
 loop, says so in its output and is never how a release is cut.
 
+### macOS (Apple Silicon)
+
+Needs Go, Node with npm, the Xcode command line tools and a Developer ID
+Application certificate in the login keychain. The script installs the Wails
+CLI and `create-dmg` (through Homebrew) when they are missing.
+
+```bash
+bash builddmg.sh
+```
+
+It reads owner/name off the origin remote with `go run ./tools/releaserepo`,
+runs `wails build` for `darwin/arm64` with the same `-X` flags as `build.ps1`,
+stamps the bundle version from `VERSION`, copies `LICENSE` into the bundle,
+signs it with the hardened runtime, notarizes and staples it, then wraps it in
+`Visitron.dmg`, which is signed, notarized and stapled in turn.
+
+The signing identity is the one `Developer ID Application` certificate in the
+keychain; with two or more, name one in `DEVELOPER_ID_APPLICATION`. Nothing in
+the script names whose it is. Notarization uses the keychain profile
+`Visitron`, made once with
+`xcrun notarytool store-credentials Visitron --apple-id <id> --team-id <team> --password <app-specific>`;
+else `APPLE_ID` and `APPLE_APP_PASSWORD` (an app-specific password, checked for
+its shape before anything is built). `ALLOW_UNNOTARIZED=1` skips notarization
+for a local test build that is never published.
+
+### Linux (Flatpak)
+
+Needs `flatpak` and `flatpak-builder` (installed through apt, dnf, pacman or
+zypper when missing) and Go on the host, for the release repository. Node and
+the Go that builds the application come from the Flatpak SDK extensions.
+
+```bash
+bash build_flatpak.sh
+```
+
+It installs the GNOME 50 runtime with the Go and Node SDK extensions from
+Flathub, reads the release repository, writes the desktop file, the metainfo
+and the manifest, builds the page and the application inside the sandbox
+against WebKitGTK 4.1 and installs it for the current user
+(`flatpak run uk.codecrafter.Visitron`). It also exports `visitron.flatpak`.
+The sandbox gets the network, the Secret Service and the single-instance
+D-Bus name; it gets no access to your files.
+
+```bash
+bash cleanup_flatpak.sh
+```
+
+removes the user install and every flatpak build output; the other platforms'
+outputs and the user's own history are left alone.
+
 ## Running from source
 
 ```powershell
@@ -61,7 +114,8 @@ executable against another folder:
 $env:LOCALAPPDATA = "$env:TEMP\visitron-sandbox"; ./build/bin/Visitron.exe
 ```
 
-The log is `%LOCALAPPDATA%\Visitron\Log.txt`. It holds each run's start line;
+The log is `%LOCALAPPDATA%\Visitron\Log.txt` (`~/Library/Logs/Visitron` on
+macOS, `~/.local/state/Visitron` on Linux). It holds each run's start line;
 each check's start, every website's outcome, the page loads and the end with
 its duration; the failures the declared writers report and any crash. Never
 the key or the token.
@@ -82,18 +136,25 @@ neither Python nor Pillow. Run it whenever a master changes.
 
 ## Versioning
 
-`VERSION` at the root is the single source. `build.ps1` passes it to Go with
-`-ldflags "-X main.appVersion=..."`. `-X` writes only to a `var`, so
+`VERSION` at the root is the single source. `build.ps1`, `builddmg.sh` and
+`build_flatpak.sh` all pass it to Go with `-ldflags "-X main.appVersion=..."`;
+the DMG also stamps it into the bundle's `Info.plist` and the Flatpak into its
+metainfo release entry. `-X` writes only to a `var`, so
 `appVersion` in `main.go` is declared `var`; against a `const` the flag does
 nothing.
 
 ## Cutting a release
 
 1. Bump `VERSION` if a bump is owed against the newest tag.
-2. Build through BuildPilot (or `./build.ps1`) and confirm exit code `0`.
-3. Commit, tag and publish `dist-installer/VisitronSetup.exe` as a GitHub
-   release of the origin repository; the update check reads its
-   `releases/latest`. These steps are the owner's to run.
+2. Build through BuildPilot (or `./build.ps1`) and confirm exit code `0`;
+   build `Visitron.dmg` with `bash builddmg.sh` on an Apple Silicon Mac (never
+   with `ALLOW_UNNOTARIZED=1`) and `visitron.flatpak` with
+   `bash build_flatpak.sh` on Linux, all from the same commit.
+3. Commit, tag and publish `dist-installer/VisitronSetup.exe`,
+   `Visitron.dmg` and `visitron.flatpak` as one GitHub release of the origin
+   repository. The update check reads its `releases/latest` and offers each
+   platform the file with its ending, so the three names must keep `.exe`,
+   `.dmg` and `.flatpak`. These steps are the owner's to run.
 
 ## Standing rules
 

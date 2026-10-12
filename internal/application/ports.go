@@ -68,7 +68,8 @@ type PageLoads interface {
 // Secret names the two secrets Visitron keeps (C-4).
 type Secret string
 
-// The secrets, each kept in Windows Credential Manager.
+// The secrets, each kept in the platform's own store: Credential Manager,
+// the Keychain or the system keyring.
 const (
 	GoatCounterKey Secret = "goatcounter-key"
 	GitHubToken    Secret = "github-token"
@@ -82,7 +83,12 @@ type Secrets interface {
 	Delete(name Secret) error
 }
 
-// Startup is the start-with-Windows entry (FR-052).
+// ErrNoStartup says this platform has no sign-in start: Windows has one; the
+// macOS and Linux builds do not, so Settings offers none there.
+var ErrNoStartup = errors.New("this platform has no sign-in start")
+
+// Startup is the start-with-Windows entry (FR-052). Off Windows both methods
+// answer ErrNoStartup.
 type Startup interface {
 	Enabled() (bool, error)
 	SetEnabled(on bool) error

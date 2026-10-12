@@ -177,11 +177,13 @@ export function SettingsDialog({ refused, onClose }: Props) {
             </fieldset>
             <fieldset className="settings-group">
               <legend>Visitron</legend>
-              <label className="check">
-                <input type="checkbox" checked={settings.startWithWindows}
-                  onChange={(e) => void api.saveStartWithWindows(e.target.checked, refused).then(reload)} />
-                Start with Windows
-              </label>
+              {settings.startWithWindowsOffered && (
+                <label className="check">
+                  <input type="checkbox" checked={settings.startWithWindows}
+                    onChange={(e) => void api.saveStartWithWindows(e.target.checked, refused).then(reload)} />
+                  Start with Windows
+                </label>
+              )}
               <label className="check">
                 <input type="checkbox" checked={settings.updateCheck}
                   onChange={(e) => void api.saveUpdateCheck(e.target.checked, refused).then(reload)} />

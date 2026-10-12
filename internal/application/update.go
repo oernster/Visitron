@@ -49,10 +49,15 @@ type UpdateStatus struct {
 	Address string
 }
 
-// platformFiles names, for each platform Visitron ships on, the ending of the
-// file a release carries for it. Visitron ships on Windows alone; a platform
-// not named is sent to the release's page.
-var platformFiles = map[string]string{"windows": ".exe"}
+// platformFiles names, for each platform Visitron ships on as Go names it, the
+// ending of the file a release carries for it: the setup program on Windows,
+// the disk image on macOS and the Flatpak bundle on Linux. A platform not
+// named is sent to the release's page.
+var platformFiles = map[string]string{
+	"windows": domain.ExeExt,
+	"darwin":  domain.DmgExt,
+	"linux":   domain.FlatpakExt,
+}
 
 // Updates is the update check service.
 type Updates struct {

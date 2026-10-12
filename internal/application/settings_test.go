@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"visitron/internal/domain"
@@ -171,6 +172,21 @@ func TestSettingsFaults(t *testing.T) {
 	sec.err = errPlanted
 	if _, err := s.View(); !errors.Is(err, errPlanted) {
 		t.Errorf("view secrets: %v", err)
+	}
+}
+
+// Off Windows there is no sign-in start: Settings still opens, offering none.
+func TestViewWithoutASignInStart(t *testing.T) {
+	t.Parallel()
+	s, _, _, start, _, _ := settingsFixture()
+	view, err := s.View()
+	if err != nil || !view.StartWithWindowsOffered {
+		t.Fatalf("with a sign-in start: offered %v, %v", view.StartWithWindowsOffered, err)
+	}
+	start.err = fmt.Errorf("the platform: %w", ErrNoStartup)
+	view, err = s.View()
+	if err != nil || view.StartWithWindowsOffered || view.StartWithWindows {
+		t.Errorf("without one: %+v, %v", view, err)
 	}
 }
 

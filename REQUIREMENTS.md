@@ -1106,3 +1106,40 @@ sliver of height beneath it.
   the layout was measured in a browser against the shipped stylesheets, with a
   forty-release list and a thirty-eight-country list each scrolling in its own
   column.
+
+**Amendment 27 (2026-10-12): macOS and Linux.** Ruled by the owner on
+2026-10-12, reversing the decision of 2026-10-09 that put every operating
+system other than Windows out of scope (section 1.3; section 3.11).
+
+- Scope and 2.3: Visitron ships for Windows 11 on x64 as before, for macOS on
+  Apple Silicon as a signed, notarized DMG built by `builddmg.sh` and for Linux
+  as a Flatpak built by `build_flatpak.sh` (removed by `cleanup_flatpak.sh`),
+  ported from PigeonPost. Off Windows there is no tray, no sign-in start and no
+  setup program: closing the window quits and checks run only while it is
+  open. Intel Macs are not built for.
+- C-1: no C import in Visitron's own code; the macOS and Linux builds compile
+  Wails against their web views through cgo.
+- C-3: the store is `Visitron/visitron.db` under the user cache folder, which is
+  `%LOCALAPPDATA%` on Windows, `~/Library/Caches` on macOS and `~/.cache`
+  (inside the Flatpak's own folder) on Linux.
+- C-4: the secrets live in the platform's own store through
+  `zalando/go-keyring`: Credential Manager, the Keychain or the Secret Service.
+  Errors name that store.
+- FR-052: off Windows there is no sign-in start. The adapter answers
+  `application.ErrNoStartup`; Settings then opens as normal and shows no Start
+  with Windows switch. Verified by
+  `internal/application/settings_test.go::TestViewWithoutASignInStart` and
+  `SettingsDialog.test.tsx::shows no sign-in switch where the platform has no sign-in start`.
+- FR-075: the update check offers each platform the release file with its own
+  ending: `.exe` on Windows, `.dmg` on macOS, `.flatpak` on Linux, by the
+  endings the platform split of downloads already uses (`internal/domain`); any
+  other platform is sent to the release's page. Verified by
+  `internal/application/update_test.go::TestEachPlatformIsOfferedItsOwnFile`
+  and `internal/application/update_test.go::TestAPlatformWithNoFileIsSentToThePage`.
+- Amendment 15: the release repository is read by `go run ./tools/releaserepo`
+  in all three build scripts, replacing `tools/releaserepo.ps1`, so the rule
+  has one home. Verified by `tools/releaserepo/main_test.go::TestReleaseRepo`.
+- Not yet verified: neither the DMG nor the Flatpak has been built or run on
+  its platform. Both scripts were checked for syntax; the Flatpak script was run
+  with its flatpak tools stubbed and its manifest and metainfo parsed. Each needs
+  a build, an install and a launch on its platform before it is released.

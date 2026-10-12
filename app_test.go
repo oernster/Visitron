@@ -166,7 +166,7 @@ func TestSettingsRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := SettingsDTO{IntervalHours: domain.MinIntervalHours, MinInterval: domain.MinIntervalHours,
-		MaxInterval: domain.MaxIntervalHours, StartWithWindows: true, GoatCounterSet: true,
+		MaxInterval: domain.MaxIntervalHours, StartWithWindows: true, StartWithWindowsOffered: true, GoatCounterSet: true,
 		GoatCounterSite: "someone", SelfDownloads: 1, MaxSelfDownloads: domain.MaxSelfDownloads}
 	if s != want {
 		t.Fatalf("settings = %+v, want %+v", s, want)

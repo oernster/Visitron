@@ -69,8 +69,10 @@
     <div class="wrap">
         <h2>What it needs from you</h2>
         <ul class="plain-list">
-            <li><strong>Windows.</strong> Visitron is a Windows application; there is
-                no macOS or Linux version.</li>
+            <li><strong>Windows 11, macOS on Apple Silicon or Linux with
+                Flatpak.</strong> The tray and starting at sign-in are Windows
+                alone; on macOS and Linux Visitron checks while its window is
+                open.</li>
             <li><strong>For page loads: your own GoatCounter account.</strong> Each
                 page you want counted carries GoatCounter's two-line tag, which the
                 Guide gives you to copy. In Settings you enter your account name and
@@ -105,7 +107,8 @@
                 you press Donate.</li>
         </ul>
         <p class="note">Your figures stay on your computer, in one file in your own
-            profile. Your keys stay in Windows Credential Manager and each one is
+            profile. Your keys stay in your system's own store (Windows Credential
+            Manager, the macOS Keychain or the Linux keyring) and each one is
             sent only to its own service.</p>
     </div>
 </section>
@@ -115,7 +118,9 @@
         <h2>What it will not do</h2>
         <p class="intro">Said plainly, so nothing comes as a surprise.</p>
         <ul class="plain-list">
-            <li>It does not run on macOS or Linux.</li>
+            <li>It has no tray on macOS or Linux: there, closing the window quits
+                it and the daily check runs only while it is open.</li>
+            <li>It does not run on Intel Macs.</li>
             <li>It does not count clicks or any event other than a page load.</li>
             <li>It does not show referrers or browsers, though GoatCounter holds
                 them. It shows visitors by country; it cannot show downloads by

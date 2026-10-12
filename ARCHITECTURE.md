@@ -1,8 +1,9 @@
 # Visitron: architecture
 
 Visitron reads page loads from GoatCounter and release downloads from GitHub,
-keeps a daily history in a local SQLite file and shows both from the Windows
-tray. It only reads; it never changes anything on either service.
+keeps a daily history in a local SQLite file and shows both in one window, from
+the tray on Windows. It runs on Windows, macOS and Linux. It only reads; it never
+changes anything on either service.
 
 ## Invariants
 
@@ -61,12 +62,12 @@ day it falls on.
 | `github` | Release download counts, anonymous or with the owner's token. |
 | `goatcounter` | Daily page loads, page paths and visitors by country from the owner's GoatCounter site. |
 | `update` | Visitron's latest published release, unauthenticated. |
-| `store` | SQLite at `%LOCALAPPDATA%\Visitron\visitron.db`; `Unavailable` stands in when it cannot open. |
-| `secrets` | The key and the token in Windows Credential Manager. |
-| `startup` | The start-with-Windows value under the HKCU Run key; Settings and the setup program both write it through here. |
-| `tray` | The Win32 notification-area icon: Open, Refresh now, Quit; added again when the taskbar restarts. |
+| `store` | SQLite at `Visitron/visitron.db` under the user cache folder (`%LOCALAPPDATA%` on Windows); `Unavailable` stands in when it cannot open. |
+| `secrets` | The key and the token in the platform's own store: Credential Manager, the Keychain or the Secret Service. |
+| `startup` | The start-with-Windows value under the HKCU Run key; Settings and the setup program both write it through here. Off Windows it answers `application.ErrNoStartup` and Settings offers no switch. |
+| `tray` | The Win32 notification-area icon: Open, Refresh now, Quit; added again when the taskbar restarts. Absent off Windows. |
 | `runlog` | The run log; points error output at it before anything can fail. |
-| `windowfocus` | Hands the keyboard to the WebView2 child window on DOM ready. |
+| `windowfocus` | Hands the keyboard to the WebView2 child window on DOM ready; nothing to do off Windows. |
 | `setup` | The per-user install policy the setup program runs. |
 
 `internal/product` holds the name and file names; `internal/licence` the
@@ -103,7 +104,7 @@ sequences can be tested against a recorder. Its page under
 
 ## Key decisions
 
-- **Secrets stay in Credential Manager** and cross into the window only when
+- **Secrets stay in the platform's own store** and cross into the window only when
   Settings asks for them (Amendment 8).
 - **The store keeps GitHub's raw counts**; the owner's own disk-image downloads
   are subtracted when read, so changing the setting applies to all history
@@ -117,8 +118,14 @@ sequences can be tested against a recorder. Its page under
   Refresh covers it (Amendment 3).
 - **The close button asks** whether to minimise to the tray or quit, only while
   the tray icon is up (Amendment 4).
-- **Windows only.** Win32 work sits behind build tags with a stub beside it,
-  so each package's portable half stays testable.
+- **Three platforms, Windows the fullest.** Win32 work sits behind build tags
+  with a stub beside it, so each package's portable half stays testable and the
+  macOS and Linux builds compile from the same tree. Off Windows there is no
+  tray, no sign-in start and no setup program: the DMG and the Flatpak install
+  it instead.
+- **The update check offers the platform's own file**: `.exe`, `.dmg` or
+  `.flatpak`, by the endings `internal/domain` already uses to count downloads
+  by platform.
 
 ## Further reading
 

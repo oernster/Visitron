@@ -174,6 +174,15 @@ describe('the settings', () => {
     expect(bridge.SaveStartWithWindows).toHaveBeenCalledWith(true)
   })
 
+  it('shows no sign-in switch where the platform has no sign-in start', async () => {
+    installBridge({
+      Settings: vi.fn(() => Promise.resolve({ ...someSettings, startWithWindowsOffered: false })),
+    })
+    dialog()
+    await screen.findByRole('checkbox', { name: 'Check for a newer Visitron' })
+    expect(screen.queryByRole('checkbox', { name: 'Start with Windows' })).toBeNull()
+  })
+
   it('groups the settings by what they feed, in a wide dialog', async () => {
     installBridge()
     dialog()

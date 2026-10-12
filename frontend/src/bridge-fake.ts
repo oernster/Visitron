@@ -113,6 +113,7 @@ export const someSettings: Settings = {
   maxInterval: 168,
   updateCheck: true,
   startWithWindows: false,
+  startWithWindowsOffered: true,
   goatCounterSet: false,
   gitHubTokenSet: true,
   goatCounterSite: '',

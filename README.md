@@ -17,7 +17,8 @@ release and platform, with charts of every day since the first check.
 ## Who it is for
 
 Anyone who publishes websites and GitHub releases and wants one window showing
-how both are doing. It runs on 64-bit Windows 11.
+how both are doing. It runs on 64-bit Windows 11, on macOS on Apple Silicon and
+on Linux as a Flatpak.
 
 Not for anyone wanting visitor profiles, referrers or real-time analytics:
 Visitron reports counts, not people.
@@ -26,7 +27,10 @@ Visitron reports counts, not people.
 
 - It does not count visits itself. Page loads come from your own GoatCounter
   account, which needs its tag on your pages and an API key in Settings.
-- It does not run on macOS or Linux.
+- It has no tray and no sign-in start on macOS or Linux. There, closing the
+  window quits it and it checks only while it is open; the tray and Start with
+  Windows are Windows alone.
+- It does not run on Intel Macs.
 - It sends nothing about you anywhere. It makes four kinds of request: to
   GoatCounter for page loads and visitors by country, to GitHub for release
   downloads, to the website
@@ -47,29 +51,38 @@ Visitron reports counts, not people.
   downloads to date by repository, release and platform, with visitors by
   country over the period beside them, as GoatCounter counts them. Downloads
   have no country; GitHub does not record one.
-- Checks from the tray every 24 hours by default; Refresh checks at once.
+- Checks every 24 hours by default, from the tray on Windows; Refresh checks at
+  once.
 - Can leave out your own downloads of each macOS disk image, if you download
   them yourself to check notarisation; none are left out until you say so.
-- Keeps the GoatCounter key and the optional GitHub token in Windows Credential
-  Manager.
+- Keeps the GoatCounter key and the optional GitHub token in the system's own
+  store: Windows Credential Manager, the macOS Keychain or the Linux keyring.
 - Opens dark, with a button to move it to light.
 
 ## Built with
 
 | Piece | What |
 |---|---|
-| Language | Go; builds with no C compiler |
-| Window | Wails v2 on WebView2 |
+| Language | Go; builds with no C compiler on Windows |
+| Window | Wails v2 on WebView2 (Windows), WebKit (macOS) and WebKitGTK (Linux) |
 | Page | React 18 and TypeScript, built by Vite |
 | History | SQLite through `modernc.org/sqlite` (pure Go) |
-| Secrets | Windows Credential Manager through `zalando/go-keyring` |
+| Secrets | Credential Manager, the Keychain or the Secret Service through `zalando/go-keyring` |
+| Delivery | Windows setup program, macOS DMG (Apple Silicon, notarized), Linux Flatpak |
 | Layering | `internal/{domain,application,infrastructure}`, enforced by tests |
 
 ## Running it
 
-Download the setup program from the
-[latest release](https://github.com/oernster/Visitron/releases/latest). The
-history and the run log (`Log.txt`) live in `%LOCALAPPDATA%\Visitron`.
+Download the setup program (Windows), the DMG (macOS, Apple Silicon) or the
+Flatpak bundle (Linux) from the
+[latest release](https://github.com/oernster/Visitron/releases/latest). On
+Linux, install the bundle with `flatpak install --user visitron.flatpak`.
+
+| Platform | History (`visitron.db`) | Run log (`Log.txt`) |
+|---|---|---|
+| Windows | `%LOCALAPPDATA%\Visitron` | `%LOCALAPPDATA%\Visitron` |
+| macOS | `~/Library/Caches/Visitron` | `~/Library/Logs/Visitron` |
+| Linux (Flatpak) | `~/.var/app/uk.codecrafter.Visitron/cache/Visitron` | `~/.var/app/uk.codecrafter.Visitron/.local/state/Visitron` |
 
 ## Testing
 
@@ -85,7 +98,9 @@ See [TESTING.md](TESTING.md).
 ./build.ps1
 ```
 
-The gate runs first; see [DEVELOPMENT.md](DEVELOPMENT.md).
+That builds the Windows setup program, with the gate first. `bash builddmg.sh`
+on an Apple Silicon Mac builds the notarized DMG; `bash build_flatpak.sh` on
+Linux builds and installs the Flatpak. See [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Documentation
 

@@ -21,13 +21,19 @@ In order, stopping at the first failure:
 
 1. `gofmt -l` over the Go, ignoring the front end.
 2. `go vet` over every package outside `node_modules`.
-3. staticcheck over the same packages.
-4. The whole Go suite.
-5. Coverage of `internal/domain` and `internal/application` together, against
+3. `go vet ./internal/...` again for `darwin` and for `linux`, with cgo off, so
+   the macOS and Linux halves of every platform-split package compile here.
+   The root package is left out: Wails needs cgo on those platforms.
+4. staticcheck over the same packages.
+5. The whole Go suite.
+6. Coverage of `internal/domain` and `internal/application` together, against
    100%. A shortfall names each uncovered function.
-6. Every other measured package against its floor.
-7. The front-end build: `eslint`, `tsc --noEmit`, `vite build`.
-8. The front-end suite: Vitest over jsdom.
+7. Every other measured package against its floor.
+8. The front-end build: `eslint`, `tsc --noEmit`, `vite build`.
+9. The front-end suite: Vitest over jsdom.
+
+The gate runs on Windows. The macOS and Linux builds are checked by hand on
+those machines.
 9. `node --check` over every script in `installer/frontend/dist`, since the
    setup page has no build step to catch a typo.
 
@@ -65,6 +71,7 @@ is lost.
 | `internal/infrastructure/setup` | 63 | The registry and shortcut writes need a real profile. |
 | `internal/infrastructure/windowfocus` | 27 | Win32 calls against a real window; the portable half alone. |
 | `internal/infrastructure/tray` | 4 | Win32 calls against a real desktop; the portable half alone. |
+| `tools/releaserepo` | 30 | The address rule is covered; asking git for the origin and printing the answer are what every build script runs. |
 
 Not gated: `internal/product` (constants), `internal/licence` (compared with
 `LICENSE` by `tests/structural`), `internal/infrastructure/setup/setuptest`

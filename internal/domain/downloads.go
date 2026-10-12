@@ -13,12 +13,19 @@ const (
 	Other   Platform = "Other"
 )
 
-const dmgExt = ".dmg"
+// The endings of the file a release carries for each platform Visitron and
+// the applications it watches ship on. The update check finds its own file by
+// the same endings.
+const (
+	ExeExt     = ".exe"
+	DmgExt     = ".dmg"
+	FlatpakExt = ".flatpak"
+)
 
 var platformByExt = map[string]Platform{
-	".exe":     Windows,
-	dmgExt:     MacOS,
-	".flatpak": Linux,
+	ExeExt:     Windows,
+	DmgExt:     MacOS,
+	FlatpakExt: Linux,
 }
 
 // Platforms lists every platform in the order the window shows them.
@@ -41,7 +48,7 @@ func PlatformOf(fileName string) Platform {
 // downloads of each disk image, as set in Settings; a value below none is read
 // as none, so a damaged setting can never add downloads.
 func Counted(fileName string, raw, selfDownloads int) int {
-	if strings.HasSuffix(strings.ToLower(fileName), dmgExt) {
+	if strings.HasSuffix(strings.ToLower(fileName), DmgExt) {
 		raw -= max(selfDownloads, MinSelfDownloads)
 	}
 	return max(raw, 0)

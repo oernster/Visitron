@@ -149,9 +149,10 @@
                     Under each key is what it is for and numbered steps to get
                     one.</p>
                 <ul class="plain-list">
-                    <li><strong>Keys stay in Windows.</strong> Your GoatCounter key
-                        and GitHub token are kept in Windows Credential Manager, never
-                        in a file or the log; each goes only to its own service.</li>
+                    <li><strong>Keys stay with your system.</strong> Your GoatCounter
+                        key and GitHub token are kept in Windows Credential Manager,
+                        the macOS Keychain or the Linux keyring, never in a file or
+                        the log; each goes only to its own service.</li>
                     <li><strong>Tried as you save.</strong> Save a key and Visitron
                         tries it once, then tells you whether it works.</li>
                     <li><strong>Hidden until you ask.</strong> A stored key is masked
@@ -165,6 +166,8 @@
 <section id="tray">
     <div class="wrap">
         <h2>Out of the way in the tray</h2>
+        <p class="intro">On Windows. The macOS and Linux versions have no tray:
+            closing the window quits them.</p>
         <ul class="plain-list">
             <li><strong>Close asks first.</strong> Closing the window asks whether to
                 minimise to the tray or quit, opening on the safe answer.</li>

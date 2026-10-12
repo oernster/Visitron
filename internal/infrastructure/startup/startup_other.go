@@ -2,14 +2,11 @@
 
 package startup
 
-import "errors"
+import "visitron/internal/application"
 
-// errWindowsOnly says the entry exists only on Windows, the one platform
-// Visitron is built for; the file exists so the package vets everywhere.
-var errWindowsOnly = errors.New("start with Windows exists only on Windows")
+// Enabled answers that this platform has no sign-in start, so Settings offers
+// none; the macOS and Linux builds start when they are opened.
+func (Entry) Enabled() (bool, error) { return false, application.ErrNoStartup }
 
-// Enabled refuses off Windows.
-func (Entry) Enabled() (bool, error) { return false, errWindowsOnly }
-
-// SetEnabled refuses off Windows.
-func (Entry) SetEnabled(bool) error { return errWindowsOnly }
+// SetEnabled refuses: there is no sign-in start to turn on.
+func (Entry) SetEnabled(bool) error { return application.ErrNoStartup }

@@ -24,6 +24,7 @@ var published = Release{
 	Assets: []Asset{
 		{Name: "Visitron.dmg", Address: "https://github.com/dmg"},
 		{Name: "VisitronSetup.EXE", Address: "https://github.com/exe"},
+		{Name: "visitron.flatpak", Address: "https://github.com/flatpak"},
 	},
 }
 
@@ -43,9 +44,23 @@ func TestAnUpdateIsOfferedWithTheWindowsFile(t *testing.T) {
 	}
 }
 
+func TestEachPlatformIsOfferedItsOwnFile(t *testing.T) {
+	t.Parallel()
+	for platform, want := range map[string]string{
+		"windows": "https://github.com/exe",
+		"darwin":  "https://github.com/dmg",
+		"linux":   "https://github.com/flatpak",
+	} {
+		u, _, _ := updatesFixture("1.1.0", platform)
+		if got := u.CheckManually(context.Background()).Address; got != want {
+			t.Errorf("%s: address = %q, want %q", platform, got, want)
+		}
+	}
+}
+
 func TestAPlatformWithNoFileIsSentToThePage(t *testing.T) {
 	t.Parallel()
-	u, source, _ := updatesFixture("1.1.0", "linux")
+	u, source, _ := updatesFixture("1.1.0", "freebsd")
 	if got := u.CheckManually(context.Background()).Address; got != published.Page {
 		t.Errorf("address = %q, want the page", got)
 	}

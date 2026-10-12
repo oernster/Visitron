@@ -19,14 +19,19 @@ they are.
 - **Costs:** the history belongs to that one machine; a second machine starts
   its own from nothing.
 
-### Windows only
+### Three platforms, with the tray on Windows alone
 
-Visitron is built for Windows alone, as a tray application started with
-Windows.
+Visitron ships for Windows as a tray application started with Windows, for
+macOS on Apple Silicon as a notarized DMG and for Linux as a Flatpak. The
+macOS and Linux builds are the same window without the tray and without a
+sign-in start: closing quits them and they check only while open.
 
-- **Rather than:** macOS and Linux packages as well.
-- **Gains:** one tray, one secret store and one setup program to get right.
-- **Costs:** anyone on another desktop cannot run it.
+- **Rather than:** Windows alone; a tray and a sign-in start written for each
+  desktop.
+- **Gains:** anyone on the three desktops can run it from one tree; only one
+  tray and one sign-in start have to be got right.
+- **Costs:** on macOS and Linux the history fills in only on days the window
+  is opened.
 
 ### Go and Wails, with no C compiler
 
@@ -36,7 +41,10 @@ driver is written in Go alone.
 - **Rather than:** a C database driver; a toolkit drawn natively.
 - **Gains:** one toolchain builds the release; the gate, the setup program and
   the update check were ported from earlier projects on the same stack.
-- **Costs:** the window depends on the WebView2 component being present.
+- **Costs:** the window depends on each platform's web view: WebView2 on
+  Windows, WebKit on macOS and WebKitGTK, carried by the Flatpak's GNOME
+  runtime, on Linux. Only the Windows build is free of a C compiler: the
+  macOS and Linux builds compile against their web views through cgo.
 
 ### Specification before code
 
@@ -153,7 +161,7 @@ records no rise for it.
 
 ## Checking
 
-### A daily check from the tray
+### A daily check, from the tray on Windows
 
 A check runs once the interval (a day unless changed) has passed since the
 last success, at start, on waking or when asked. One runs at a time. A failure
@@ -161,8 +169,8 @@ keeps the figures held, is shown on Refresh and waits half an hour before an
 automatic retry.
 
 - **Rather than:** checking on every open; retrying every minute.
-- **Gains:** the history fills in without the window open; an outage costs a
-  few requests rather than a stream of them.
+- **Gains:** on Windows the history fills in without the window open; an
+  outage costs a few requests rather than a stream of them.
 - **Costs:** a day with no successful check has no snapshot; its downloads
   land on the next day that has one.
 
@@ -176,14 +184,16 @@ A check's figures are saved in one transaction.
 
 ## Privacy and the network
 
-### Secrets in Windows Credential Manager
+### Secrets in the system's own store
 
-The GoatCounter key and the GitHub token are kept by Windows, never in a file
-or the log; Settings shows a stored one behind an eye when asked.
+The GoatCounter key and the GitHub token are kept by the operating system
+(Credential Manager on Windows, the Keychain on macOS, the Secret Service on
+Linux), never in a file or the log; Settings shows a stored one behind an eye
+when asked.
 
 - **Rather than:** a settings file; secrets that can never be seen again.
-- **Gains:** the secrets are protected by the account like any other Windows
-  credential; the owner can see what is stored.
+- **Gains:** the secrets are protected by the account like any other
+  credential on that system; the owner can see what is stored.
 - **Costs:** the secrets do not travel with a copy of the data folder.
 
 ### Only named hosts are reached

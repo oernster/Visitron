@@ -39,6 +39,22 @@ Write-Host 'Vetting...'
 go vet $packages
 if ($LASTEXITCODE -ne 0) { throw "go vet failed with exit code $LASTEXITCODE" }
 
+# The macOS and Linux builds cannot be made here, so their halves of the
+# platform-split packages are at least compiled: a stub that drifts from the
+# Windows file beside it fails now rather than on someone else's machine. The
+# root package is left out, since Wails itself needs cgo on those platforms.
+foreach ($goos in 'darwin', 'linux') {
+    Write-Host "Vetting internal/... for $goos..."
+    $env:GOOS = $goos
+    $env:CGO_ENABLED = '0'
+    try {
+        go vet ./internal/...
+        if ($LASTEXITCODE -ne 0) { throw "go vet for $goos failed with exit code $LASTEXITCODE" }
+    } finally {
+        Remove-Item Env:GOOS, Env:CGO_ENABLED
+    }
+}
+
 Write-Host 'Running staticcheck...'
 go run honnef.co/go/tools/cmd/staticcheck@latest $packages
 if ($LASTEXITCODE -ne 0) { throw "staticcheck failed with exit code $LASTEXITCODE" }
@@ -91,6 +107,8 @@ try {
 # shortcuts, which need a real profile; the setup program's facade reaches all
 # but the Wails runtime underneath it. Every setup test runs inside a scratch
 # profile (internal/infrastructure/setup/main_test.go), never the real one.
+# tools/releaserepo reaches the address rule; the rest is asking git for the
+# origin and printing the answer, which every build script exercises.
 $measured = [ordered]@{
     '.'                                       = 72
     './internal/infrastructure/github'        = 100
@@ -105,6 +123,7 @@ $measured = [ordered]@{
     './internal/infrastructure/tray'          = 4
     './installer'                             = 69
     './internal/infrastructure/setup'         = 63
+    './tools/releaserepo'                     = 30
 }
 
 Write-Host 'Measuring the rest of the tree...'

@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 
 	"visitron/internal/domain"
 )
@@ -24,12 +25,14 @@ func Preferred(store Store) (Preferences, error) {
 }
 
 // SettingsView is what the Settings dialog shows (FR-060). The key and token
-// appear only as set or not (FR-062).
+// appear only as set or not (FR-062). StartWithWindowsOffered is false where
+// the platform has no sign-in start, so the dialog shows no switch for it.
 type SettingsView struct {
 	Preferences
-	StartWithWindows bool
-	GoatCounterSet   bool
-	GitHubTokenSet   bool
+	StartWithWindows        bool
+	StartWithWindowsOffered bool
+	GoatCounterSet          bool
+	GitHubTokenSet          bool
 }
 
 // Settings is the settings service.
@@ -53,9 +56,11 @@ func (s *Settings) View() (SettingsView, error) {
 		return SettingsView{}, err
 	}
 	on, err := s.startup.Enabled()
-	if err != nil {
+	offered := !errors.Is(err, ErrNoStartup)
+	if err != nil && offered {
 		return SettingsView{}, err
 	}
+	on = on && offered
 	key, err := s.secrets.Get(GoatCounterKey)
 	if err != nil {
 		return SettingsView{}, err
@@ -64,7 +69,7 @@ func (s *Settings) View() (SettingsView, error) {
 	if err != nil {
 		return SettingsView{}, err
 	}
-	return SettingsView{Preferences: prefs, StartWithWindows: on, GoatCounterSet: key != "", GitHubTokenSet: token != ""}, nil
+	return SettingsView{Preferences: prefs, StartWithWindows: on, StartWithWindowsOffered: offered, GoatCounterSet: key != "", GitHubTokenSet: token != ""}, nil
 }
 
 // SaveInterval keeps a check interval in hours (FR-063).

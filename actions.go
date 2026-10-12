@@ -164,7 +164,8 @@ func (a *App) Settings() (settings SettingsDTO, err error) {
 	return SettingsDTO{
 		IntervalHours: v.IntervalHours, MinInterval: domain.MinIntervalHours, MaxInterval: domain.MaxIntervalHours,
 		UpdateCheck: v.UpdateCheck, StartWithWindows: v.StartWithWindows,
-		GoatCounterSet: v.GoatCounterSet, GitHubTokenSet: v.GitHubTokenSet,
+		StartWithWindowsOffered: v.StartWithWindowsOffered,
+		GoatCounterSet:          v.GoatCounterSet, GitHubTokenSet: v.GitHubTokenSet,
 		GoatCounterSite: v.GoatCounterSite,
 		SelfDownloads:   v.SelfDownloads, MaxSelfDownloads: domain.MaxSelfDownloads,
 	}, nil

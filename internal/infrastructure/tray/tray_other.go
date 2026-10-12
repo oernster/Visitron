@@ -4,8 +4,9 @@ package tray
 
 import "errors"
 
-// errWindowsOnly says the tray exists only on Windows, the one platform
-// Visitron is built for; this file lets the package vet everywhere.
+// errWindowsOnly says the tray exists only on Windows. The macOS and Linux
+// builds have none, so closing the window quits them and they check only
+// while open.
 var errWindowsOnly = errors.New("the tray exists only on Windows")
 
 // Tray is absent off Windows.

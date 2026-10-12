@@ -104,8 +104,11 @@ type SettingsDTO struct {
 	MaxInterval      int  `json:"maxInterval"`
 	UpdateCheck      bool `json:"updateCheck"`
 	StartWithWindows bool `json:"startWithWindows"`
-	GoatCounterSet   bool `json:"goatCounterSet"`
-	GitHubTokenSet   bool `json:"gitHubTokenSet"`
+	// StartWithWindowsOffered is false where the platform has no sign-in
+	// start, so the dialog shows no switch for it (macOS and Linux).
+	StartWithWindowsOffered bool `json:"startWithWindowsOffered"`
+	GoatCounterSet          bool `json:"goatCounterSet"`
+	GitHubTokenSet          bool `json:"gitHubTokenSet"`
 	// GoatCounterSite is the code of the owner's GoatCounter site, "" until
 	// set (Amendment 11).
 	GoatCounterSite string `json:"goatCounterSite"`
