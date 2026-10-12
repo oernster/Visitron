@@ -158,20 +158,51 @@ main.split > :last-child {
 /* The Statistics dialog keeps its headings in place: its body is a column in
    which the title and the section headings keep their size while the tables
    give way, so their rows scroll under their captions instead. The body still
-   scrolls as a last resort on a window too short for the headings alone. */
-.statistics-body {
+   scrolls as a last resort on a window too short for the headings alone.
+   The downloads and the countries are two columns side by side, each with the
+   full height to itself, so the dialog is as wide as the two need rather than
+   the reading width the other dialogs keep. */
+.dialog:has(> .statistics-body) {
+  max-width: var(--widest-dialog);
+}
+
+.statistics-body,
+.statistics-section {
   display: flex;
   flex-direction: column;
 }
 
-.statistics-body > * {
+.statistics-body > *,
+.statistics-section > * {
   flex: none;
 }
 
-.statistics-body > .totals-row,
-.statistics-body > .countries-scroll {
+.statistics-body > .statistics-columns,
+.statistics-section > .totals-row,
+.statistics-section > .countries-scroll {
   flex: 0 1 auto;
   min-height: 0;
+}
+
+.statistics-columns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto;
+  grid-template-rows: minmax(0, 1fr);
+  justify-content: start;
+  column-gap: 48px;
+}
+
+.statistics-section {
+  min-height: 0;
+}
+
+/* A sentence under or in place of a table takes the column's width rather
+   than setting it, so it wraps beside the table instead of widening the
+   dialog to one long line. */
+.statistics-section > p {
+  width: 0;
+  min-width: 100%;
 }
 
 /* The gutter is kept for the scrollbar whether or not one shows, so a column

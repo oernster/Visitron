@@ -87,23 +87,29 @@ export function StatisticsDialog({ id, refused, onClose }: Props) {
   const downloads = stats ? [...stats.byPlatform, ...stats.byRepo, ...stats.byRelease] : []
   return (
     <Modal labelId="statistics-title" role="dialog" onClose={onClose} pinnedActions>
-      {/* The headings stay put; the tables' rows scroll inside each table. The
-          release list is the one that can run long, so it reads itself. */}
+      {/* The downloads and the countries stand side by side, so a long release
+          list never takes the countries' height. The headings stay put; the
+          tables' rows scroll inside each table. The release list is the one
+          that can run long, so it reads itself. */}
       <div className="dialog-body statistics-body">
         <h2 id="statistics-title">{stats ? stats.url.replace('https://', '') : 'Statistics'}</h2>
         {!stats && <p>{reading}</p>}
         {stats && (
-          <>
-            <h3>Downloads to date</h3>
-            {downloads.length === 0 && <p>{noDownloads}</p>}
-            <div className="totals-row">
-              <Totals title="By platform" rows={stats.byPlatform} />
-              <Totals title="By repository" rows={stats.byRepo} />
-              <Totals title="By release" rows={stats.byRelease} autoScroll={autoScroll} />
-            </div>
-            <h3>Visitors by country, {periodLabel(stats.period)}</h3>
-            <Countries stats={stats} />
-          </>
+          <div className="statistics-columns">
+            <section className="statistics-section">
+              <h3>Downloads to date</h3>
+              {downloads.length === 0 && <p>{noDownloads}</p>}
+              <div className="totals-row">
+                <Totals title="By platform" rows={stats.byPlatform} />
+                <Totals title="By repository" rows={stats.byRepo} />
+                <Totals title="By release" rows={stats.byRelease} autoScroll={autoScroll} />
+              </div>
+            </section>
+            <section className="statistics-section">
+              <h3>Visitors by country, {periodLabel(stats.period)}</h3>
+              <Countries stats={stats} />
+            </section>
+          </div>
         )}
       </div>
       <div className="actions">
