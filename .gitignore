@@ -42,6 +42,18 @@ installer/build/bin/
 installer/frontend/wailsjs/
 dist-installer/
 
+# macOS: builddmg.sh's scratch space and its output.
+dist-dmg/
+Visitron.dmg
+
+# Linux: everything build_flatpak.sh writes; cleanup_flatpak.sh removes it.
+.flatpak-build/
+.flatpak-repo/
+.flatpak-builder/
+packaging/
+uk.codecrafter.Visitron.yml
+visitron.flatpak
+
 # Wails writes its generated bindings here. They are not the wire contract:
 # frontend/src/api.ts is, compared with the Go DTOs by a structural test.
 frontend/wailsjs/

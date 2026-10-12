@@ -45,7 +45,8 @@ if ($Fast) {
 # The update check reads releases from the repository this checkout came from,
 # taken off its origin remote, so no account is written into the source
 # (Amendment 15). Like the version, it reaches a var through -ldflags -X.
-$releaseRepo = & (Join-Path $root 'tools\releaserepo.ps1')
+$releaseRepo = (& go run ./tools/releaserepo | Out-String).Trim()
+if ($LASTEXITCODE -ne 0) { throw "tools/releaserepo failed with exit code $LASTEXITCODE" }
 if ($releaseRepo) {
     Write-Host "Updates will be read from $releaseRepo."
 } else {

@@ -31,7 +31,7 @@ In order, it:
 1. Reads `VERSION`; an empty file stops the build.
 2. Runs [`test.ps1`](TESTING.md) and stops on a failure, unless `-Fast` was
    given.
-3. Runs `tools/releaserepo.ps1`, which reads owner/name off the origin remote;
+3. Runs `go run ./tools/releaserepo`, which reads owner/name off the origin remote;
    without a GitHub origin the build has no update source and says so.
 4. Runs `wails build` with `-X main.appVersion` and `-X main.releaseRepo`,
    which installs the page's dependencies, builds the page and compiles

@@ -842,7 +842,7 @@ the owner on 2026-10-10: Visitron is released to everyone, so it carries no
 account, domain or address of the person who builds it, with no exception.
 
 - FR-075: the update check reads releases from the repository the build came
-  from. `tools/releaserepo.ps1` takes owner/name off the checkout's origin
+  from. `tools/releaserepo` takes owner/name off the checkout's origin
   remote and `build.ps1` hands it to the application through `-ldflags -X`,
   as it does the version. Nothing in the source names it; a fork checks its
   own releases. A build with no GitHub origin has no update source: a check
