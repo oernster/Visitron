@@ -10,7 +10,7 @@ and Linux builds, which are bash on those machines.
 | Go, at the version `go.mod` names or later | The application and the setup program | https://go.dev/dl/ |
 | Node with npm | The page | https://nodejs.org/ |
 | Wails CLI | Building both windows | `go install github.com/wailsapp/wails/v2/cmd/wails@latest` |
-| WebView2 runtime | Running both windows | Ships with Windows 11 |
+| WebView2 runtime | Running both windows on Windows | Ships with Windows 11 |
 | git | The release repository read at build time; the identity guard | https://git-scm.com/ |
 | Python with Pillow | Regenerating the icons only | `python -m pip install pillow` |
 
@@ -115,7 +115,7 @@ $env:LOCALAPPDATA = "$env:TEMP\visitron-sandbox"; ./build/bin/Visitron.exe
 ```
 
 The log is `%LOCALAPPDATA%\Visitron\Log.txt` (`~/Library/Logs/Visitron` on
-macOS, `~/.local/state/Visitron` on Linux). It holds each run's start line;
+macOS; `$XDG_STATE_HOME/Visitron`, else `~/.local/state/Visitron`, on Linux). It holds each run's start line;
 each check's start, every website's outcome, the page loads and the end with
 its duration; the failures the declared writers report and any crash. Never
 the key or the token.

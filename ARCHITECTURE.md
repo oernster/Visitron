@@ -66,7 +66,7 @@ day it falls on.
 | `secrets` | The key and the token in the platform's own store: Credential Manager, the Keychain or the Secret Service. |
 | `startup` | The start-with-Windows value under the HKCU Run key; Settings and the setup program both write it through here. Off Windows it answers `application.ErrNoStartup` and Settings offers no switch. |
 | `tray` | The Win32 notification-area icon: Open, Refresh now, Quit; added again when the taskbar restarts. Absent off Windows. |
-| `runlog` | The run log; points error output at it before anything can fail. |
+| `runlog` | The run log; on Windows, where a windowed run has no error output, points error output at it before anything can fail. |
 | `windowfocus` | Hands the keyboard to the WebView2 child window on DOM ready; nothing to do off Windows. |
 | `setup` | The per-user install policy the setup program runs. |
 

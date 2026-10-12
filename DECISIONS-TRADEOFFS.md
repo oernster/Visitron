@@ -19,6 +19,17 @@ they are.
 - **Costs:** the history belongs to that one machine; a second machine starts
   its own from nothing.
 
+### The history kept where each system keeps a program's data
+
+The file lives in the folder each platform gives a program for its own data:
+the local application data folder on Windows, Application Support on macOS
+and the XDG data folder on Linux.
+
+- **Rather than:** one cache folder on every platform.
+- **Gains:** neither the system nor a disk cleaner empties it, so the history
+  survives a short disk or a tidy-up.
+- **Costs:** three rules to keep right, where one call would have served.
+
 ### Three platforms, with the tray on Windows alone
 
 Visitron ships for Windows as a tray application started with Windows, for
@@ -33,7 +44,7 @@ sign-in start: closing quits them and they check only while open.
 - **Costs:** on macOS and Linux the history fills in only on days the window
   is opened.
 
-### Go and Wails, with no C compiler
+### Go and Wails, with a database driver in Go
 
 The application is Go behind a Wails window over a React page; the database
 driver is written in Go alone.
@@ -232,8 +243,10 @@ test learns that identity from the checkout and refuses it.
 ### Updates checked against GitHub releases, from the build's own repository
 
 Visitron asks GitHub for its newest release shortly after opening and daily,
-quiet unless there is news; it can be switched off. The repository asked is
-read from the git remote the build came from, so a fork checks its own.
+quiet unless there is news; it can be switched off. A newer release offers the
+file for the platform it runs on: the setup program, the disk image or the
+Flatpak bundle. The repository asked is read from the git remote the build
+came from, so a fork checks its own.
 
 - **Rather than:** no check; a repository written in the source.
 - **Gains:** new releases are found without nagging; the source names no one.

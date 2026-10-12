@@ -31,13 +31,13 @@ In order, stopping at the first failure:
 7. Every other measured package against its floor.
 8. The front-end build: `eslint`, `tsc --noEmit`, `vite build`.
 9. The front-end suite: Vitest over jsdom.
+10. `node --check` over every script in `installer/frontend/dist`, since the
+    setup page has no build step to catch a typo.
+
+`build.ps1` runs it first. BuildPilot reads its exit code.
 
 The gate runs on Windows. The macOS and Linux builds are checked by hand on
 those machines.
-9. `node --check` over every script in `installer/frontend/dist`, since the
-   setup page has no build step to catch a typo.
-
-`build.ps1` runs it first. BuildPilot reads its exit code.
 
 ## Reading a result
 
