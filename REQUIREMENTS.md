@@ -1143,3 +1143,13 @@ system other than Windows out of scope (section 1.3; section 3.11).
   its platform. Both scripts were checked for syntax; the Flatpak script was run
   with its flatpak tools stubbed and its manifest and metainfo parsed. Each needs
   a build, an install and a launch on its platform before it is released.
+
+**Amendment 28 (2026-10-12): the macOS history lives in Application Support.**
+Ruled by the owner on 2026-10-12, amending Amendment 27's C-3.
+
+- C-3: on macOS the store is `Visitron/visitron.db` under
+  `~/Library/Application Support`, not `~/Library/Caches`, which the system may
+  empty when the disk runs short and the history with it. Windows and Linux are
+  unchanged. No macOS build had been released, so there is no history in the
+  old place to move. Verified by
+  `internal/infrastructure/store/store_test.go::TestEachPlatformKeepsTheHistoryInItsOwnFolder`.

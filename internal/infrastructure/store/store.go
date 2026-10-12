@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"visitron/internal/product"
 
@@ -41,9 +42,30 @@ type Store struct {
 	db *sql.DB
 }
 
-// DefaultPath is where the data lives: %LOCALAPPDATA%\Visitron\visitron.db.
+// macOS is the platform whose history lives apart from the cache folder.
+const macOS = "darwin"
+
+// DefaultPath is where the data lives: Visitron/visitron.db under the folder
+// pathFor names for this platform.
 func DefaultPath() (string, error) {
-	base, err := os.UserCacheDir()
+	return pathFor(runtime.GOOS, os.UserCacheDir, os.UserConfigDir)
+}
+
+// pathFor works the data's path out from the platform and its two folder
+// lookups, each a parameter so every platform's rule runs on every platform.
+//
+// Windows and Linux keep the history in the user cache folder: LOCALAPPDATA on
+// Windows, where it has always been; ~/.cache on Linux, which the Flatpak
+// points into its own folder. macOS keeps it in ~/Library/Application Support,
+// which os.UserConfigDir answers there: its cache folder, ~/Library/Caches, is
+// one the system may empty when the disk runs short, which would take the
+// history with it.
+func pathFor(goos string, cache, config func() (string, error)) (string, error) {
+	folder := cache
+	if goos == macOS {
+		folder = config
+	}
+	base, err := folder()
 	if err != nil {
 		return "", fmt.Errorf("finding the folder for Visitron's data: %w", err)
 	}

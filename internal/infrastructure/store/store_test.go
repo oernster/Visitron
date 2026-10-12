@@ -218,6 +218,31 @@ func TestDefaultPath(t *testing.T) {
 	}
 }
 
+// Every platform's rule runs on every platform: macOS keeps the history in
+// Application Support, which the system never clears; the rest keep it in the
+// user cache folder, which is LOCALAPPDATA on Windows.
+func TestEachPlatformKeepsTheHistoryInItsOwnFolder(t *testing.T) {
+	t.Parallel()
+	const support, cache = "/support", "/cache"
+	config := func() (string, error) { return support, nil }
+	cached := func() (string, error) { return cache, nil }
+	for goos, base := range map[string]string{"darwin": support, "windows": cache, "linux": cache} {
+		got, err := pathFor(goos, cached, config)
+		want := filepath.Join(base, "Visitron", "visitron.db")
+		if err != nil || got != want {
+			t.Errorf("%s: %q %v, want %q", goos, got, err, want)
+		}
+	}
+	errPlanted := errors.New("planted")
+	failed := func() (string, error) { return "", errPlanted }
+	if _, err := pathFor("darwin", cached, failed); !errors.Is(err, errPlanted) {
+		t.Errorf("macOS without a home: %v", err)
+	}
+	if _, err := pathFor("linux", failed, config); !errors.Is(err, errPlanted) {
+		t.Errorf("Linux without a home: %v", err)
+	}
+}
+
 func TestStoredDayMustParse(t *testing.T) {
 	t.Parallel()
 	s := open(t)

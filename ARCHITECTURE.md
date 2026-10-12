@@ -62,7 +62,7 @@ day it falls on.
 | `github` | Release download counts, anonymous or with the owner's token. |
 | `goatcounter` | Daily page loads, page paths and visitors by country from the owner's GoatCounter site. |
 | `update` | Visitron's latest published release, unauthenticated. |
-| `store` | SQLite at `Visitron/visitron.db` under the user cache folder (`%LOCALAPPDATA%` on Windows); `Unavailable` stands in when it cannot open. |
+| `store` | SQLite at `Visitron/visitron.db` under the user cache folder (`%LOCALAPPDATA%` on Windows), except on macOS, where it is under `~/Library/Application Support`, which the system never empties; `Unavailable` stands in when it cannot open. |
 | `secrets` | The key and the token in the platform's own store: Credential Manager, the Keychain or the Secret Service. |
 | `startup` | The start-with-Windows value under the HKCU Run key; Settings and the setup program both write it through here. Off Windows it answers `application.ErrNoStartup` and Settings offers no switch. |
 | `tray` | The Win32 notification-area icon: Open, Refresh now, Quit; added again when the taskbar restarts. Absent off Windows. |

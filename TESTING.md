@@ -63,7 +63,7 @@ is lost.
 | `internal/infrastructure/secrets` | 100 | |
 | `internal/infrastructure/web` | 100 | |
 | `internal/infrastructure/update` | 100 | |
-| `internal/infrastructure/store` | 88 | Operating-system failures that cannot be forced without breaking the disk. |
+| `internal/infrastructure/store` | 89 | Operating-system failures that cannot be forced without breaking the disk. |
 | `internal/infrastructure/startup` | 85 | Registry failures that cannot be forced. |
 | `internal/infrastructure/runlog` | 81 | Win32 standard-handle work. |
 | root package (facade) | 72 | `main`, the window's runtime calls and the single-instance lock need a window. |
