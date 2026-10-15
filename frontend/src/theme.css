@@ -35,6 +35,16 @@
   --ring: #34d399;
   --muted-fill: #2a303a;
   --selected: #243349;
+
+  /* The world map's five steps, fewest visitors to most (FR-094): one hue,
+     brightening on the dark surface. Measured in OKLab: lightness rises
+     37, 48, 61, 73, 86; neighbours differ by Delta E 11 or more and the first
+     step stands 8.9 from the land (--muted-fill) a country of none wears. */
+  --map-1: #24406b;
+  --map-2: #2f5d9c;
+  --map-3: #4682d4;
+  --map-4: #74aaf8;
+  --map-5: #b4d3ff;
 }
 
 :root[data-theme='light'] {
@@ -52,4 +62,13 @@
   --ring: #047857;
   --muted-fill: #e4e8ed;
   --selected: #dce8fb;
+
+  /* The map's steps deepen on the light surface instead: lightness falls 84,
+     74, 63, 52, 38; neighbours differ by Delta E 11 or more; the first step
+     stands 10.4 from the land. */
+  --map-1: #b2cdf6;
+  --map-2: #80abed;
+  --map-3: #4f88df;
+  --map-4: #2a64c4;
+  --map-5: #173f80;
 }

@@ -6,6 +6,7 @@ import addIcon from './assets/icons/add-website.png'
 import editIcon from './assets/icons/edit-website.png'
 import deleteIcon from './assets/icons/delete-website.png'
 import refreshIcon from './assets/icons/refresh.png'
+import worldIcon from './assets/icons/world-visitors.png'
 import settingsIcon from './assets/icons/settings.png'
 import donateIcon from './assets/icons/donate.png'
 import lightModeIcon from './assets/icons/light-mode.png'
@@ -71,6 +72,7 @@ export const guideSections: GuideSection[] = [
       { icon: editIcon, name: 'Edit website', text: 'Change the selected website\'s address; the site is read again and your ticks are kept where the repository is found again.' },
       { icon: deleteIcon, name: 'Delete website', text: 'Remove the selected website and its download history, after you confirm.' },
       { icon: refreshIcon, name: 'Refresh', text: 'Check every website now rather than waiting for the next scheduled check. While the last check has failed, Refresh carries a warning sign; point at it to read what failed. The sign goes once a check succeeds.' },
+      { icon: worldIcon, name: 'World visitors', text: 'Every website\'s visitors by country over the period, on a world map with the same figures in a table beside it. The deeper the shade, the more visitors; the key under the map gives the counts each shade covers. GoatCounter counts them across every website at once, so they need not add up to each website\'s own table. Point at a country to read its figure.' },
       { icon: settingsIcon, name: 'Settings', text: 'Your GoatCounter account name and key, an optional GitHub token, how often to check, starting with Windows (on Windows alone) and the update check. Each field says where its key or token comes from.' },
       { icon: donateIcon, name: 'Donate', text: 'Opens the donation page in your browser.' },
       { icon: lightModeIcon, name: 'Light or dark', text: 'Switches the window between light and dark; the picture is the mode you would move to.' },

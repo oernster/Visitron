@@ -1172,3 +1172,86 @@ Reported by the owner on 2026-10-12, closing Amendment 27's last point: the
 Flatpak, then each was installed and run on its own platform and found
 working. Checked by hand, since only a real Mac and a real Linux desktop can
 show it.
+
+**Amendment 31 (2026-10-15): every website's visitors by country, on a world
+map.** Asked for by the owner on 2026-10-15: one view of where visitors come
+from across every website, shaded on a map, so that new countries can be seen
+appearing as weeks of data build up. The owner drew the band's picture,
+`assets/world-visitors.png`.
+
+GoatCounter's location read answers a country's two-letter ISO 3166-1 code in
+its `id`, even where it stored a region such as `US-CA`: read from its source
+on 2026-10-15, where `hit_stats.ListLocations.sql` takes the first two
+characters of each location and joins them to the country's name. The map's
+shapes are Natural Earth's at 1:50m, from the `world-atlas` package; measured on
+2026-10-15, the 1:110m set has no shape for 76 countries (Singapore, Hong Kong
+and Malta among them) while the 1:50m set lacks 15, all territories too small
+to draw at that scale or drawn as part of another country, plus Kosovo, whose
+shape carries no code.
+
+- FR-091 World visitors button (Must): when the owner selects World visitors on
+  the band, the window shall open the World visitors dialog. The button sits
+  between Refresh and Settings, since it reads every website rather than the
+  selected one. Acceptance: given the main window, when World visitors is
+  selected, then a dialog headed "World visitors" opens. FR-040's band order
+  gains it in that place. Verified by
+  `App.test.tsx::opens the world visitors dialog from the band` and
+  `App.test.tsx::orders the band as FR-040 states`.
+- FR-092 Every website's countries (Must): when the World visitors dialog
+  opens, Visitron shall show the visitors by country over the chosen period to
+  every path a recorded website owns, by FR-020's rule, as one GoatCounter
+  read, largest first. Rationale: one read leaves the counting to GoatCounter,
+  so a visitor who reached two websites is counted as GoatCounter counts them;
+  the figures therefore need not equal the sum of each website's own table. The
+  dialog says so beneath the table. A path no recorded website owns is not
+  counted. Acceptance: given example.org owning `/` and example.net owning
+  `/net/`, plus an unowned path `/old/`, when the dialog opens, then
+  GoatCounter is asked once for the ids of `/` and `/net/` alone; its answer
+  of United Kingdom 7, France 2 is listed in that order. Verified by
+  `internal/application/countries_test.go::TestCountriesOfEveryWebsiteReadEveryOwnedPathAtOnce`,
+  `world_test.go::TestWorldVisitorsCarryEveryWebsitesCountries` and
+  `WorldDialog.test.tsx::lists the visitors to every website by country, largest first, beside the map`.
+- FR-093 No visitors (Must): while no recorded website owns a visited path in
+  the period, the dialog shall say there are no visitors in this period yet
+  and draw no map. Verified by
+  `internal/application/countries_test.go::TestCountriesOfEveryWebsiteAreNoneWithNoWebsites` and
+  `WorldDialog.test.tsx::says there are no visitors yet and draws no map`.
+- FR-094 World map (Must): the dialog shall draw a world map beside the table,
+  shading each country that had visitors in one of five steps of a single hue,
+  deeper for more visitors, the steps rising on a logarithmic scale up to the
+  largest count. Rationale: a few countries hold most visitors, so equal steps
+  would leave every other country in the palest step. A country with none takes
+  the land colour; Antarctica is left off. A country the map has no shape for
+  stays in the table. A key beneath the map gives each step's range of counts.
+  Acceptance: given United Kingdom 100, France 10 and Japan 1, when the map is
+  drawn, then the United Kingdom takes step 5, Japan step 1 and France a step
+  between, while Brazil takes the land colour. Verified by
+  `mapShade.test.ts::rises on a logarithmic scale from the fewest to the most`,
+  `mapShade.test.ts::leaves a country of none unshaded` and
+  `WorldMap.test.tsx::shades each country by its visitors and leaves the rest as land`.
+- FR-095 Naming a country on the map (Should): when the owner points at a
+  country on the map, the map shall name the country and its visitors. The map
+  is not on the focus ring; the table beside it carries the same figures to the
+  keyboard and to a screen reader. Verified by
+  `WorldMap.test.tsx::names each shaded country with its visitors`.
+- FR-096 GoatCounter not set up (Must): if GoatCounter is not set up when the
+  dialog opens, then the dialog shall say that countries need its account name
+  and key in Settings, in FR-048's words. Verified by
+  `world_test.go::TestWorldVisitorsSayGoatCounterIsNotSetUp` and
+  `WorldDialog.test.tsx::says GoatCounter is not set up`.
+- FR-097 Read failed (Must): if reading the countries fails, then the dialog
+  shall name the failure in their place. Verified by
+  `internal/application/countries_test.go::TestCountriesOfEveryWebsitePassOnEveryFailure`,
+  `world_test.go::TestWorldVisitorsNameAFailedRead` and
+  `WorldDialog.test.tsx::names a failed read`.
+- FR-072: About credits the map's sources: Natural Earth (public domain),
+  `world-atlas`, `topojson-client`, `d3-geo` and `i18n-iso-countries`, which
+  turns a two-letter code into the number the shapes are keyed by. The shapes
+  ship inside the application, so drawing the map contacts no one
+  (NFR-PRIV-001 holds unchanged).
+- FR-071: the Guide says what World visitors shows and why its figures need
+  not add up to each website's own.
+- Won't this time: remembering when a country first appeared. The map shows
+  the chosen period, so a new country appears on it by being visited; marking
+  it as new would need a stored history of countries, which Visitron does not
+  keep. Shading by region within a country: the read answers countries alone.

@@ -1,0 +1,117 @@
+/* The World visitors dialog (FR-091 to FR-097): the map beside the table that
+   carries the same figures. The map takes the room the table leaves, so a long
+   country list scrolls under its caption while the map stays whole. */
+
+/* The map wants the room: the dialog takes the widest a dialog may, where the
+   others keep the reading width. */
+.dialog:has(> .world-body) {
+  width: var(--widest-dialog);
+  max-width: var(--widest-dialog);
+}
+
+.world-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The section and its columns may shrink to the dialog's height, so the
+   country rows scroll under their caption rather than the whole body. */
+.world-body > .statistics-section,
+.statistics-section > .world-columns {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+.world-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: 32px;
+  min-height: 0;
+}
+
+.world-table {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.world-table > .countries-scroll {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+/* The note under the table wraps to the table's width, as in Statistics. */
+.world-table > p {
+  width: 0;
+  min-width: 100%;
+}
+
+.world-map {
+  margin: 0;
+}
+
+.world-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Land of none wears the disabled fill; the outlines keep the continents
+   legible against the dialog's surface, which the fill sits close to. */
+.map-country {
+  fill: var(--muted-fill);
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+
+.map-country.map-step-1,
+.map-swatch.map-step-1 {
+  fill: var(--map-1);
+  background: var(--map-1);
+}
+
+.map-country.map-step-2,
+.map-swatch.map-step-2 {
+  fill: var(--map-2);
+  background: var(--map-2);
+}
+
+.map-country.map-step-3,
+.map-swatch.map-step-3 {
+  fill: var(--map-3);
+  background: var(--map-3);
+}
+
+.map-country.map-step-4,
+.map-swatch.map-step-4 {
+  fill: var(--map-4);
+  background: var(--map-4);
+}
+
+.map-country.map-step-5,
+.map-swatch.map-step-5 {
+  fill: var(--map-5);
+  background: var(--map-5);
+}
+
+.map-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.map-key-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}

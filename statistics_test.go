@@ -39,7 +39,7 @@ func TestStatisticsCarryTheDownloadTablesAndTheCountries(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if s.ID != id || s.URL != "https://example.org/" || s.Period != int(domain.DefaultPeriod) {
+	if s.ID != id || s.URL != "https://example.org/" || s.Visitors.Period != int(domain.DefaultPeriod) {
 		t.Fatalf("statistics = %+v", s)
 	}
 	if len(s.ByPlatform) != 2 || s.ByPlatform[0].Name != string(domain.Windows) || s.ByPlatform[1].Name != string(domain.MacOS) {
@@ -49,16 +49,16 @@ func TestStatisticsCarryTheDownloadTablesAndTheCountries(t *testing.T) {
 		t.Fatalf("repositories %v, releases %v", s.ByRepo, s.ByRelease)
 	}
 	want := []CountryDTO{{"GB", "United Kingdom", 5}, {"FR", "France", 2}}
-	if !reflect.DeepEqual(s.Countries, want) || s.NoGoatCounter || s.CountriesProblem != "" {
-		t.Fatalf("countries %v, no GoatCounter %v, problem %q; want %v", s.Countries, s.NoGoatCounter,
-			s.CountriesProblem, want)
+	if !reflect.DeepEqual(s.Visitors.Countries, want) || s.Visitors.NoGoatCounter || s.Visitors.Problem != "" {
+		t.Fatalf("countries %v, no GoatCounter %v, problem %q; want %v", s.Visitors.Countries, s.Visitors.NoGoatCounter,
+			s.Visitors.Problem, want)
 	}
 }
 
 func TestStatisticsSayGoatCounterIsNotSetUpAndKeepTheDownloads(t *testing.T) {
 	r, id := statisticsRig(t, false)
 	s, err := r.app.Statistics(id)
-	if err != nil || !s.NoGoatCounter || s.Countries == nil || len(s.Countries) != 0 || len(s.ByPlatform) == 0 {
+	if err != nil || !s.Visitors.NoGoatCounter || s.Visitors.Countries == nil || len(s.Visitors.Countries) != 0 || len(s.ByPlatform) == 0 {
 		t.Fatalf("statistics = %+v, %v", s, err)
 	}
 }
@@ -67,7 +67,7 @@ func TestStatisticsNameAFailedCountryReadAndKeepTheDownloads(t *testing.T) {
 	r, id := statisticsRig(t, true)
 	r.loads.err = errPlanted
 	s, err := r.app.Statistics(id)
-	if err != nil || s.CountriesProblem == "" || s.NoGoatCounter || len(s.ByPlatform) == 0 {
+	if err != nil || s.Visitors.Problem == "" || s.Visitors.NoGoatCounter || len(s.ByPlatform) == 0 {
 		t.Fatalf("statistics = %+v, %v", s, err)
 	}
 }

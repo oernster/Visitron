@@ -164,7 +164,9 @@ describe('the band', () => {
     await screen.findByText('example.org')
     const groups = band().querySelectorAll('.band-group')
     const labels = (group: Element) => Array.from(group.querySelectorAll('button')).map((b) => b.textContent)
-    expect(labels(groups[0])).toEqual(['Add website', 'Edit website', 'Delete website', 'Refresh', 'Settings'])
+    expect(labels(groups[0])).toEqual([
+      'Add website', 'Edit website', 'Delete website', 'Refresh', 'World visitors', 'Settings',
+    ])
     expect(labels(groups[1])).toEqual(['Donate', 'Light mode', 'Help'])
     expect(groups[1].children[1]).toHaveClass('band-separator')
   })
@@ -219,6 +221,18 @@ describe('the band', () => {
     fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Delete' }))
     expect(await screen.findByText('The store is closed')).toBeInTheDocument()
     expect(bandButton('Delete website')).toBeEnabled()
+  })
+
+  it('opens the world visitors dialog from the band', async () => {
+    const bridge = installBridge()
+    render(<App />)
+    await screen.findByText('example.org')
+    fireEvent.click(bandButton('World visitors'))
+    expect(screen.getByRole('heading', { name: 'World visitors' })).toBeInTheDocument()
+    await screen.findByRole('table', { name: 'By country' })
+    expect(bridge.WorldVisitors).toHaveBeenCalledOnce()
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('heading', { name: 'World visitors' })).toBeNull()
   })
 
   it('opens Settings and reloads the list when it closes', async () => {

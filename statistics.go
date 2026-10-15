@@ -21,24 +21,43 @@ func (a *App) Statistics(id int64) (stats StatisticsDTO, err error) {
 	if err != nil {
 		return StatisticsDTO{}, err
 	}
-	stats = StatisticsDTO{
-		ID: id, URL: d.Website.Address.URL(), Period: int(prefs.Period),
+	countries, err := a.services.Countries.Of(a.ctx, id, prefs.Period)
+	return StatisticsDTO{
+		ID: id, URL: d.Website.Address.URL(),
 		ByPlatform: platformCounts(d.Totals.ByPlatform),
 		ByRepo:     named(d.Totals.ByRepo), ByRelease: releases(d.Totals.ByRelease),
-		Countries: []CountryDTO{},
+		Visitors: visitors(prefs.Period, countries, err),
+	}, nil
+}
+
+// WorldVisitors answers the World visitors dialog: every website's visitors by
+// country over the chosen period (FR-092). A read that fails or is not set up
+// is said in the countries' place rather than refused (FR-096, FR-097).
+func (a *App) WorldVisitors() (out VisitorsDTO, err error) {
+	defer guard(&err)
+	prefs, err := application.Preferred(a.services.Store)
+	if err != nil {
+		return VisitorsDTO{}, err
 	}
-	countries, err := a.services.Countries.Of(a.ctx, id, prefs.Period)
+	countries, err := a.services.Countries.All(a.ctx, prefs.Period)
+	return visitors(prefs.Period, countries, err), nil
+}
+
+// visitors turns a country read into what a dialog shows: the countries, else
+// why there are none to show.
+func visitors(period domain.Period, countries []domain.CountryCount, err error) VisitorsDTO {
+	out := VisitorsDTO{Period: int(period), Countries: []CountryDTO{}}
 	switch {
 	case errors.Is(err, application.ErrNoGoatCounter):
-		stats.NoGoatCounter = true
+		out.NoGoatCounter = true
 	case err != nil:
-		stats.CountriesProblem = err.Error()
+		out.Problem = err.Error()
 	default:
 		for _, c := range countries {
-			stats.Countries = append(stats.Countries, CountryDTO{Code: c.Code, Name: c.Name, Count: c.Count})
+			out.Countries = append(out.Countries, CountryDTO{Code: c.Code, Name: c.Name, Count: c.Count})
 		}
 	}
-	return stats, nil
+	return out
 }
 
 // platformCounts lists the platforms in the domain's order. A platform with no

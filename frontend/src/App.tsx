@@ -14,6 +14,7 @@ import { UpdateDialog, useUpdateCheck } from './updates'
 import { GuideDialog } from './GuideDialog'
 import { SettingsDialog } from './SettingsDialog'
 import { StatisticsDialog } from './StatisticsDialog'
+import { WorldDialog } from './WorldDialog'
 import { WebsiteDialog } from './WebsiteDialog'
 import { DetailPane } from './DetailPane'
 import { EmptyPane } from './EmptyPane'
@@ -23,6 +24,7 @@ import addIcon from './assets/icons/add-website.png'
 import editIcon from './assets/icons/edit-website.png'
 import deleteIcon from './assets/icons/delete-website.png'
 import refreshIcon from './assets/icons/refresh.png'
+import worldIcon from './assets/icons/world-visitors.png'
 import settingsIcon from './assets/icons/settings.png'
 import guideIcon from './assets/icons/help-guide.png'
 import lightModeIcon from './assets/icons/light-mode.png'
@@ -62,7 +64,7 @@ function Separator() {
 
 const donateHint = 'Buy the author a drink (opens your browser)'
 
-type Open = 'add' | 'edit' | 'delete' | 'settings' | 'guide' | null
+type Open = 'add' | 'edit' | 'delete' | 'settings' | 'guide' | 'world' | null
 
 /** About and the licence both read Go's About, so one fetch serves either. */
 type Shown = { kind: 'about' | 'licence'; about: About }
@@ -74,6 +76,9 @@ export function App() {
   const [detail, setDetail] = useState<Detail | null>(null)
   const [progress, setProgress] = useState<Progress | null>(null)
   const [open, setOpen] = useState<Open>(null)
+  // Steady across renders, since the World visitors dialog reads again whenever
+  // the close it is handed changes.
+  const closeOpen = useCallback(() => setOpen(null), [])
   const [shown, setShown] = useState<Shown | null>(null)
   const [closing, setClosing] = useState(false)
   // The website whose Statistics dialog is open (FR-045); null while none is.
@@ -147,6 +152,8 @@ export function App() {
             badge={failed ? warningIcon : undefined}
             hint={failed ? `The check at ${overview?.lastFailure} failed: ${overview?.failure}` : undefined}
             onClick={() => void api.refresh(refused)} />
+          <BandButton label="World visitors" icon={worldIcon} hint="Every website's visitors by country, on a map"
+            onClick={() => setOpen('world')} />
           <BandButton label="Settings" icon={settingsIcon} onClick={() => setOpen('settings')} />
         </div>
         <div className="band-group">
@@ -208,6 +215,7 @@ export function App() {
       )}
       {open === 'settings' && <SettingsDialog refused={refused} onClose={() => { setOpen(null); reload() }} />}
       {open === 'guide' && <GuideDialog onClose={() => setOpen(null)} />}
+      {open === 'world' && <WorldDialog refused={refused} onClose={closeOpen} />}
       {statisticsOf !== null && <StatisticsDialog id={statisticsOf} refused={refused} onClose={closeStatistics} />}
       {shown?.kind === 'about' && <AboutDialog about={shown.about} onClose={() => setShown(null)} />}
       {shown?.kind === 'licence' && <LicenceDialog text={shown.about.licence} onClose={() => setShown(null)} />}

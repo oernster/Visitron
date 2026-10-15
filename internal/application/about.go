@@ -17,5 +17,10 @@ var Credits = []Credit{
 	{Work: "SQLite", Licence: "Public domain", Holder: "D. Richard Hipp and contributors"},
 	{Work: "go-keyring", Licence: "MIT", Holder: "Zalando SE"},
 	{Work: "React", Licence: "MIT", Holder: "Meta Platforms, Inc. and affiliates"},
+	{Work: "Natural Earth (the map's shapes)", Licence: "Public domain", Holder: "Natural Earth contributors"},
+	{Work: "world-atlas", Licence: "ISC", Holder: "Michael Bostock"},
+	{Work: "topojson-client", Licence: "ISC", Holder: "Michael Bostock"},
+	{Work: "d3-geo", Licence: "ISC", Holder: "Mike Bostock"},
+	{Work: "i18n-iso-countries", Licence: "MIT", Holder: "widdix GmbH"},
 	{Work: "GoatCounter (the service read)", Licence: "EUPL-1.2, slightly modified", Holder: "Martin Tournoij"},
 }

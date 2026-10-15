@@ -53,16 +53,38 @@ func (c *Countries) Of(ctx context.Context, id int64, period domain.Period) ([]d
 	if err != nil {
 		return nil, err
 	}
-	addrs := make([]domain.Address, len(sites))
 	var own *Website
 	for i := range sites {
-		addrs[i] = sites[i].Address
 		if sites[i].ID == id {
 			own = &sites[i]
 		}
 	}
 	if own == nil {
 		return nil, ErrNoSuchSite
+	}
+	return c.read(ctx, sites, period, func(owner domain.Address) bool { return owner == own.Address })
+}
+
+// All answers every website's visitors by country over period, largest
+// first, as one read over every path a recorded website owns (FR-092), so
+// GoatCounter does the counting across them. With no visited path there are
+// none. ErrNoGoatCounter means GoatCounter is not set up.
+func (c *Countries) All(ctx context.Context, period domain.Period) ([]domain.CountryCount, error) {
+	sites, err := c.store.Websites()
+	if err != nil {
+		return nil, err
+	}
+	return c.read(ctx, sites, period, func(domain.Address) bool { return true })
+}
+
+// read answers the visitors by country to the paths owned, by FR-020's rule,
+// by a website among sites that counted accepts. A path no website owns is
+// never read.
+func (c *Countries) read(ctx context.Context, sites []Website, period domain.Period,
+	counted func(owner domain.Address) bool) ([]domain.CountryCount, error) {
+	addrs := make([]domain.Address, len(sites))
+	for i := range sites {
+		addrs[i] = sites[i].Address
 	}
 	site, key, err := goatCounter(c.store, c.secrets)
 	if err != nil {
@@ -76,7 +98,7 @@ func (c *Countries) Of(ctx context.Context, id int64, period domain.Period) ([]d
 	}
 	var ids []int64
 	for _, p := range paths {
-		if owner, ok := domain.Owner(p.Path, addrs); ok && owner == own.Address {
+		if owner, ok := domain.Owner(p.Path, addrs); ok && counted(owner) {
 			ids = append(ids, p.ID)
 		}
 	}

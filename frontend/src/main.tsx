@@ -8,6 +8,7 @@ import './dialogs.css'
 import './forms.css'
 import './menu.css'
 import './visitron.css'
+import './map.css'
 
 const root = document.getElementById('root')
 if (root) {

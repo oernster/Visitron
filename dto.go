@@ -66,20 +66,27 @@ type CountryDTO struct {
 	Count int    `json:"count"`
 }
 
+// VisitorsDTO is visitors by country over the period, as one website's
+// Statistics dialog (FR-047) and the World visitors dialog (FR-092) both show
+// them. Countries is empty, not absent, when there are none; NoGoatCounter and
+// Problem say why they were not read.
+type VisitorsDTO struct {
+	Period        int          `json:"period"`
+	Countries     []CountryDTO `json:"countries"`
+	NoGoatCounter bool         `json:"noGoatCounter"`
+	Problem       string       `json:"problem"`
+}
+
 // StatisticsDTO is one website's Statistics dialog (FR-045 to FR-049): its
 // downloads to date by platform, repository and release, then its visitors
-// by country over the period. Countries is empty, not absent, when there are
-// none; NoGoatCounter and CountriesProblem say why they were not read.
+// by country over the period.
 type StatisticsDTO struct {
-	ID               int64           `json:"id"`
-	URL              string          `json:"url"`
-	Period           int             `json:"period"`
-	ByPlatform       []NamedCountDTO `json:"byPlatform"`
-	ByRepo           []NamedCountDTO `json:"byRepo"`
-	ByRelease        []NamedCountDTO `json:"byRelease"`
-	Countries        []CountryDTO    `json:"countries"`
-	NoGoatCounter    bool            `json:"noGoatCounter"`
-	CountriesProblem string          `json:"countriesProblem"`
+	ID         int64           `json:"id"`
+	URL        string          `json:"url"`
+	ByPlatform []NamedCountDTO `json:"byPlatform"`
+	ByRepo     []NamedCountDTO `json:"byRepo"`
+	ByRelease  []NamedCountDTO `json:"byRelease"`
+	Visitors   VisitorsDTO     `json:"visitors"`
 }
 
 // ProposalDTO is what the Add and Edit dialogs offer after a crawl.

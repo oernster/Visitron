@@ -237,12 +237,17 @@ func drawnTargets(rules [][2]string, states ...string) map[string]bool {
 // scroll off a short window; the self-reading cycle on it, so a new dialog
 // cannot quietly ship without the cycle every other one has.
 //
+// The cycle counts where the dialog wears it itself or hands it to a component
+// that wears it, as the World visitors dialog hands it to the country table it
+// shares with Statistics.
+//
 // Proved by planting: dropping `pinnedActions` from GuideDialog.tsx fails the
-// first check by name.
+// first check by name; dropping the cycle from WorldDialog.tsx fails the second.
 func TestEveryScrollingDialogPinsItsActionsAndReadsItself(t *testing.T) {
 	const (
 		pinned = "pinnedActions"
 		cycle  = "ref={autoScroll}"
+		handed = "autoScroll={autoScroll}"
 	)
 	scrolling := 0
 	for _, path := range frontendFiles(t) {
@@ -263,7 +268,7 @@ func TestEveryScrollingDialogPinsItsActionsAndReadsItself(t *testing.T) {
 			t.Errorf("%s scrolls a body without pinning its actions: Close would scroll away with the words",
 				filepath.Base(path))
 		}
-		if holdsBody && !strings.Contains(source, cycle) {
+		if holdsBody && !strings.Contains(source, cycle) && !strings.Contains(source, handed) {
 			t.Errorf("%s scrolls a body that does not read itself: it wants %s",
 				filepath.Base(path), cycle)
 		}

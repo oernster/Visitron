@@ -80,6 +80,64 @@ func TestCountriesPassOnEveryFailure(t *testing.T) {
 	}
 }
 
+func TestCountriesOfEveryWebsiteReadEveryOwnedPathAtOnce(t *testing.T) {
+	t.Parallel()
+	store, loads, secrets, clock := countriesFixture()
+	loads.paths = append(loads.paths, SitePath{Path: "elsewhere.net/", ID: 41})
+	got, err := NewCountries(store, loads, secrets, clock).All(context.Background(), domain.DefaultPeriod)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []int64{11, 31, 12}
+	if len(loads.idsAsked) != len(want) {
+		t.Fatalf("asked about %v; want every owned path %v and not the unowned 41", loads.idsAsked, want)
+	}
+	for i, id := range want {
+		if loads.idsAsked[i] != id {
+			t.Errorf("asked about %v; want %v", loads.idsAsked, want)
+		}
+	}
+	if len(got) != 2 || got[0].Code != "GB" || got[1].Code != "FR" {
+		t.Errorf("countries = %v; want GB then FR", got)
+	}
+}
+
+func TestCountriesOfEveryWebsiteAreNoneWithNoWebsites(t *testing.T) {
+	t.Parallel()
+	store, loads, secrets, clock := countriesFixture()
+	store.sites = nil
+	got, err := NewCountries(store, loads, secrets, clock).All(context.Background(), domain.DefaultPeriod)
+	if err != nil || got == nil || len(got) != 0 {
+		t.Fatalf("countries = %v, %v; want an empty list", got, err)
+	}
+	if loads.idsAsked != nil {
+		t.Error("GoatCounter was asked about countries with no path to ask about")
+	}
+}
+
+func TestCountriesOfEveryWebsitePassOnEveryFailure(t *testing.T) {
+	t.Parallel()
+	cases := map[string]func(*fakeStore, *fakePageLoads, *fakeSecrets){
+		"websites":  func(s *fakeStore, _ *fakePageLoads, _ *fakeSecrets) { s.failOn = "Websites" },
+		"key":       func(_ *fakeStore, _ *fakePageLoads, k *fakeSecrets) { k.err = errPlanted },
+		"paths":     func(_ *fakeStore, l *fakePageLoads, _ *fakeSecrets) { l.pathsErr = errPlanted },
+		"countries": func(_ *fakeStore, l *fakePageLoads, _ *fakeSecrets) { l.countriesErr = errPlanted },
+	}
+	for name, plant := range cases {
+		store, loads, secrets, clock := countriesFixture()
+		plant(store, loads, secrets)
+		_, err := NewCountries(store, loads, secrets, clock).All(context.Background(), domain.DefaultPeriod)
+		if !errors.Is(err, errPlanted) {
+			t.Errorf("%s: err = %v; want the planted failure", name, err)
+		}
+	}
+	store, loads, secrets, clock := countriesFixture()
+	delete(secrets.values, GoatCounterKey)
+	if _, err := NewCountries(store, loads, secrets, clock).All(context.Background(), domain.DefaultPeriod); !errors.Is(err, ErrNoGoatCounter) {
+		t.Errorf("err = %v; want ErrNoGoatCounter", err)
+	}
+}
+
 func TestCountriesRefuseAWebsiteNoLongerRecorded(t *testing.T) {
 	t.Parallel()
 	store, loads, secrets, clock := countriesFixture()

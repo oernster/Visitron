@@ -24,13 +24,18 @@ var creditFor = map[string]string{
 	"modernc.org/sqlite":            "modernc.org/sqlite",
 	"react":                         "React",
 	"react-dom":                     "React",
+	"world-atlas":                   "world-atlas",
+	"topojson-client":               "topojson-client",
+	"d3-geo":                        "d3-geo",
+	"i18n-iso-countries":            "i18n-iso-countries",
 }
 
 // creditedWithoutADependency are the credits no dependency file names, each
 // with why it is there.
 var creditedWithoutADependency = map[string]string{
-	"SQLite":                         "the database modernc.org/sqlite is a translation of",
-	"GoatCounter (the service read)": "the service the page loads come from",
+	"SQLite":                           "the database modernc.org/sqlite is a translation of",
+	"GoatCounter (the service read)":   "the service the page loads come from",
+	"Natural Earth (the map's shapes)": "the data world-atlas redistributes",
 }
 
 // directRequire matches a direct requirement in go.mod; an indirect one is

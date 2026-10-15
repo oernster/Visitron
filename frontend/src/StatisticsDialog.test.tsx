@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { StatisticsDialog } from './StatisticsDialog'
-import { installBridge, someStatistics } from './bridge-fake'
+import { installBridge, someStatistics, someVisitors } from './bridge-fake'
 import type { Statistics } from './api'
 
 function open(stats: Statistics = someStatistics) {
@@ -25,20 +25,20 @@ describe('the Statistics dialog', () => {
   })
 
   it('says GoatCounter is not set up and keeps the downloads', async () => {
-    open({ ...someStatistics, countries: [], noGoatCounter: true })
+    open({ ...someStatistics, visitors: { ...someVisitors, countries: [], noGoatCounter: true } })
     expect(await screen.findByText(/need its account name and key in Settings/)).toBeInTheDocument()
     expect(screen.getByRole('table', { name: 'By platform' })).toBeInTheDocument()
     expect(screen.queryByRole('table', { name: 'By country' })).toBeNull()
   })
 
   it('names a failed country read and keeps the downloads', async () => {
-    open({ ...someStatistics, countries: [], countriesProblem: 'GoatCounter: offline' })
+    open({ ...someStatistics, visitors: { ...someVisitors, countries: [], problem: 'GoatCounter: offline' } })
     expect(await screen.findByRole('alert')).toHaveTextContent('The countries could not be read: GoatCounter: offline')
     expect(screen.getByRole('table', { name: 'By platform' })).toBeInTheDocument()
   })
 
   it('says when there are no visitors and no downloads yet', async () => {
-    open({ ...someStatistics, byPlatform: [], byRepo: [], byRelease: [], countries: [] })
+    open({ ...someStatistics, byPlatform: [], byRepo: [], byRelease: [], visitors: { ...someVisitors, countries: [] } })
     expect(await screen.findByText('No visitors in this period yet.')).toBeInTheDocument()
     expect(screen.getByText('No downloads yet.')).toBeInTheDocument()
     expect(screen.queryByRole('table', { name: 'By release' })).toBeNull()

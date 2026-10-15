@@ -5,8 +5,9 @@
 
 import { useEffect, useState } from 'react'
 import { api } from './api'
-import type { NamedCount, Refused, Statistics } from './api'
+import type { NamedCount, Refused, Statistics, Visitors } from './api'
 import { Modal } from './Modal'
+import { CountryTable, visitorsGap } from './Visitors'
 import { useAutoScroll } from './useAutoScroll'
 import { periodLabel } from './WebsiteList'
 
@@ -37,35 +38,12 @@ function Totals({ title, rows, autoScroll }: TotalsProps) {
   )
 }
 
-// What stands in the countries' place when there is no table to show.
 const reading = 'Reading the statistics.'
-const noGoatCounter = 'Countries come from GoatCounter, so they need its account name and key in Settings.'
-const noCountries = 'No visitors in this period yet.'
 const noDownloads = 'No downloads yet.'
 const howCounted = 'As GoatCounter counts visitors by location, so these need not add up to page loads.'
 
-function Countries({ stats }: { stats: Statistics }) {
-  if (stats.noGoatCounter) return <p>{noGoatCounter}</p>
-  if (stats.countriesProblem) return <p role="alert">The countries could not be read: {stats.countriesProblem}</p>
-  if (stats.countries.length === 0) return <p>{noCountries}</p>
-  return (
-    <>
-      <div className="totals-scroll countries-scroll">
-        <table className="totals countries">
-          <caption>By country</caption>
-          <tbody>
-            {stats.countries.map((c) => (
-              <tr key={c.code}>
-                <td>{c.name}</td>
-                <td>{c.count}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="secret-help">{howCounted}</p>
-    </>
-  )
+function Countries({ visitors }: { visitors: Visitors }) {
+  return visitorsGap(visitors) ?? <CountryTable countries={visitors.countries} note={howCounted} />
 }
 
 interface Props {
@@ -106,8 +84,8 @@ export function StatisticsDialog({ id, refused, onClose }: Props) {
               </div>
             </section>
             <section className="statistics-section">
-              <h3>Visitors by country, {periodLabel(stats.period)}</h3>
-              <Countries stats={stats} />
+              <h3>Visitors by country, {periodLabel(stats.visitors.period)}</h3>
+              <Countries visitors={stats.visitors} />
             </section>
           </div>
         )}
