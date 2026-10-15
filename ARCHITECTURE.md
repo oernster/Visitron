@@ -49,8 +49,9 @@ version comparison (`version.go`).
 **Application, `internal/application`.** One service per thing the owner does,
 over the ports in `ports.go`: `websites.go` (add, edit, delete, crawl),
 `check.go` (one pass over every website), `scheduler.go` (when a check is due,
-the wait after a failure), `figures.go`, `countries.go` (one website's visitors
-by country; also the one rule for whether GoatCounter is set up), `settings.go`,
+the wait after a failure), `figures.go`, `countries.go` (visitors by country,
+for one website or for every website as one read; also the one rule for
+whether GoatCounter is set up), `settings.go`,
 `update.go`, `about.go`, with `days.go` turning an instant into the calendar
 day it falls on.
 
@@ -75,10 +76,13 @@ embedded licence and its plain reading.
 
 **UI, the root package and `frontend/`.** `app.go`, `actions.go` and
 `statistics.go` are the facade: one bound method per action, converting shapes
-and calling one service.
+and calling one service. `statistics.go` answers both the Statistics dialog and
+World visitors, which share one visitors shape.
 `dto.go` holds the wire shapes; `closing.go` the close choice; `updates.go` the
 update offer; `window.go` the Wails runtime seams. The React page in
-`frontend/src` talks to the facade through `api.ts` alone.
+`frontend/src` talks to the facade through `api.ts` alone. The world map's
+shapes are most of the page's weight, so the map is a chunk of its own, loaded
+from the page's own files the first time World visitors draws it.
 
 **Setup program, `installer/`.** A second Wails application in the same module
 that embeds the built application as `payload.zip`. `installer/app.go` is a

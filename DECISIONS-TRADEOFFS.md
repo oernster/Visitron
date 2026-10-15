@@ -105,14 +105,34 @@ public repository, grouped by platform from the file's extension.
 ### Visitors by country, read when asked
 
 A website's visitors by country come from GoatCounter, counted over that
-website's own paths; they are read when its Statistics open rather than kept.
-Downloads have no country: GitHub does not record one.
+website's own paths; they are read when its Statistics or World visitors open
+rather than kept. Downloads have no country: GitHub does not record one.
 
 - **Rather than:** storing countries at every check; downloads by country,
   which no source offers.
 - **Gains:** no second history to keep; the figures are GoatCounter's own.
 - **Costs:** countries need the network when asked; GoatCounter counts them
   its own way, so they need not add up to page loads.
+
+### Every website's countries as one read, on a map shipped inside
+
+World visitors asks GoatCounter once for every path a recorded website owns
+and shows the answer on a world map beside a table. The map's shapes are
+bundled with the page, drawn at a scale fine enough to show small countries;
+countries are shaded in a few steps that rise on a logarithmic scale. Only
+the chosen period is shown; Visitron does not remember when a country first
+appeared.
+
+- **Rather than:** adding up each website's own figures; map tiles fetched
+  from a map service; equal shading steps; a stored history of countries.
+- **Gains:** GoatCounter does the counting across websites; the map works
+  with no extra request and nothing new learns which countries visit; a
+  country with a handful of visitors is still visibly shaded beside one with
+  hundreds.
+- **Costs:** the figures need not match the sum of the websites' own tables;
+  the shapes are most of the page's weight, so they load on the map's first
+  showing; a few very small territories have no shape and appear only in the
+  table; a new country is noticed by looking rather than flagged.
 
 ### A website is an address prefix; the longest owns a path
 

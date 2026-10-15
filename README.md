@@ -35,7 +35,8 @@ Visitron reports counts, not people.
   GoatCounter for page loads and visitors by country, to GitHub for release
   downloads, to the website
   you add (reading its pages to find its repositories) and to GitHub once a day
-  to check for a newer Visitron, which Settings can turn off.
+  to check for a newer Visitron, which Settings can turn off. The world map's
+  shapes ship inside Visitron, so drawing it asks nothing of anyone.
 - It cannot see downloads from before its first check: GitHub keeps only
   running totals, so the daily history starts there.
 
@@ -51,6 +52,9 @@ Visitron reports counts, not people.
   downloads to date by repository, release and platform, with visitors by
   country over the period beside them, as GoatCounter counts them. Downloads
   have no country; GitHub does not record one.
+- Shows every website's visitors by country together under World visitors: a
+  world map shaded by how many came from each country over the period, with
+  the same figures in a table beside it.
 - Checks every 24 hours by default, from the tray on Windows; Refresh checks at
   once.
 - Can leave out your own downloads of each macOS disk image, if you download
@@ -66,6 +70,7 @@ Visitron reports counts, not people.
 | Language | Go; builds with no C compiler on Windows |
 | Window | Wails v2 on WebView2 (Windows), WebKit (macOS) and WebKitGTK (Linux) |
 | Page | React 18 and TypeScript, built by Vite |
+| Map | Natural Earth's 1:50m shapes from `world-atlas`, drawn with `d3-geo` |
 | History | SQLite through `modernc.org/sqlite` (pure Go) |
 | Secrets | Credential Manager, the Keychain or the Secret Service through `zalando/go-keyring` |
 | Delivery | Windows setup program, macOS DMG (Apple Silicon, notarized), Linux Flatpak |

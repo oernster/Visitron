@@ -4,13 +4,13 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Visitron features: page loads, downloads and a daily history</title>
-<meta name="description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; visitors by country; daily charts; repositories found by reading your site; figures that survive a failed check."/>
+<meta name="description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; visitors by country, with a world map across every website; daily charts; repositories found by reading your site; figures that survive a failed check."/>
 <link rel="canonical" href="https://ernster.dev/Visitron/features.html"/>
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="Visitron"/>
 <meta property="og:title" content="Visitron features: page loads, downloads and a daily history"/>
-<meta property="og:description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; visitors by country; daily charts; repositories found by reading your site; figures that survive a failed check."/>
+<meta property="og:description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; visitors by country, with a world map across every website; daily charts; repositories found by reading your site; figures that survive a failed check."/>
 <meta property="og:url" content="https://ernster.dev/Visitron/features.html"/>
 <meta property="og:image" content="https://ernster.dev/Visitron/application-icon.png"/>
 <meta property="og:image:type" content="image/png"/>
@@ -20,7 +20,7 @@
 <meta property="og:locale" content="en_GB"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Visitron features: page loads, downloads and a daily history"/>
-<meta name="twitter:description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; visitors by country; daily charts; repositories found by reading your site; figures that survive a failed check."/>
+<meta name="twitter:description" content="What Visitron does: one list of your websites with page loads and downloads; tables by repository, release and platform; visitors by country, with a world map across every website; daily charts; repositories found by reading your site; figures that survive a failed check."/>
 <meta name="twitter:image" content="https://ernster.dev/Visitron/application-icon.png"/>
 <meta name="twitter:image:alt" content="Visitron app icon"/>
 <link rel="icon" href="application-icon.png"/>
@@ -83,6 +83,32 @@
                      alt="A website's Statistics: downloads to date by platform, by repository and by release with the newest version first, beside its visitors by country over 30 days, largest first."/>
             </figure>
         </div>
+    </div>
+</section>
+
+<section id="world">
+    <div class="wrap">
+        <h2>Where your visitors come from</h2>
+        <p class="intro">World visitors, in the bar, puts every website's visitors
+            together on a map of the world over the period you chose. Watch new
+            countries appear as the weeks go by.</p>
+        <ul class="plain-list">
+            <li><strong>Shaded by how many came.</strong> The deeper the shade, the
+                more visitors; the steps rise on a logarithmic scale, so a country with
+                a handful still stands out beside one with hundreds. The key under the
+                map gives the counts each shade covers.</li>
+            <li><strong>The figures beside it.</strong> A table lists every country,
+                largest first; point at a country on the map to read its own.</li>
+            <li><strong>Counted once across every site.</strong> GoatCounter counts
+                them over all your websites at once, so the totals need not add up to
+                each website's own table.</li>
+            <li><strong>Nothing fetched to draw it.</strong> The map's shapes come
+                inside Visitron, so drawing it asks no map service for anything.</li>
+        </ul>
+        <figure class="shot wide">
+            <img src="screenshots/world-visitors.png" width="1089" height="672"
+                 alt="World visitors: a world map with each country shaded by its visitors over 30 days, deepest for the most, a key of the counts each shade covers beneath it and a table of every country, largest first, beside it."/>
+        </figure>
     </div>
 </section>
 
