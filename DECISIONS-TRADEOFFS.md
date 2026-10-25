@@ -137,14 +137,16 @@ appeared.
 ### A website is an address prefix; the longest owns a path
 
 A website is a host plus a path. A GoatCounter path belongs to the website
-with the longest address that begins it, so a sub-site under a site counts
-separately from the site above it.
+with the longest address that begins it once the path is closed with a slash,
+so `example.com/app` belongs to `example.com/app/` while `example.com/apple`
+does not. A sub-site under a site therefore counts separately from the site
+above it.
 
 - **Rather than:** one website per host; a path shared between websites.
 - **Gains:** several applications on one domain each get their own figures;
   no page load is counted twice.
 - **Costs:** the path a site records must match the address given for it,
-  case included.
+  case included; only a missing final slash is forgiven.
 
 ### Repositories are proposed by a crawl and chosen by the owner
 

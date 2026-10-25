@@ -68,7 +68,7 @@ Out of scope (decided; see also 3.11 Won't this time):
 | Site address | An `https` URL reduced to host plus path, lower-case host, no query, no fragment, ending in `/`. `https://example.com/app/` and `https://example.org/` are site addresses. The path keeps its case, because GitHub Pages paths are case sensitive. |
 | Sub-site | A website whose address begins with another website's address: `example.com/app/` is a sub-site of `example.com/`. |
 | Page load | One count recorded by GoatCounter when a page carrying the tag loads in a browser. GoatCounter stores it under the path `host + path`, for example `example.org/download.html`. |
-| Owned path | A GoatCounter path belongs to the website with the longest address that is a prefix of it. |
+| Owned path | A GoatCounter path, closed with `/` where it lacks one, belongs to the website with the longest address that is a prefix of it: `example.com/app` belongs to `example.com/app/` while `example.com/apple` does not. |
 | Repository | A public GitHub repository named `owner/name`. |
 | Chosen repository | A repository ticked for a website; only chosen repositories count towards its downloads. |
 | Release file | One asset attached to a GitHub release. |
@@ -78,7 +78,7 @@ Out of scope (decided; see also 3.11 Won't this time):
 | Platform | Windows for a file ending `.exe`, macOS for `.dmg`, Linux for `.flatpak`, Other for anything else. Case is ignored. |
 | Check | One pass over every website: page loads from GoatCounter, downloads from GitHub, a snapshot saved. |
 | Snapshot | The counted downloads of every release file at the moment of a check. |
-| Day | A calendar day in the time zone Windows is set to. |
+| Day | A calendar day in the time zone the computer is set to. |
 | Check interval | The time between automatic checks; 24 hours unless changed in Settings. |
 | Crawl | The fetch of a website's pages that finds the repositories it mentions. |
 | Reference machine | The owner's desktop, Windows 11. |
@@ -532,7 +532,9 @@ danger band, one home for every colour and the wire stated on both sides,
 each enforced by a structural test proved by planting a violation.
 
 **NFR-OBS-001 Log**: Each check shall log its start, each website's outcome
-and its end with duration, to `%LOCALAPPDATA%\Visitron\Log.txt`.
+and its end with duration, to `Visitron/Log.txt` in the platform's own log
+folder: `%LOCALAPPDATA%` on Windows, `~/Library/Logs` on macOS and
+`$XDG_STATE_HOME` (else `~/.local/state`) on Linux.
 
 ### 3.11 Won't this time
 
@@ -1255,3 +1257,17 @@ shape carries no code.
   the chosen period, so a new country appears on it by being visited; marking
   it as new would need a stored history of countries, which Visitron does not
   keep. Shading by region within a country: the read answers countries alone.
+
+**Amendment 32 (2026-10-25): a page recorded without its final slash.**
+Found by the owner on 2026-10-25: a sub-site showed no page loads while
+GoatCounter's own dashboard listed eleven, all recorded as `host/folder`.
+GoatCounter records a visitor who lands on a folder without its final slash
+under that exact path, which no site address begins, so the visit went to the
+site above or to none.
+
+- FR-020: a recorded path is closed with `/` before the prefix test, so
+  `example.com/App` belongs to `example.com/App/` while `example.com/Apple`
+  still does not. The rule serves page loads and countries alike (FR-047,
+  FR-092). The history already held is attributed afresh when the figures are
+  next read, since paths are stored as GoatCounter recorded them. Verified
+  by `internal/domain/figures_test.go::TestLongestPrefixOwns`.
