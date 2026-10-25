@@ -20,6 +20,8 @@ func TestLongestPrefixOwns(t *testing.T) {
 		"example.com/?ref=x":            hub,
 		"example.com/App/index.html":    app,
 		"example.com/App/":              app,
+		"example.com/App":               app,
+		"example.com/Apple":             hub,
 		"EXAMPLE.COM/App/":              app,
 		"example.com/app/":              hub,
 		"example.org/download.html":     sym,
