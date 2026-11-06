@@ -47,7 +47,8 @@ Visitron reports counts, not people.
 - Gives a sub-site its own figures: `example.com/app` is counted apart from
   `example.com`.
 - Shows page loads and downloads over 7, 30, 90 or 365 days, plus downloads to
-  date.
+  date and the downloads between your last two presses of Refresh, which a
+  restart or an automatic check leaves as they were.
 - Opens each website's statistics from the button at the right of its row:
   downloads to date by repository, release and platform, with visitors by
   country over the period beside them, as GoatCounter counts them. Downloads

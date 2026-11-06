@@ -221,10 +221,12 @@ automatic retry.
 
 ### Each snapshot is written whole
 
-A check's figures are saved in one transaction.
+Each repository's reading and each read of page loads is saved in one
+transaction of its own.
 
 - **Rather than:** writing file by file.
-- **Gains:** a quit, crash or power cut leaves the last good figures intact.
+- **Gains:** a quit, crash or power cut leaves every repository and the page
+  loads at their last good figures.
 - **Costs:** none recorded.
 
 ## Privacy and the network
