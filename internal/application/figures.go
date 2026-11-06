@@ -13,7 +13,8 @@ type SiteFigures struct {
 	Downloads int
 	// TotalDownloads is every counted download to date.
 	TotalDownloads int
-	// SinceLastCheck is the rise between the last two kept snapshots.
+	// SinceLastCheck is the rise between the last two presses of Refresh,
+	// whatever ran or restarted between them (Amendment 33).
 	SinceLastCheck int
 }
 
@@ -62,8 +63,8 @@ func (f *Figures) Overview(period domain.Period) ([]SiteFigures, error) {
 		for _, d := range rises {
 			row.Downloads += d.Count
 		}
-		if n := len(rises); n > 0 {
-			row.SinceLastCheck = rises[n-1].Count
+		if row.SinceLastCheck, err = f.sinceLastPress(w, self); err != nil {
+			return nil, err
 		}
 		rows = append(rows, row)
 	}
@@ -162,6 +163,21 @@ func (f *Figures) dailyLoads(sites []Website, period domain.Period) (map[domain.
 		}
 	}
 	return out, nil
+}
+
+// sinceLastPress answers the rise in w's counted downloads between the last
+// two presses of Refresh, summed over its chosen repos; none for a repo read
+// by fewer than two.
+func (f *Figures) sinceLastPress(w Website, self int) (int, error) {
+	total := 0
+	for _, repo := range w.Repos {
+		earlier, later, err := f.store.RefreshReadings(repo)
+		if err != nil {
+			return 0, err
+		}
+		total += domain.RiseBetween(earlier, later, self)
+	}
+	return total, nil
 }
 
 // selfDownloads answers the owner's own downloads of each disk image, as set

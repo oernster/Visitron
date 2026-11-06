@@ -42,8 +42,9 @@ func TestOverviewSeparatesSubSites(t *testing.T) {
 	if hub.PageLoads != 3 || hub.TotalDownloads != 0 {
 		t.Errorf("hub %+v", hub)
 	}
-	if wd.PageLoads != 7 || wd.TotalDownloads != 15 || wd.Downloads != 5 || wd.SinceLastCheck != 3 {
-		t.Errorf("App %+v; want loads 7, total 15, period 5, since last 3", wd)
+	// Daily history alone moves no change since the last press (Amendment 33).
+	if wd.PageLoads != 7 || wd.TotalDownloads != 15 || wd.Downloads != 5 || wd.SinceLastCheck != 0 {
+		t.Errorf("App %+v; want loads 7, total 15, period 5, since last press 0", wd)
 	}
 }
 
@@ -153,5 +154,10 @@ func TestFiguresFaults(t *testing.T) {
 		if _, err := f.Detail(wdID, domain.Week); !errors.Is(err, errPlanted) {
 			t.Errorf("detail %s: %v", op, err)
 		}
+	}
+	f, store, _, _, _ := figuresFixture()
+	store.failOn = "RefreshReadings"
+	if _, err := f.Overview(domain.Week); !errors.Is(err, errPlanted) {
+		t.Errorf("overview RefreshReadings: %v", err)
 	}
 }

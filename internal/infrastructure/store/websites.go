@@ -98,8 +98,8 @@ func writeRepos(tx *sql.Tx, id int64, repos []domain.Repo) error {
 }
 
 // DeleteWebsite removes a website with its history (FR-010): the release
-// files of every repo no remaining website chose. Page loads stay, since they
-// belong to whichever website owns their path.
+// files and refresh readings of every repo no remaining website chose. Page
+// loads stay, since they belong to whichever website owns their path.
 func (s *Store) DeleteWebsite(id int64) error {
 	return s.inTransaction(func(tx *sql.Tx) error {
 		res, err := tx.Exec(`DELETE FROM websites WHERE id = ?`, id)
@@ -109,9 +109,13 @@ func (s *Store) DeleteWebsite(id int64) error {
 		if err := mustHaveChanged(res); err != nil {
 			return err
 		}
-		_, err = tx.Exec(`DELETE FROM release_files WHERE repo NOT IN
-			(SELECT lower(owner || '/' || name) FROM website_repos)`)
-		return err
+		for _, table := range []string{"release_files", "refresh_files"} {
+			if _, err := tx.Exec(`DELETE FROM ` + table + ` WHERE repo NOT IN
+				(SELECT lower(owner || '/' || name) FROM website_repos)`); err != nil {
+				return err
+			}
+		}
+		return nil
 	})
 }
 

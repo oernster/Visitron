@@ -294,10 +294,12 @@ func TestClosedFileRefusesEverything(t *testing.T) {
 	_, e6 := s.PageLoads(oct9, oct9)
 	_, _, e7 := s.Preferences()
 	_, e8 := s.CheckRecord()
+	_, _, e9 := s.RefreshReadings(sym)
 	for i, err := range []error{e1, e2, s.UpdateWebsite(w), s.DeleteWebsite(1),
 		s.SaveFiles(oct9, sym, []domain.ReleaseFile{file("a", 1)}), e4, e5,
 		s.SavePageLoads(oct9, oct9, nil), e6, e7, s.SavePreferences(application.Preferences{}), e8,
-		s.SaveCheckRecord(application.CheckRecord{}), s.migrate()} {
+		s.SaveCheckRecord(application.CheckRecord{}), s.migrate(),
+		s.SaveRefreshReading(sym, []domain.ReleaseFile{file("a", 1)}), e9} {
 		if err == nil {
 			t.Errorf("operation %d succeeded on a closed file", i)
 		}
@@ -315,9 +317,11 @@ func TestUnavailableRefusesEverything(t *testing.T) {
 	_, e6 := u.PageLoads(oct9, oct9)
 	_, _, e7 := u.Preferences()
 	_, e8 := u.CheckRecord()
+	_, _, e9 := u.RefreshReadings(sym)
 	for i, err := range []error{e1, e2, u.UpdateWebsite(application.Website{}), u.DeleteWebsite(1),
 		u.SaveFiles(oct9, sym, nil), e4, e5, u.SavePageLoads(oct9, oct9, nil), e6, e7,
-		u.SavePreferences(application.Preferences{}), e8, u.SaveCheckRecord(application.CheckRecord{})} {
+		u.SavePreferences(application.Preferences{}), e8, u.SaveCheckRecord(application.CheckRecord{}),
+		u.SaveRefreshReading(sym, nil), e9} {
 		if !errors.Is(err, why) {
 			t.Errorf("operation %d: %v", i, err)
 		}

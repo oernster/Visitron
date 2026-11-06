@@ -352,8 +352,9 @@ that verifies it; test names are the intended ones until the code exists.
 - Priority: Must
 - Requirement: The window shall list every website with its page loads and
   counted downloads for the chosen period, plus the change since the previous
-  check.
-- Verified by: `frontend` component test `WebsiteList.test.tsx`
+  press of Refresh (Amendment 33).
+- Verified by: `frontend` component test `WebsiteList.test.tsx`;
+  `internal/application/refresh_test.go::TestSinceLastCheckIsTheRiseBetweenTwoPresses`
 
 **FR-042 Website detail**
 - Priority: Must
@@ -1271,3 +1272,26 @@ site above or to none.
   FR-092). The history already held is attributed afresh when the figures are
   next read, since paths are stored as GoatCounter recorded them. Verified
   by `internal/domain/figures_test.go::TestLongestPrefixOwns`.
+
+**Amendment 33 (2026-11-06): "Since last check" counts from the press
+before.** Found by the owner on 2026-11-06: after a reboot one website showed
++133 since the last check, which did not ring true. The column was the rise of
+the latest day held over the day held before it (Amendment 1), so it grew with
+each check through a day; after days with Visitron not running it held every
+download since the last day it ran. Ruled by the owner on 2026-11-06: the
+column is the downloads between the last two presses of Refresh.
+
+- FR-041: each press of Refresh, from the window or the tray, keeps the release
+  files it read for each repo as that repo's reading; the reading before it is
+  kept beside it and the one before that goes. "Since last check" is the rise
+  in counted downloads from the earlier reading to the later, less own
+  downloads on each disk image as set (Amendment 19). This supersedes
+  Amendment 1's account of the column.
+- The readings live in the data file, so neither a restart nor a reboot moves
+  the column; nor does an automatic check (FR-030, FR-031), which still keeps
+  the daily history and every other figure current.
+- A press that cannot read a repo leaves that repo's two readings as they were.
+  Until a repo has been read at two presses it adds nothing, so the column
+  shows 0 after the first press following this change.
+- Verified by `internal/application/refresh_test.go` and
+  `internal/infrastructure/store/refresh_test.go`.

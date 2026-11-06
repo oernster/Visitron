@@ -62,6 +62,13 @@ func Rise(earlier, later Snapshot) int {
 	return total
 }
 
+// RiseBetween is the rise in counted downloads from one reading of release
+// files to a later one, less selfDownloads on each .dmg; as with Rise, a file
+// that fell or is missing from either adds nothing (FR-024).
+func RiseBetween(earlier, later []ReleaseFile, selfDownloads int) int {
+	return Rise(SnapshotOf(Day{}, earlier, selfDownloads), SnapshotOf(Day{}, later, selfDownloads))
+}
+
 // DailyRises keeps the last snapshot of each day in day order, then reports
 // each day's rise over the day kept before it. The first day kept has nothing
 // to rise from, so it reports none.

@@ -136,6 +136,23 @@ func TestFallIsNotNegative(t *testing.T) {
 	}
 }
 
+func TestRiseBetweenTwoReadings(t *testing.T) {
+	t.Parallel()
+	sym := Repo{"someone", "Widget"}
+	read := func(exe, dmg int) []ReleaseFile {
+		return []ReleaseFile{{sym, "v1", "WidgetSetup.exe", exe}, {sym, "v1", "Widget.dmg", dmg}}
+	}
+	if got := RiseBetween(read(10, 1), read(13, 4), 1); got != 6 {
+		t.Errorf("RiseBetween = %d; want 6", got)
+	}
+	if got := RiseBetween(read(10, 1), read(13, 4), 2); got != 5 {
+		t.Errorf("own downloads 2: RiseBetween = %d; want 5, the disk image counts from 2", got)
+	}
+	if got := RiseBetween(nil, read(13, 4), 1); got != 0 {
+		t.Errorf("no earlier reading gave %d; want 0", got)
+	}
+}
+
 func TestDayOrderAndText(t *testing.T) {
 	t.Parallel()
 	days := []Day{{2025, 12, 31}, {2026, 1, 1}, {2026, 2, 1}, {2026, 2, 2}}

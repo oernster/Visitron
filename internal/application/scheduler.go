@@ -75,7 +75,7 @@ func (s *Scheduler) Tick(ctx context.Context, progress Progress) (Outcome, bool,
 	if err != nil || !due {
 		return Outcome{}, false, err
 	}
-	out, err := s.Refresh(ctx, progress)
+	out, err := s.start(ctx, progress, s.check.Run)
 	if errors.Is(err, ErrBusy) {
 		return Outcome{}, false, nil
 	}
@@ -89,8 +89,16 @@ func (s *Scheduler) RecordFault(reason string) error {
 	return s.check.record(s.clock.Now(), Outcome{Failures: []string{reason}})
 }
 
-// Refresh runs a check now unless one is running (FR-032, FR-033).
+// Refresh runs a check now unless one is running (FR-032, FR-033). It is the
+// owner's press, from the window or the tray, so it moves the change since
+// the previous press (Amendment 33).
 func (s *Scheduler) Refresh(ctx context.Context, progress Progress) (Outcome, error) {
+	return s.start(ctx, progress, s.check.Press)
+}
+
+// start runs check unless one is running.
+func (s *Scheduler) start(ctx context.Context, progress Progress,
+	check func(context.Context, Progress) (Outcome, error)) (Outcome, error) {
 	s.mu.Lock()
 	if s.running {
 		s.mu.Unlock()
@@ -103,7 +111,7 @@ func (s *Scheduler) Refresh(ctx context.Context, progress Progress) (Outcome, er
 		s.running = false
 		s.mu.Unlock()
 	}()
-	out, err := s.check.Run(ctx, progress)
+	out, err := check(ctx, progress)
 	s.mu.Lock()
 	s.resume = out.RateLimitedUntil
 	s.mu.Unlock()

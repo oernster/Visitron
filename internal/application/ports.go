@@ -153,6 +153,15 @@ type Store interface {
 	// figures service's job, since what is taken off is a setting.
 	History(repo domain.Repo, first domain.Day) ([]domain.DayFiles, error)
 
+	// SaveRefreshReading keeps files as repo's reading at this press of
+	// Refresh; the reading it replaces becomes the earlier one and the one
+	// before that goes (Amendment 33).
+	SaveRefreshReading(repo domain.Repo, files []domain.ReleaseFile) error
+	// RefreshReadings answers repo's readings at the press before last and at
+	// the last, with GitHub's own counts; earlier is empty until two presses
+	// have read the repo.
+	RefreshReadings(repo domain.Repo) (earlier, later []domain.ReleaseFile, err error)
+
 	// SavePageLoads replaces the page loads held for the days covered.
 	SavePageLoads(first, last domain.Day, loads []PathDay) error
 	PageLoads(first, last domain.Day) ([]PathDay, error)

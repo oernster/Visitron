@@ -48,10 +48,30 @@ func NewCheck(store Store, releases Releases, pageLoads PageLoads, secrets Secre
 	return &Check{store: store, releases: releases, pageLoads: pageLoads, secrets: secrets, clock: clock, log: log}
 }
 
-// Run reads every chosen repo's release files from GitHub, then a year of
+// trigger says what started a check: only a press of Refresh moves the change
+// since the previous press (FR-041, Amendment 33).
+type trigger int
+
+const (
+	automatic trigger = iota
+	pressed
+)
+
+// Run is a check the scheduler started on its own (FR-030, FR-031).
+func (c *Check) Run(ctx context.Context, progress Progress) (Outcome, error) {
+	return c.run(ctx, progress, automatic)
+}
+
+// Press is a check the owner asked for with Refresh (FR-032). Each repo it
+// reads also becomes that repo's reading at this press.
+func (c *Check) Press(ctx context.Context, progress Progress) (Outcome, error) {
+	return c.run(ctx, progress, pressed)
+}
+
+// run reads every chosen repo's release files from GitHub, then a year of
 // page loads from GoatCounter, saving each as it comes. Whatever fails keeps
 // the figures already held (FR-034); the outcome is recorded either way.
-func (c *Check) Run(ctx context.Context, progress Progress) (Outcome, error) {
+func (c *Check) run(ctx context.Context, progress Progress, by trigger) (Outcome, error) {
 	now := c.clock.Now()
 	sites, err := c.store.Websites()
 	if err != nil {
@@ -73,7 +93,7 @@ func (c *Check) Run(ctx context.Context, progress Progress) (Outcome, error) {
 				continue
 			}
 			read[key] = true
-			c.readRepo(ctx, DayOf(now), repo, &out)
+			c.readRepo(ctx, DayOf(now), repo, by, &out)
 		}
 		c.log.Printf("%s: %s", w.Address.URL(), siteOutcome(len(w.Repos), out.Failures[before:], out.RateLimitedUntil))
 	}
@@ -115,7 +135,9 @@ func loadsOutcome(noKey bool, failures []string) string {
 	}
 }
 
-func (c *Check) readRepo(ctx context.Context, day domain.Day, repo domain.Repo, out *Outcome) {
+// readRepo reads and saves one repo. A repo that is not read keeps the
+// reading it had, so a press that fails for it leaves its change as it was.
+func (c *Check) readRepo(ctx context.Context, day domain.Day, repo domain.Repo, by trigger, out *Outcome) {
 	files, reset, err := c.releases.Files(ctx, repo)
 	switch {
 	case errors.Is(err, ErrRateLimited):
@@ -125,6 +147,13 @@ func (c *Check) readRepo(ctx context.Context, day domain.Day, repo domain.Repo, 
 	default:
 		if err := c.store.SaveFiles(day, repo, files); err != nil {
 			out.Failures = append(out.Failures, fmt.Sprintf("saving %s: %v", repo, err))
+			return
+		}
+		if by != pressed {
+			return
+		}
+		if err := c.store.SaveRefreshReading(repo, files); err != nil {
+			out.Failures = append(out.Failures, fmt.Sprintf("saving the refresh reading of %s: %v", repo, err))
 		}
 	}
 }

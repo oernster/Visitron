@@ -153,9 +153,12 @@ func (f *fakeStartup) SetEnabled(on bool) error {
 
 // fakeStore keeps everything in memory with the store's semantics.
 type fakeStore struct {
-	sites   []Website
-	nextID  int64
-	files   map[string]map[domain.Day][]domain.ReleaseFile
+	sites  []Website
+	nextID int64
+	files  map[string]map[domain.Day][]domain.ReleaseFile
+	// pressed holds each repo's readings at the press before last and the
+	// last, in that order.
+	pressed map[string][2][]domain.ReleaseFile
 	loads   []PathDay
 	prefs   *Preferences
 	record  CheckRecord
@@ -164,7 +167,10 @@ type fakeStore struct {
 }
 
 func newStore() *fakeStore {
-	return &fakeStore{files: map[string]map[domain.Day][]domain.ReleaseFile{}}
+	return &fakeStore{
+		files:   map[string]map[domain.Day][]domain.ReleaseFile{},
+		pressed: map[string][2][]domain.ReleaseFile{},
+	}
 }
 
 func (s *fakeStore) fail(op string) error {
@@ -251,6 +257,20 @@ func (s *fakeStore) History(repo domain.Repo, first domain.Day) ([]domain.DayFil
 		}
 	}
 	return held, nil
+}
+
+func (s *fakeStore) SaveRefreshReading(repo domain.Repo, files []domain.ReleaseFile) error {
+	if err := s.fail("SaveRefreshReading"); err != nil {
+		return err
+	}
+	key := strings.ToLower(repo.String())
+	s.pressed[key] = [2][]domain.ReleaseFile{s.pressed[key][1], files}
+	return nil
+}
+
+func (s *fakeStore) RefreshReadings(repo domain.Repo) ([]domain.ReleaseFile, []domain.ReleaseFile, error) {
+	held := s.pressed[strings.ToLower(repo.String())]
+	return held[0], held[1], s.fail("RefreshReadings")
 }
 
 func (s *fakeStore) SavePageLoads(_, _ domain.Day, loads []PathDay) error {

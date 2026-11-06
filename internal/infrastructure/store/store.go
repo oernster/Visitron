@@ -172,6 +172,18 @@ var migrations = []string{
 		key   TEXT PRIMARY KEY,
 		value TEXT NOT NULL
 	);`,
+	// Each repo's release files at the last two presses of Refresh
+	// (Amendment 33).
+	`CREATE TABLE refresh_files (
+		reading TEXT NOT NULL,
+		repo    TEXT NOT NULL,
+		owner   TEXT NOT NULL,
+		name    TEXT NOT NULL,
+		release TEXT NOT NULL,
+		file    TEXT NOT NULL,
+		raw     INTEGER NOT NULL,
+		PRIMARY KEY (repo, reading, release, file)
+	);`,
 }
 
 // migrate applies every migration the file has not had, each in one

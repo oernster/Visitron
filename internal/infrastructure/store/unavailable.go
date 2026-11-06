@@ -36,6 +36,14 @@ func (u Unavailable) History(domain.Repo, domain.Day) ([]domain.DayFiles, error)
 	return nil, u.Reason
 }
 
+// SaveRefreshReading refuses.
+func (u Unavailable) SaveRefreshReading(domain.Repo, []domain.ReleaseFile) error { return u.Reason }
+
+// RefreshReadings refuses.
+func (u Unavailable) RefreshReadings(domain.Repo) ([]domain.ReleaseFile, []domain.ReleaseFile, error) {
+	return nil, nil, u.Reason
+}
+
 // SavePageLoads refuses.
 func (u Unavailable) SavePageLoads(domain.Day, domain.Day, []application.PathDay) error {
 	return u.Reason

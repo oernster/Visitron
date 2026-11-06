@@ -170,6 +170,18 @@ period longer than the history held says the day counting began.
 - **Costs:** downloads before the first check are a total with no shape; the
   first day has nothing to rise from.
 
+### "Since last check" counts from the press before
+
+The column is the rise between the readings taken at the last two presses of
+Refresh, kept in the data file apart from the daily history (Amendment 33).
+
+- **Rather than:** the latest day's rise, which grew with every check through
+  a day; after days with Visitron not running it held all of them.
+- **Gains:** the number answers "what came in since I last asked", whatever
+  restarted or checked on its own in between.
+- **Costs:** the column stays as it was until the next press, even while the
+  automatic checks bring the other figures up to date.
+
 ### GitHub's counts stored; own downloads taken off on reading
 
 The store keeps GitHub's counts as read. The owner's own downloads of each
