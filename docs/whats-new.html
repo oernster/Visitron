@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>What's new in Visitron: release history</title>
+<meta name="description" content="Visitron's release history: a Since last check column that counts from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
+<link rel="canonical" href="https://ernster.dev/Visitron/whats-new.html"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Visitron"/>
+<meta property="og:title" content="What's new in Visitron: release history"/>
+<meta property="og:description" content="A Since last check column that counts from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
+<meta property="og:url" content="https://ernster.dev/Visitron/whats-new.html"/>
+<meta property="og:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="1254"/>
+<meta property="og:image:height" content="1254"/>
+<meta property="og:image:alt" content="Visitron app icon"/>
+<meta property="og:locale" content="en_GB"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="What's new in Visitron: release history"/>
+<meta name="twitter:description" content="A Since last check column that counts from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
+<meta name="twitter:image" content="https://ernster.dev/Visitron/application-icon.png"/>
+<meta name="twitter:image:alt" content="Visitron app icon"/>
+<link rel="icon" href="application-icon.png"/>
+<link rel="stylesheet" href="styles.css"/>
+<script>window.goatcounter = {path: function (p) { return location.host + p }}</script>
+<script data-goatcounter="https://oernster.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<header class="bar">
+    <div class="wrap">
+        <a class="mark" href="./"><img src="application-icon.png" alt=""/>Visitron</a>
+        <nav>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a class="hide-small" href="whats-new.html">What's New</a>
+            <a href="download.html">Get it</a>
+            <button type="button" class="toggle" id="theme-toggle" title="Change the appearance">
+                <img id="theme-face" src="light-mode.png" alt="Switch to light mode"/>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<section id="whats-new">
+    <div class="wrap">
+        <div class="eyebrow">Changelog</div>
+        <h2>What's new</h2>
+        <p class="intro">Recent releases have focused on seeing your figures more widely
+            and reading them correctly. Visitron reached macOS and Linux, then gained a
+            map of every website's visitors by country. The newest releases match page
+            loads to a website kept in a folder even when the address lacks its final
+            slash; the Since last check column now counts from your previous press of
+            Refresh.</p>
+
+        <div class="changelog">
+
+            <div class="card">
+                <div class="ver-tag">v<!--VERSION-->1.4.2<!--/VERSION--></div>
+                <h3>Since last check counts from your previous Refresh</h3>
+                <ul class="plain-list">
+                    <li>The column measured from the last day Visitron had run rather than from the previous check, so it crept up with every automatic check; after a restart it could hold days of downloads under a label that suggested minutes</li>
+                    <li>It now shows the downloads between your last two presses of Refresh, from the window or the tray. Each reading is kept in Visitron's data file, so a restart or an automatic check leaves the figure as it was</li>
+                    <li>With no earlier press to compare against, the column shows 0 until you have pressed Refresh twice on this version</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.4.1</div>
+                <h3>Page loads found when an address lacks its final slash</h3>
+                <ul class="plain-list">
+                    <li>A visit to a website kept in a folder, such as example.com/app, that arrived without the final slash was counted against the whole host or against nothing. Such a website could show no page loads while GoatCounter's own dashboard listed them</li>
+                    <li>Visitron now reads the address as the folder it names, so example.com/app counts for example.com/app/ while example.com/apple still does not. The same rule decides each website's visitors by country</li>
+                    <li>Page loads already in your history are reassigned the next time the figures are shown; nothing is fetched again</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.4.0</div>
+                <h3>World visitors: every website's visitors on one map</h3>
+                <ul class="plain-list">
+                    <li>A new World visitors button shows where your visitors come from across every website at once: a map of the world shaded by country over the period you chose, with a table of every country beside it, largest first. Point at a country to read its figure</li>
+                    <li>The shades rise on a logarithmic scale, so a country that sent a handful of visitors still stands out next to one that sent hundreds; the key under the map gives the counts each shade covers</li>
+                    <li>GoatCounter counts these visitors across all your websites in one go, so the totals need not add up to each website's own Statistics</li>
+                    <li>The map's shapes come inside Visitron: drawing it contacts no map service</li>
+                    <li>The Guide describes the new button; About credits the open map data and libraries it is drawn with</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.3.0</div>
+                <h3>Visitron on macOS and Linux</h3>
+                <ul class="plain-list">
+                    <li>Visitron now runs on macOS on Apple Silicon as a signed, notarized disk image and on Linux as a Flatpak, alongside the Windows setup program; the download page offers all three</li>
+                    <li>On macOS and Linux there is no tray: closing the window quits Visitron and the daily check runs while it is open. Starting at sign-in stays a Windows setting</li>
+                    <li>Your GoatCounter key and GitHub token are kept in each system's own store: Credential Manager on Windows, the Keychain on macOS and the keyring on Linux. The history lives in the folder each system keeps for a program's own data, where no cache clean-up can remove it</li>
+                    <li>The update check offers the file for the platform you are on</li>
+                    <li>The Flatpak has no access to your files; it needs only the network, the keyring and its own folders</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.2.1</div>
+                <h3>Countries beside the downloads</h3>
+                <ul class="plain-list">
+                    <li>The Statistics dialog shows a website's visitors by country beside its downloads rather than beneath them, so a long list of releases no longer leaves the countries a row or two of room. Each list has the dialog's full height and scrolls under its own heading</li>
+                    <li>The Guide describes the new arrangement</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.2.0</div>
+                <h3>The list and the detail scroll apart; a tidier Statistics dialog</h3>
+                <ul class="plain-list">
+                    <li>A vertical rule divides the website list from the selected website's detail; each side scrolls on its own. The Period chooser and the table's headings stay in view while the charts stay where they are</li>
+                    <li>The window opens a little taller, so both charts and their notes fit without a scrollbar of their own</li>
+                    <li>The Statistics dialog is only as wide as its tables. Its headings and captions stay in place while the rows scroll inside each table</li>
+                    <li>Releases are named by their version alone, such as v5.5.6. Where a website's releases come from more than one repository, each version keeps its repository's name in front of it</li>
+                    <li>Fixed: the shorter platform and repository tables no longer stretch to the height of a long list of releases</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.1.0</div>
+                <h3>Statistics for each website, with visitors by country</h3>
+                <ul class="plain-list">
+                    <li>Every row in the website list has a Statistics button; Enter on the list opens the same. It shows downloads to date by platform, repository and release, then visitors by country from your GoatCounter account over the period you chose</li>
+                    <li>Downloads carry no country, since GitHub does not record one. Where GoatCounter is not set up or cannot be reached, the dialog says so and still shows the downloads</li>
+                    <li>The tables by platform, repository and release moved into this dialog, leaving the main window to the list and the daily charts</li>
+                    <li>Releases are listed newest first, reading version numbers as numbers, so 1.10.1 sits above 1.9. Anything with no counted downloads is left out rather than shown as 0</li>
+                    <li>Fixed: the tray icon vanished for good when Windows restarted its taskbar. It now returns as soon as the taskbar does</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.0.0</div>
+                <h3>The first release: page loads and downloads in one window</h3>
+                <ul class="plain-list">
+                    <li>Page loads from your GoatCounter account beside downloads from each website's GitHub releases, by repository, release and platform. Choose 7, 30, 90 or 365 days, with a chart of every day</li>
+                    <li>Add a website by its address and Visitron reads the site to propose the GitHub repositories it offers; you tick which count. A website is an address prefix, so example.com/app gets its own figures apart from example.com</li>
+                    <li>GitHub keeps only running totals, so the daily history starts at Visitron's first check; the window says so when a period reaches further back</li>
+                    <li>If you download each macOS disk image yourself, Settings can take that many off every .dmg count</li>
+                    <li>Visitron sits in the tray and checks every 24 hours by default. Refresh checks at once; a failed check leaves a warning on Refresh until a later one succeeds</li>
+                    <li>The GoatCounter key and the optional GitHub token are kept in Windows Credential Manager</li>
+                    <li>A Help menu holds the Guide, About, the licence and Check for updates. A daily check for a newer Visitron can be turned off in Settings</li>
+                    <li>Every control can be reached from the keyboard. The window opens dark, with a button to move it to light</li>
+                    <li>A setup program installs Visitron for your own Windows account with no administrator rights</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <p class="changelog-more">
+            <a class="button plain" href="https://github.com/oernster/Visitron/releases">View all releases on GitHub</a>
+        </p>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        <div class="links">
+            <a href="./">Home</a>
+            <a href="features.html">Features</a>
+            <a href="why.html">Why</a>
+            <a href="whats-new.html">What's New</a>
+            <a href="download.html">Get it</a>
+            <a href="https://github.com/oernster/Visitron">Source on GitHub</a>
+            <a href="https://github.com/oernster/Visitron/blob/main/LICENSE">Licence</a>
+            <a href="https://ernster.dev/commercial-licensing.html">Commercial licensing</a>
+            <a href="https://ernster.dev">More of my work</a>
+        </div>
+        <p>Visitron is free software under the GNU General Public Licence, version 3.
+            You may use it, study it, share it and change it; anything you pass on
+            carries the same freedoms.</p>
+        <p>Visitron reads figures from GoatCounter and GitHub and shows them back to
+            you. It never changes anything on either service.</p>
+        <p>&#169; Oliver Ernster</p>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

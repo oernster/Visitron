@@ -556,6 +556,44 @@ section .intro {
   width: 100%;
 }
 
+/* The release history ----------------------------------------------- */
+
+/* One card per release, newest first, in a single column so the history reads
+   top to bottom. The version sits in a pill above each headline. A long
+   address in a bullet breaks rather than pushing the page sideways. */
+.changelog {
+  display: grid;
+  gap: 22px;
+}
+
+.changelog .card {
+  overflow-wrap: break-word;
+}
+
+.ver-tag {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 3px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 620;
+  color: var(--accent);
+}
+
+.changelog .plain-list {
+  margin-top: 14px;
+}
+
+.changelog .plain-list li:last-child {
+  margin-bottom: 0;
+}
+
+.changelog-more {
+  margin: 40px 0 0;
+  text-align: center;
+}
+
 footer {
   border-top: 1px solid var(--border);
   padding: 44px 0 60px;
