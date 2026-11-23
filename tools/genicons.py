@@ -16,6 +16,8 @@ somebody made would stretch it.
 The site's pictures: GitHub Pages serves docs/ alone, so the site cannot reach
 assets/. Each picture the site shows is a byte for byte copy of its page icon,
 so the site never carries a master's megabytes and never falls out of step.
+The one exception is docs/donate.png, the small donate mark every project site
+shares; it is committed as it is and never written here.
 
 Nothing here resamples the artwork upwards. Reframing is a crop or a pad; an
 upscale invents detail the master does not have.
@@ -63,12 +65,12 @@ ICO = REPO / "build" / "windows" / "icon.ico"
 SETUP_ICO = REPO / "installer" / "build" / "windows" / "icon.ico"
 APPICON = REPO / "build" / "appicon.png"
 SITE = REPO / "docs"
-# SITE_PICTURES are the page icons the site shows, copied into SITE.
+# SITE_PICTURES are the page icons the site shows, copied into SITE. The
+# site's donate.png is left out: it is the shared mark, not a page icon.
 SITE_PICTURES = (
     "application-icon.png",
     "light-mode.png",
     "dark-mode.png",
-    "donate.png",
 )
 
 
