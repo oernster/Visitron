@@ -142,14 +142,46 @@ func TestRiseBetweenTwoReadings(t *testing.T) {
 	read := func(exe, dmg int) []ReleaseFile {
 		return []ReleaseFile{{sym, "v1", "WidgetSetup.exe", exe}, {sym, "v1", "Widget.dmg", dmg}}
 	}
-	if got := RiseBetween(read(10, 1), read(13, 4), 1); got != 6 {
-		t.Errorf("RiseBetween = %d; want 6", got)
+	if got := LatestRiseBetween(read(10, 1), read(13, 4), 1); got != 6 {
+		t.Errorf("LatestRiseBetween = %d; want 6", got)
 	}
-	if got := RiseBetween(read(10, 1), read(13, 4), 2); got != 5 {
-		t.Errorf("own downloads 2: RiseBetween = %d; want 5, the disk image counts from 2", got)
+	if got := LatestRiseBetween(read(10, 1), read(13, 4), 2); got != 5 {
+		t.Errorf("own downloads 2: LatestRiseBetween = %d; want 5, the disk image counts from 2", got)
 	}
-	if got := RiseBetween(nil, read(13, 4), 1); got != 0 {
+	if got := LatestRiseBetween(nil, read(13, 4), 1); got != 0 {
 		t.Errorf("no earlier reading gave %d; want 0", got)
+	}
+}
+
+// The case that prompted Amendment 34, measured on 2026-11-23: every one of
+// 169 older files rose by exactly one between two presses, which the column
+// showed as +169 while the newest release had four.
+func TestOnlyTheLatestReleaseCountsBetweenReadings(t *testing.T) {
+	t.Parallel()
+	app := Repo{"someone", "App"}
+	file := func(tag, name string, raw int) ReleaseFile { return ReleaseFile{app, tag, name, raw} }
+	earlier := []ReleaseFile{
+		file("v2.9.0", "AppSetup.exe", 40),
+		file("v2.10.0", "AppSetup.exe", 7),
+		file("v2.10.0", "app.flatpak", 2),
+	}
+	swept := []ReleaseFile{
+		file("v2.9.0", "AppSetup.exe", 41),
+		file("v2.10.0", "AppSetup.exe", 8),
+		file("v2.10.0", "app.flatpak", 3),
+	}
+	if got := LatestRiseBetween(earlier, swept, 0); got != 2 {
+		t.Errorf("sweep: %d; want 2, v2.10.0 (newer than v2.9.0 read as numbers) alone", got)
+	}
+	released := append(swept, file("v2.11.0", "AppSetup.exe", 3), file("v2.11.0", "App.dmg", 2))
+	if got := LatestRiseBetween(earlier, released, 1); got != 4 {
+		t.Errorf("new release: %d; want 4, its files count from none less own disk image", got)
+	}
+	other := Repo{"someone", "Tool"}
+	both := append(released, ReleaseFile{other, "v1", "ToolSetup.exe", 9})
+	was := append(earlier, ReleaseFile{other, "v1", "ToolSetup.exe", 5})
+	if got := LatestRiseBetween(was, both, 1); got != 8 {
+		t.Errorf("two repos: %d; want 8, each repo's latest release", got)
 	}
 }
 

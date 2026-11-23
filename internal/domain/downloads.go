@@ -68,6 +68,10 @@ func (f ReleaseFile) Counted(selfDownloads int) int { return Counted(f.Name, f.R
 // Platform is this file's platform.
 func (f ReleaseFile) Platform() Platform { return PlatformOf(f.Name) }
 
+// ReleaseKey identifies the release this file belongs to as owner/name/tag,
+// the form ReleaseBefore orders.
+func (f ReleaseFile) ReleaseKey() string { return f.Repo.String() + pathSep + f.Release }
+
 // FileKey identifies a release file across snapshots.
 func (f ReleaseFile) FileKey() string {
 	return strings.ToLower(f.Repo.String()) + pathSep + f.Release + pathSep + f.Name
@@ -94,7 +98,7 @@ func Total(files []ReleaseFile, selfDownloads int) Totals {
 		n := f.Counted(selfDownloads)
 		t.All += n
 		t.ByRepo[f.Repo.String()] += n
-		t.ByRelease[f.Repo.String()+pathSep+f.Release] += n
+		t.ByRelease[f.ReleaseKey()] += n
 		t.ByPlatform[f.Platform()] += n
 	}
 	return t

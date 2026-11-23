@@ -4,13 +4,13 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>What's new in Visitron: release history</title>
-<meta name="description" content="Visitron's release history: a Since last check column that counts from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
+<meta name="description" content="Visitron's release history: a Since last check column that counts the latest release from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
 <link rel="canonical" href="https://ernster.dev/Visitron/whats-new.html"/>
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="Visitron"/>
 <meta property="og:title" content="What's new in Visitron: release history"/>
-<meta property="og:description" content="A Since last check column that counts from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
+<meta property="og:description" content="A Since last check column that counts the latest release from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
 <meta property="og:url" content="https://ernster.dev/Visitron/whats-new.html"/>
 <meta property="og:image" content="https://ernster.dev/Visitron/application-icon.png"/>
 <meta property="og:image:type" content="image/png"/>
@@ -20,7 +20,7 @@
 <meta property="og:locale" content="en_GB"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="What's new in Visitron: release history"/>
-<meta name="twitter:description" content="A Since last check column that counts from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
+<meta name="twitter:description" content="A Since last check column that counts the latest release from your previous Refresh, page loads matched to websites kept in a folder, a world map of every website's visitors, macOS and Linux, per-website statistics with visitors by country and the first release."/>
 <meta name="twitter:image" content="https://ernster.dev/Visitron/application-icon.png"/>
 <meta name="twitter:image:alt" content="Visitron app icon"/>
 <link rel="icon" href="application-icon.png"/>
@@ -55,13 +55,23 @@
             and reading them correctly. Visitron reached macOS and Linux, then gained a
             map of every website's visitors by country. The newest releases match page
             loads to a website kept in a folder even when the address lacks its final
-            slash; the Since last check column now counts from your previous press of
-            Refresh.</p>
+            slash; the Since last check column now counts the latest release's downloads
+            since your previous press of Refresh.</p>
 
         <div class="changelog">
 
             <div class="card">
-                <div class="ver-tag">v<!--VERSION-->1.4.2<!--/VERSION--></div>
+                <div class="ver-tag">v<!--VERSION-->1.5.0<!--/VERSION--></div>
+                <h3>Since last check counts the latest release</h3>
+                <ul class="plain-list">
+                    <li>The column added up every file of every release, so one crawler fetching each old file once could show as +169 on a day the newest release had four downloads. GitHub counts such a fetch like any other; its size alone cannot tell it from genuine interest</li>
+                    <li>It now counts only the downloads of each repository's latest release between your last two presses of Refresh. A release published between the two counts all its downloads so far, so the column does not read 0 on release day</li>
+                    <li>Every other figure still counts every release: downloads over the period, downloads to date, the daily chart and the tables in Statistics</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="ver-tag">v1.4.2</div>
                 <h3>Since last check counts from your previous Refresh</h3>
                 <ul class="plain-list">
                     <li>The column measured from the last day Visitron had run rather than from the previous check, so it crept up with every automatic check; after a restart it could hold days of downloads under a label that suggested minutes</li>

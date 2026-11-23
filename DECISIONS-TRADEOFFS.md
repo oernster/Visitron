@@ -182,6 +182,19 @@ Refresh, kept in the data file apart from the daily history (Amendment 33).
 - **Costs:** the column stays as it was until the next press, even while the
   automatic checks bring the other figures up to date.
 
+### "Since last check" counts the latest release alone
+
+Between the two presses only each repo's newest version counts; its files new
+since the earlier press count from none (Amendment 34).
+
+- **Rather than:** every release, where one crawler fetching each old file
+  once showed as +169 on a day the newest release had four; or a test for the
+  shape of such a sweep, which a large genuine rise could one day trip.
+- **Gains:** the number answers "how is the current version doing", which a
+  sweep across old releases cannot move.
+- **Costs:** real downloads of an older release, by someone who chose it on
+  purpose, leave the column alone; they still count everywhere else.
+
 ### GitHub's counts stored; own downloads taken off on reading
 
 The store keeps GitHub's counts as read. The owner's own downloads of each

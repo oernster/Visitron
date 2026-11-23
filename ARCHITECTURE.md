@@ -119,7 +119,9 @@ sequences can be tested against a recorder. Its page under
 - **"Since last check" is measured between presses of Refresh.** Each press
   keeps a reading of every repo it read beside the one from the press before;
   an automatic check keeps the daily history alone, so neither it nor a
-  restart moves the column (Amendment 33).
+  restart moves the column (Amendment 33). Only each repo's latest release
+  counts towards it, so a crawler fetching every old file adds nothing
+  (Amendment 34).
 - **A failed check waits 30 minutes** before retrying on its own, so an outage
   is not a check a minute; Refresh still runs at once (Amendment 1).
 - **A panic in a check is recorded as a failed check**, so the warning on

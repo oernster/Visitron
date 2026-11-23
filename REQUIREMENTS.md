@@ -351,10 +351,11 @@ that verifies it; test names are the intended ones until the code exists.
 **FR-041 Website list**
 - Priority: Must
 - Requirement: The window shall list every website with its page loads and
-  counted downloads for the chosen period, plus the change since the previous
-  press of Refresh (Amendment 33).
+  counted downloads for the chosen period, plus the change in the latest
+  release's downloads since the previous press of Refresh (Amendments 33, 34).
 - Verified by: `frontend` component test `WebsiteList.test.tsx`;
-  `internal/application/refresh_test.go::TestSinceLastCheckIsTheRiseBetweenTwoPresses`
+  `internal/application/refresh_test.go::TestSinceLastCheckIsTheRiseBetweenTwoPresses`;
+  `internal/domain/figures_test.go::TestOnlyTheLatestReleaseCountsBetweenReadings`
 
 **FR-042 Website detail**
 - Priority: Must
@@ -1295,3 +1296,27 @@ column is the downloads between the last two presses of Refresh.
   shows 0 after the first press following this change.
 - Verified by `internal/application/refresh_test.go` and
   `internal/infrastructure/store/refresh_test.go`.
+
+**Amendment 34 (2026-11-23): "Since last check" counts the latest release
+alone.** Found by the owner on 2026-11-23: one website showed +169 on the day
+a patch came out, while its newest release had four downloads in all. Measured
+in the data file the same day: every one of the 169 files held at both presses
+rose by exactly one, across all 77 releases back to the first. Something had
+fetched every file once; GitHub counts that as a download like any other. Ruled
+by the owner on 2026-11-23: the column measures the latest version's downloads
+only, since a genuine rise of that size may come one day and the size alone
+cannot tell the two apart.
+
+- FR-041: "Since last check" is the rise in counted downloads of each chosen
+  repo's latest release between the last two presses, summed over the repos.
+  The latest release is the newest version in the later reading, read as
+  numbers as Amendment 24 orders them. This narrows Amendment 33's account of
+  the column; when and how the readings are kept is unchanged.
+- A file of the latest release that the earlier reading lacks was released
+  between the two presses, so it counts from none: on the day of a release the
+  column shows its downloads so far rather than 0. A file that fell still adds
+  nothing (FR-024).
+- Every other figure counts every release as before: the downloads over the
+  period, downloads to date, the daily chart and the tables in Statistics.
+- Verified by
+  `internal/domain/figures_test.go::TestOnlyTheLatestReleaseCountsBetweenReadings`.

@@ -13,8 +13,9 @@ type SiteFigures struct {
 	Downloads int
 	// TotalDownloads is every counted download to date.
 	TotalDownloads int
-	// SinceLastCheck is the rise between the last two presses of Refresh,
-	// whatever ran or restarted between them (Amendment 33).
+	// SinceLastCheck is the rise in the latest release's downloads between
+	// the last two presses of Refresh, whatever ran or restarted between them
+	// (Amendments 33, 34).
 	SinceLastCheck int
 }
 
@@ -165,9 +166,9 @@ func (f *Figures) dailyLoads(sites []Website, period domain.Period) (map[domain.
 	return out, nil
 }
 
-// sinceLastPress answers the rise in w's counted downloads between the last
-// two presses of Refresh, summed over its chosen repos; none for a repo read
-// by fewer than two.
+// sinceLastPress answers the rise in w's counted downloads of each repo's
+// latest release between the last two presses of Refresh, summed over its
+// chosen repos; none for a repo read by fewer than two.
 func (f *Figures) sinceLastPress(w Website, self int) (int, error) {
 	total := 0
 	for _, repo := range w.Repos {
@@ -175,7 +176,7 @@ func (f *Figures) sinceLastPress(w Website, self int) (int, error) {
 		if err != nil {
 			return 0, err
 		}
-		total += domain.RiseBetween(earlier, later, self)
+		total += domain.LatestRiseBetween(earlier, later, self)
 	}
 	return total, nil
 }

@@ -1,6 +1,9 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // Day is a calendar day in the time zone Windows is set to. The application
 // layer works it out from its clock; the domain only compares and prints it.
@@ -62,11 +65,37 @@ func Rise(earlier, later Snapshot) int {
 	return total
 }
 
-// RiseBetween is the rise in counted downloads from one reading of release
-// files to a later one, less selfDownloads on each .dmg; as with Rise, a file
-// that fell or is missing from either adds nothing (FR-024).
-func RiseBetween(earlier, later []ReleaseFile, selfDownloads int) int {
-	return Rise(SnapshotOf(Day{}, earlier, selfDownloads), SnapshotOf(Day{}, later, selfDownloads))
+// LatestRiseBetween is the rise in counted downloads of each repo's latest
+// release from one reading of release files to a later one, less
+// selfDownloads on each .dmg (Amendment 34). The latest release is the newest
+// version in the later reading, as ReleaseBefore orders them. Its files that
+// the earlier reading lacks were released between the two, so they count from
+// none; as with Rise, a file that fell adds nothing. With no earlier reading
+// there is nothing to rise from, so it answers none.
+func LatestRiseBetween(earlier, later []ReleaseFile, selfDownloads int) int {
+	if len(earlier) == 0 {
+		return 0
+	}
+	newest := map[string]string{}
+	for _, f := range later {
+		repo := strings.ToLower(f.Repo.String())
+		if key, ok := newest[repo]; !ok || ReleaseBefore(f.ReleaseKey(), key) {
+			newest[repo] = f.ReleaseKey()
+		}
+	}
+	var latest []ReleaseFile
+	for _, f := range later {
+		if newest[strings.ToLower(f.Repo.String())] == f.ReleaseKey() {
+			latest = append(latest, f)
+		}
+	}
+	before := SnapshotOf(Day{}, earlier, selfDownloads)
+	for _, f := range latest {
+		if _, ok := before.Counts[f.FileKey()]; !ok {
+			before.Counts[f.FileKey()] = 0
+		}
+	}
+	return Rise(before, SnapshotOf(Day{}, latest, selfDownloads))
 }
 
 // DailyRises keeps the last snapshot of each day in day order, then reports
