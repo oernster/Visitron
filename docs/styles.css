@@ -625,3 +625,9 @@ footer .links {
     display: none;
   }
 }
+
+/* site-chrome-guard: a link in the top bar or footer never breaks inside itself; rows wrap
+   whole links instead and no bar is held to a fixed height. */
+.mark { flex-shrink: 0; white-space: nowrap; }
+.bar nav { flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; }
+.bar nav a, footer a { white-space: nowrap; }
